@@ -1,0 +1,15 @@
+image: leplusorg/latex
+
+building-latex-master:
+  stage: build
+  variables:
+    COMPILE_ALL: "True"
+  script:
+    - latexmk -pdf main.tex -shell-escape
+  artifacts:
+    paths:
+      - "main.pdf"
+  only:
+    - master
+  tags:
+    - saas-linux-small-amd64
