@@ -16,6 +16,49 @@
 % Spécifier vos fichiers de bibliographie
 % Specify you bibliography files here
 \addbibresource{./biblio/biblio.bib}
+\addbibresource{./biblio/herofake.bib}
+\addbibresource{./biblio/herocache.bib}
+\addbibresource{./biblio/herosim.bib}
+
+% Que du plaisir
+\usepackage{amsmath,amssymb,amsfonts}
+
+\usepackage{circledsteps}
+\pgfkeys{/csteps/inner color=white}
+\pgfkeys{/csteps/fill color=black}
+
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\color{YellowGreen}\ding{51}}%
+\newcommand{\xmark}{\color{BrickRed}\ding{55}}%
+
+\usepackage{float}
+\usepackage[caption=false]{subfig}
+
+% \usepackage[breaklinks]{hyperref}
+
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+% Centered tabular column with text wrapping (L)
+\newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
+\newcolumntype{S}{>{\centering\arraybackslash}m{0.1\linewidth}}
+% for vertical centering text in X colum
+\renewcommand\tabularxcolumn[1]{m{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newboolean{showcomments}
+\setboolean{showcomments}{true}
+\ifthenelse{\boolean{showcomments}}
+{ \newcommand{\mynote}[3]{
+    \fbox{\bfseries\sffamily\scriptsize#1}
+    {\small$\blacktriangleright$\textsf{\emph{\color{#3}{#2}}}$\blacktriangleleft$}}}
+{ \newcommand{\mynote}[3]{}}
+\newcommand{\shrink}[1]{}
+\newcommand{\jb}[1]{\mynote{Jalil}{#1}{blue}}
+\newcommand{\vl}[1]{\mynote{Vincent}{#1}{red}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
@@ -30,7 +73,7 @@
 % Inclusion du chapitre remerciement
 % Input acknowledgement chapter
 \clearemptydoublepage
-\input{./Acknowledgement/acknowledgement}
+\input{./1_Acknowledgement/acknowledgement}
 
 % Ne pas oublier cette commande qui g\'{e}n\`{e}re la page de couverture avant
 % This command will generate the front cover
@@ -41,18 +84,31 @@
 %\shorttableofcontents{Sommaire}{0}
 
 \clearemptydoublepage
-\input{./Introduction/introduction}
+\input{./2_Introduction/introduction}
+
+\part{Contexte et état de l'art}
 
 \clearemptydoublepage
 \mainmatter
-\input{./Chapitre1/chapitre1}
+\input{./3_Chapitre1/chapitre1}
 
 \clearemptydoublepage
-\input{./Chapitre2/chapitre2}
+\input{./4_Chapitre2/chapitre2}
+
+\part{Contributions}
+
+\clearemptydoublepage
+\input{./5_Chapitre3/chapitre3}
+
+\clearemptydoublepage
+\input{./6_Chapitre4/chapitre4}
+
+\clearemptydoublepage
+\input{./7_Chapitre5/chapitre5}
 
 \clearemptydoublepage
 \backmatter
-\input{./Conclusion/conclusion}
+\input{./8_Conclusion/conclusion}
 
 % Chapitre pour la bibliographie
 % Bibliography chapter
