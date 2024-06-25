@@ -1,4 +1,4 @@
-\chapter{HeROcache}
+\chapter{HeROcache : Applications serverless et coûts associés aux systèmes de stockage}
 
 \section{Introduction}
 \label{section:herocache-introduction}
@@ -107,7 +107,7 @@ In this paper, we present a solution that addresses the three challenges mention
 
 The paper is organized as follows: Section~\ref{section:herocache-background} gives some background knowledge; Section~\ref{section:herocache-before-contrib} explains the overall project; Section~\ref{section:herocache-workload} details our offline metadata collection approach; Section~\ref{section:herocache-contribution} describes our online orchestration strategy; Section~\ref{section:herocache-evaluation} discusses evaluation results; Section~\ref{section:herocache-sota} discusses state-of-the-art work; Section~\ref{section:herocache-conclusion} concludes the paper.
 
-\section{Background and Motivation}
+\section{Contexte et motivation}
 \label{section:herocache-background}
 
 % \begin{figure}[t]
@@ -141,7 +141,7 @@ The paper is organized as follows: Section~\ref{section:herocache-background} gi
 %the complexity of the models and 
 % the processing element on which they run. Yet, edge devices can be equipped with heterogeneous processing elements, making it possible to leverage these  resources and achieve a satisfying trade-off between security, performance and energy with respect to the conditions of the mission (criticality level, traffic load, battery level).
 
-\subsection{Serverless challenges}
+\subsection{Défis de l'orchestration dynamique}
 
 Serverless is a trending service model for the cloud~\cite{Lannurien2023}: by shifting the resource allocation responsibility from customers to service providers, it alleviates an important part of the complexity from application developers and opens new opportunities of optimization and cost control for the infrastructure manager.
 In a serverless architecture, developers design their applications as a composition of stateless functions. Stateless %(or "pure", side-effect free) 
@@ -157,7 +157,7 @@ This cold start presents a risk of increased latency, as the provider has to all
 
 A recent study has shown that 50\% of serverless applications deployed at Microsoft Azure Durable Functions \footnote{\href{https://learn.microsoft.com/en-US/azure/azure-functions/durable/durable-functions-overview}{https://learn.microsoft.com/en-US/azure/azure-functions/durable/durable-functions-overview}} consist of 3 or fewer functions, with 65\% of the applications exhibiting a simple DAG of functions arranged as linear chains \cite{mahgoubORIONThreeRights}. Our IDS application consists of different chains that are two functions long, as described in Section~\ref{section:herocache-characterization-workloads}. Workload characterization work showed that 25\% of the functions deployed at Microsoft Azure Functions \footnote{\href{https://azure.microsoft.com/en-us/products/functions/}{https://azure.microsoft.com/en-us/products/functions/}} execute in 100 ms or less \cite{shahradServerlessWildCharacterizing}. The functions that make up our IDS application run for hundredths to tenths of a second, which makes them particularly prone to critical slowdowns in the context of dynamically allocated resources.
 
-\subsection{Function cache}
+\subsection{Mise en cache des images de fonctions}
 \label{section:herocache-background-cache}
 
 % \vl{Cache} Online, dynamic resource allocation and task placement policies can help meet per-request Quality of Service (QoS) requirements by mapping the requests to appropriate replicas in the cluster. However, most papers on resources orchestration and task placement in serverless computing only consider best-case scenarios in which function images are already available on edge nodes. This does not reflect the reality, where function images are stored in repositories on dedicated nodes and pulled by worker nodes where and when functions are deployed. Depending on image size, this can have detrimental consequences on request latency with deployments where cold starts dominate a function's total response time \cite{yanHermesEfficientCache2020}. \jb{y a moyens de rendre le pb plus pertinent dans le cadre d'edge devices}
@@ -174,7 +174,7 @@ In fact, pulling images on the edge nodes can account for more than 80\% of func
 
 % Creating a replica thus implies pulling the image from the registry to the worker node. The image can then be cached on the worker node for use in further deployments, dramatically speeding up the process of spinning new instances of the function \cite{yanHermesEfficientCache2020}. However, node-local storage is limited in size and cannot be employed for caching purposes only.
 
-\subsection{Inter-function communications}
+\subsection{Communications entre les fonctions}
 \label{section:herocache-background-communications}
 
 % \vl{Communications} Furthermore, as these functions are sometimes scaled from zero, they are not network-addressable: inter-function communications are achieved through the use of slow, network-accessible storage (\textit{e.g.} S3 buckets). This induces delays that can snowball throughout the execution of the application and provoke Service Level Objective (SLO) violations by increasing request tail latencies \cite{wawrzoniakBoxerDataAnalytics2021a}. FaaS offerings are a typical example of data-shipping architecture: gigabytes of data are moved to megabytes of code, leading to inefficiencies that increase energy consumption and resource under-utilization. Ideally, functions that are part of a same application should be able to communicate intermediate results locally, using node-local storage rather than remote storage.
@@ -203,7 +203,7 @@ deteriorate QoS.
 
 % Orchestrating serverless applications while achieving SLA thus requires carefully modeling application characteristics, and taking these into account when allocating resources and scheduling user requests on the serverless platform.
 
-\section{IDS Applications on Serverless Edge}
+\section{Détection d'intrusion à l'edge dans le modèle serverless}
 \label{section:herocache-before-contrib}
 
 Orchestrating serverless applications while achieving SLA requires carefully modeling application characteristics and taking these into account when allocating resources and scheduling user requests on the serverless platform. Figure~\ref{figure:herocache-serverless-platform} gives an overview of the overall lifecycle of a request on our serverless platform. It is divided in two phases; an \textbf{offline phase} that consists in characterizing the applications deployed by the users on edge platforms, and an \textbf{online phase} where the requests to these applications are scheduled on the platform.
@@ -216,7 +216,7 @@ The scheduler will then try to find an available replica of the first function i
 
 When the application completes, it returns a classification vector to the user that gives the probabilities that the traffic is malicious, exhibiting patterns of a potential attack.
 
-\section{Offline Phase: IDS Characterization} 
+\section{Phase hors-ligne : caractérisation} 
 \label{section:herocache-workload}
 
 % \begin{figure}[t]
@@ -234,14 +234,14 @@ This section describes our methodology and results.
 
 %The authors characterized their models in terms of detection accuracy, latency, energy consumption and memory and storage footprints on different platforms and processing elements: Raspberry Pi 4 (CPU), Nvidia Jetson Xavier AGX (CPU, GPU and DLA) and a Pynq-Z2 FPGA.
 
-\subsection{Execution platform benchmarks} \label{section:herocache-characterization-platforms}
+\subsection{Caractérisation des plateformes d'exécution} \label{section:herocache-characterization-platforms}
 
 We used platforms that are representative of what one can find in the edge~\cite{slimani:hal-04159551,kljucaric2020}: 
 \textbf{(1) Raspberry Pi 4B} equipped with a quad core ARM Cortex-A72, 4 GB LPDDR4 main memory and a 16GB SD Card. It runs on Linux Raspbian 5.4.
 \textbf{(2) Nvidia Jetson Xavier AGX} composed of three processing elements: an 8 core NVIDIA ARM Carmel CPU, an NVIDIA Volta GPU with 512 CUDA cores, and a Deep Learning Accelerator (DLA), which is a fixed-function hardware accelerator designed for Convolutional Neural Networks (CNN). It is assumed to be more energy efficient than the GPU. The NVIDIA Xavier AGX is equipped with 16 GB LPDDR4 and a 32 GB eMMC 5.1 Flash Storage. It runs on Linux Tegra 4.9.10. The 15 Watts Desktop power mode was used. 
 \textbf{(3) PYNQ-Z2 Development Board}, a board based on the Xilinx Zynq XC7Z020 System on Chip. It is equipped with the Artix-7 FPGA and 512 MB DDR3 memory and a 16GB SD card.
 
-\subsection{Workload characterization}
+\subsection{Caractérisation des applications}
 \label{section:herocache-characterization-workloads}
 
 Our application consists of different preprocessors and classifiers. The preprocessor selects a subset of relevant features of the TCP packets. 3 different preprocessing approaches were used: (1) using all the packet features without any selection (NoFS: No Feature Selection); (2) using a DNN auto-encoder to project features in a smaller latent space (AE: Auto-Encoder); and (3) expertly selecting a subset of the features (ES: Expert Selection). For the classifier part, we used Random Forest (RF), two different Dense Neural Network (DNN) architectures, and a CNN.
@@ -272,7 +272,7 @@ ES-CNN    &                                                                     
 Table~\ref{table:herocache-workload} shows the IDS models considered in this study and some of their characteristics. These models were trained and characterized on the reference network intrusion dataset UNSW-NB15\footnote{\href{https://research.unsw.edu.au/projects/unsw-nb15-dataset}{https://research.unsw.edu.au/projects/unsw-nb15-dataset}}
 where each observation represents statistical, content and time features on data traffic during a time window, and tagged as "normal" or "attack". The dataset includes 9 attack categories. The neural network models were exported and optimized using TensorFlow Lite and TensorRT when intended for CPU and GPU/DLA platforms, respectively. Regarding Random Forest, the models were exported using the Emlearn and HummingBird.ml frameworks when targeting CPU and GPU platforms, respectively. hls4ml was used to export neural network models for the FPGA target.
 
-\subsection{Performance measurements results}
+\subsection{Mesures de performances}
 
 Each of the IDS models was deployed on the target platforms and inferences were run with a set of 80,000 packets from the UNSW-NB15 dataset to characterize inference latency. The results are shown on Figure~\ref{figure:herocache-performance}. Only one model (ES-DNN1) has been characterized on the FPGA platform since the other HLS models could not be accommodated on the target. %the result has not been included in the figure \jb{pourquoi pas??}. Inferences on the FPGA processing element take 453 ms. 
 The conclusion that was drawn from these results is that for neural networks, the Xavier CPU achieves the best performance in the majority of cases, except for NoFS-CNN which takes advantage of the GPU capabilities due to its high number of parameters and GPU efficiency for convolution operations. For Random Forest models, the fastest processing element is the GPU. In terms of cost and availability, the Xavier AGX is respectively around 20x and 10x more expensive than the RBPI4 and the Pynq-Z2 platforms, respectively. We size our infrastructure accordingly by providing more RBPI4 platforms than Xavier AGXs to be  representative of real deployments. % platforms than , even if its timing performances are better.
@@ -284,7 +284,7 @@ The conclusion that was drawn from these results is that for neural networks, th
     \label{figure:herocache-performance}
 \end{figure}
 
-\subsection{Energy consumption measurements results}
+\subsection{Mesures de consommation d'énergie}
 
 %As with the latency \jb{energy ??}\vl{done} 
 We run inferences on IDS models on each processing element and measured the energy consumption of the platform using the N6705A DC Power Analyzer. The results are shown in Figure~\ref{figure:herocache-energy}. For the same reasons mentioned above, only ES-DNN1 was characterized on FPGA. %, we did not include this result in the figure \jb{pourquoi pas??}. The energy consumption of the PYNQ-Z2 platform when running ES-DNN1 is 0.863J which is the lowest energy consumption compared to all other models and platforms.
@@ -299,9 +299,9 @@ Even if Pynq-Z2 shows the best energy efficiency with the ES-DNN1 model, since i
     \label{figure:herocache-energy}
 \end{figure}
 
-\section{Online Phase: HeROcache Orchestration} \label{section:herocache-contribution}
+\section{Phase en ligne : orchestration avec HeROcache} \label{section:herocache-contribution}
 
-\subsection{Overview of HeROcache}
+\subsection{Présentation générale}
 
 The HeROcache orchestrator is mainly composed of two modules, the \textbf{autoscaler} and the \textbf{scheduler} (see Figure~\ref{figure:herocache-serverless-platform}). The autoscaler is in charge of dynamic resource allocation: it assigns execution platforms to function replicas. The scheduler handles the placement of user requests on the replicas.
 
@@ -395,7 +395,7 @@ The next sections describe both the autoscaling and scheduling strategies. %pres
 % \label{eq:herocache-performance-ratio}
 % \end{equation}
 
-\subsection{Autoscaling cost minimization strategy}
+\subsection{Stratégie de minimisation des coûts d'allocation des ressources}
 
 %\vl{Il faudrait presque déplacer le paragraphe suivant, qui introduit la raison de formuler un problème d'optimisation, avant les 2 sections autoscaling cost / scheduling cost. Sinon, on dirait qu'il manque une introduction à la sous-section scheduling cost. Qu'en penses-tu ?}
 
@@ -519,7 +519,7 @@ ${EC}_{{f}_{N, P}}$ and ${HP}_{{f}_{N, P}}$ correspond respectively to (a) the d
 \label{eq:herocache-hardware-price}
 \end{equation}
 
-\subsection{Scheduling cost minimization strategy}
+\subsection{Stratégie de minimisation des coûts d'ordonnancement et de placement des données}
 
 As with autoscaling, we formulate an optimization problem to find the optimal scheduling configuration for each user request (as the QoS is to be guaranteed on a user request basis) and solve it with a simple greedy algorithm. The objective of the scheduler is to minimize the cost of $z_i$ tasks placement on $R_i$ replicas of function $i$ for $y_a$ invocations of application $a$ (Equation~\ref{eq:herocache-objective-scheduling}), under the constraint of a finite set of function replicas $R_{i}$ (Equation~\ref{eq:herocache-constraint-scheduling}) previously deployed by the autoscaler.  % with each replica having a limited request queue length (Equation~\ref{eq:herocache-constraint-queue}).
 We assume that applications always run to completion and that nodes do not fail, hence there is no cost associated to task migrations or retries.
@@ -605,7 +605,7 @@ Then, we compute a task consolidation score $TC$ by applying an exponential func
 \label{eq:herocache-task-consolidation}
 \end{equation}
 
-\section{Evaluation}
+\section{Évaluation}
 \label{section:herocache-evaluation}
 
 This section presents our evaluation methodology and results obtained in an IDS deployment scenario on edge devices. The evaluation is done in two phases: we compare HeROcache with several baselines, then we evaluate the impact of each of its components (autoscaler and scheduler) taken apart.
@@ -634,7 +634,7 @@ This section presents our evaluation methodology and results obtained in an IDS 
     \label{figure:herocache-evaluation}
 \end{figure*}
 
-\subsection{Experimental setup}
+\subsection{Protocole expérimental}
 
 % \begin{figure}[t]
 % \centering
@@ -680,9 +680,9 @@ We designed a two-step performance evaluation:\\
 
 We evaluate HeROcache on the basis of three  metrics: (1) the number of unused nodes in the infrastructure, which measures the consolidation level reached; (2) QoS penalties, which expresses the capability for our strategy to meet user requirements; (3) energy consumption, which is a salient challenge in resource-constrained edge computing.
 
-\subsection{Experimental results}
+\subsection{Analyse des résultats}
 
-\subsubsection{Comparison against baselines}
+\subsubsection{Comparaison aux politiques de base}
 
 \textbf{Tasks consolidation}. Figure~\ref{figure:herocache-evaluation-full-unused-nodes} shows that our combination of autoscaler and scheduler achieves the best task consolidation, utilizing only 20\% of the edge infrastructure for the execution of the scenario. Knative behaves as expected, spreading the load across the entire infrastructure. Note that BPFF under Knative produces slightly different results: as task queues are maximized, the autoscaler does not need to allocate as many replicas. In this scenario, if the unused edge nodes were powered off instead of sitting idle, our strategy would allow the service provider to save almost 100 Wh (that is 80\% of the static energy and more than 83\% of the total energy) by turning off 80\% of the infrastructure, while still guaranteeing the application response time for 72\% of user requests.
 
@@ -693,7 +693,7 @@ With HeROcache, 30\% of the tasks manage to communicate through node-local stora
 
 \textbf{Energy consumption}. Figure~\ref{figure:herocache-evaluation-full-energy-consumption} shows that HeROcache manages to cut dynamic energy consumption by a third: with a makespan of 1505 seconds for the scenario, the infrastructure consumes 0.0088 kWh, as compared to 0.0266 kWh for 2193 seconds of execution time under Knative. Not only does HeROcache's consolidation strategy allow for power-off policies that could provide important reductions in static energy requirements for running IDS applications on the edge, but by selecting adequate execution platforms, it also reduces the overall consumption of the edge cluster. HeROfake consumes the most energy at 0.31 kWh because of a much longer execution time for the scenario.
 
-\subsubsection{Impact of each component}
+\subsubsection{Impact des composants individuels}
 
 \textbf{Tasks consolidation}. Figure~\ref{figure:herocache-evaluation-components-unused-nodes} shows that strategies that are oblivious to storage costs do not manage to consolidate tasks as well as HeROcache: HRO-HRC and HRO-HRO respectively use 80\% and 70\% of the infrastructure. We explain these results as follows: as dependencies are not satisfied in time, load keeps on growing for the various functions, leading the autoscaler to increase the number of replicas, thus enroling more nodes for the duration of the scenario.%: HRO-HRC uses 80\% of the infrastructure.
 
@@ -704,25 +704,21 @@ With HeROcache, 30\% of the tasks manage to communicate through node-local stora
 \textbf{Note on complexity}: HeROcache employs a greedy optimization technique comparable to HeROfake. In HeROcache, the complexity is bounded by the number of applications $A$, their size $f_{a}$ and the size of the infrastructure $N$ (Equation~\ref{eq:herocache-complexity-autoscaler}): in the worst-case scenario where all the resources are available, the autoscaler scans through the whole infrastructure $N$ to score each node for replica creation.
 
 \begin{equation}
-\setlength{\abovedisplayskip}{0pt}
-\setlength{\belowdisplayskip}{0pt}
-   \footnotesize \mathcal{O}_{autoscaling}(A \cdot f_{a} \cdot N)
+    \mathcal{O}_{autoscaling}(A \cdot f_{a} \cdot N)
 \label{eq:herocache-complexity-autoscaler}
 \end{equation}
 
 As the scheduler works with already created replicas $R_{f}$ of functions, its complexity is lower (Equation~\ref{eq:herocache-complexity-scheduler}).
 
 \begin{equation}
-\setlength{\abovedisplayskip}{0pt}
-\setlength{\belowdisplayskip}{0pt}
-  \footnotesize  \mathcal{O}_{scheduling}(A \cdot f_{a} \cdot R_{f})
+    \mathcal{O}_{scheduling}(A \cdot f_{a} \cdot R_{f})
 \label{eq:herocache-complexity-scheduler}
 \end{equation}
 
 As our current case study implies a limited subset of IDS functions with a reasonable number of edge nodes, the scalability was not an issue. However, this overhead should be considered for wider deployments of different case studies.
 %These overheads have not been measured in simulation. However, as the autoscaler works in a periodic fashion, the frequency of the period could be tuned to adjust the algorithm depending on the service provider's needs. The scheduler is called at the time of user requests and could be distributed across nodes if the load is too heavy to handle.
 
-\section{Related Work}
+\section{Travaux connexes}
 \label{section:herocache-sota}
 
 Previous work focused on autoscaling platforms for the deployment of short-lived tasks, comprised in applications exhibiting unpredictable load patterns (see Table~\ref{table:herocache-sota}).% summarizes how these contributions differ from our target solution.
@@ -734,7 +730,7 @@ leverages hardware heterogeneity in their orchestration policy, but does not int
 Some of these contributions optimize energy consumption at the autoscaler level \cite{bhasiCypressInputSizesensitive2022, zhangFIRSTExploitingMultiDimensional2023}. However, they focus on the dynamic part of energy consumption: they do not consider the possible impact of consolidation towards static energy consumption. We argue that service providers should seek task consolidation as a means to power off as many nodes as possible, dramatically lowering the overall infrastructure energy requirements.
 In \cite{fuerstIluvatarFastControl2023}, the authors investigated the various overheads inflicted by serverless orchestration. This element has not been taken into account in our study, as we are targeting an edge infrastructure limited in size for the deployment of a single application.
 
-\section{Conclusion}
+\section{Conclusion et perspectives}
 \label{section:herocache-conclusion}
 
 In this work, we presented an allocation and scheduling policy for serverless edge computing. This policy seeks to optimize time-sensitive applications deployment for QoS on energy-constrained devices. By leveraging workload characterization, hardware heterogeneity and local storage devices on the edge nodes, HeROcache enforces applications consolidation and manages to reduce average initialization delays by 17.6\% and communication delays by 88.4\%. This results in reducing the static energy consumption of the platform by 80\% while maintaining under 28\% of QoS violations. We plan to generalize the HeROcache approach for case studies including several types of application on larger edge or cloud infrastructures. For such a sake, machine learning strategies or metaheuristics could be used for scaling purposes.

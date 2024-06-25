@@ -29,7 +29,7 @@
 \RequirePackage[utf8]{inputenc} 
 \RequirePackage[english,french]{babel} % Last language is the default, use \selectlanguage{english} to switch
 \RequirePackage{ifpdf}
-\RequirePackage[usenames,dvipsnames]{color} % pour les couleurs
+\RequirePackage[usenames,dvipsnames]{xcolor} % pour les couleurs
 \RequirePackage{textcomp}
 \RequirePackage{titlesec}
 \RequirePackage{parcolumns}
@@ -45,7 +45,7 @@
 \RequirePackage{shorttoc} % pour le sommaire, au debut.
 \RequirePackage{fancyhdr} % Afin de r\'{e}aliser soi-même les en-têtes et pieds de page, voir chaque d\'{e}but de chapitre.
 \RequirePackage{pifont} % Pour utiliser des symboles divers.
-\RequirePackage{color}
+% \RequirePackage{color}
 \RequirePackage{comment}
 \RequirePackage{wallpaper}
 \RequirePackage[inner=30mm,outer=20mm,top=30mm,bottom=20mm]{geometry}

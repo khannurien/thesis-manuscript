@@ -1,14 +1,21 @@
-\chapter{Ordonnancement dans un cloud hétérogène : État de l'art}
+\chapter{Serverless, allocation et placement dynamiques dans le cloud : État de l'art}
 
 \section{Serverless}
+
+Le modèle serverless constitue un changement de paradigme dans le cloud public : par opposition aux modèles traditionnels, les clients serverless ne réservent pas de ressources matérielles. L'exécution de leur code est dirigée par des événements (requêtes HTTP, tâches programmées, etc.) et la facturation s'effectue sur la base de l'usage réel des ressources. En contrepartie, la responsabilité de l'allocation des ressources et du placement des tâches incombe au fournisseur.
 
 \subsection{Allocation des ressources}
 
 \subsection{Placement des requêtes}
 
-\subsection{Opportunités}
-
-\subsection{Défis}
-
 \section{Conclusion}
 
+En libérant les utilisateurs de la contrainte du dimensionnement de leur infrastructure, le modèle de service serverless pour le cloud promet de faciliter le passage à l'échelle des applications. Grâce au mécanisme d'allocation à la demande, les clients peuvent bénéficier d'économies considérables, en ne payant plus pour des ressources qui seraient essentiellement dormantes, en attente d'une requête.
+
+Toutefois, les solutions serverless actuelles présentent des inconvénients non négligeables qui limitent l'utilisation du serverless à des cas d'usage spécifiques. Ce paradigme se réalise aujourd'hui sous la forme d'un contrat sur le modèle de programmation : les utilisateurs des offres serverless doivent concevoir leurs applications comme un ensemble de fonctions pures -- idempotentes, leur exécution n'entraîne pas d'effets de bord -- ce qui constitue un lourd effort d'ingénierie.
+
+Le fonctionnement de cette architecture logicielle, qui présente des similitudes avec l'architecture en micro-services, repose sur la communication par passage de messages entre fonctions. Les fonctions n'étant pas directement adressables sur le réseau dans les solutions commerciales actuelles, cette communication s'effectue par le biais d'un stockage lent : cela induit un surcoût important sur les performances de l'application lors des phases de composition et de synchronisation, jusqu'à parfois contrebalancer les gains offerts par le parallélisme massif inhérent au paradigme serverless.
+
+Par ailleurs, le passage à l'échelle depuis zéro est associé à un fréquent risque de latence lors du réveil de l'application, puisque le fournisseur de services doit alors dynamiquement allouer des ressources matérielles et instancier l'environnement d'exécution des fonctions pour répondre à l'événement déclencheur. Les fournisseurs de services ont tendance à pré-allouer des ressources de manière à éviter ces démarrages à froid, ce qui contraint leurs gains potentiels en rendant ces ressources indisponibles pour d'autres clients.
+
+Enfin, les accélérateurs matériels sont les grands absents de l'offre serverless commerciale. À l'heure où la demande en GPU et FPGA est croissante pour répondre aux besoins en calcul massivement parallèle, notamment dans le cadre de l'apprentissage machine ou de l'analyse de données "big data", les clients doivent se tourner vers une offre cloud plus conventionnelle s'ils souhaitent bénéficier de plateformes d'exécution hétérogènes.

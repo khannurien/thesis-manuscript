@@ -1,4 +1,4 @@
-\chapter{HeROsim}
+\chapter{HeROsim : Élaborer et évaluer des politiques d'orchestration pour le cloud privé}
 
 \section{Introduction}
 \label{section:herosim-introduction}
@@ -70,7 +70,7 @@ To address these limitations, we propose \textbf{HeROsim}~\footnote{\href{https:
 
 %\vspace*{-10pt}
 
-\section{Overview of the simulated platform}
+\section{Présentation générale de la plateforme simulée}
 \label{section:herosim-overview}
 
 % \vl{premier jet de figure générale... à revoir : passage de la plateforme à l'infrastructure. reprendre la figure HeROcache ?}
@@ -107,7 +107,7 @@ When replicas are removed, hardware resources are freed. However, when a new rep
 % Scheduler policies (bin-packing, load balancing...)
 Finally, user requests are mapped to the available function replicas by the \textbf{scheduler} that implements different strategies: for example AWS Lambda\footnote{\href{https://aws.amazon.com/en/lambda/}{https://aws.amazon.com/en/lambda/}} uses a bin-packing algorithm, while an open source platform such as Knative implements a load balancing policy~\cite{Lannurien2023}. %These strategies have different outcomes with regard to resource usage and QoS, but it can be difficult to predict to what extent they will impact workloads before deployment.
 
-\section{Design of HeROsim}
+\section{Choix de conception}
 \label{section:herosim-herosim}
 
 %This section introduces the design choices and hypotheses made for the development of HeROsim.%, in order to help users get started implementing their own policy in simulation.
@@ -121,7 +121,7 @@ Finally, user requests are mapped to the available function replicas by the \tex
 
 HeROsim uses the SimPy~\footnote{\href{https://simpy.readthedocs.io}{https://simpy.readthedocs.io}} library as the discrete-event simulation engine. It ships three base classes -- \texttt{Orchestrator}, \texttt{Autoscaler} and \texttt{Scheduler} -- that should be subclassed by users willing to implement their own  algorithms. As the bulk of the platform behavior is inherited from the base classes, implementation overhead for a new policy is minimal: the simplest couple of autoscaler and scheduler (Random Placement policy) are implemented in less than 20 LOCs.
 
-\subsection{Input data}
+\subsection{Données d'entrée}
 
 HeROsim exposes a declarative interface for users to define their cloud environment, workloads and QoS constraints. The simulator replays an allocation and placement scenario under different orchestration policies. A simulator run requires the following JSON inputs to define such a scenario:
 
@@ -133,7 +133,7 @@ HeROsim exposes a declarative interface for users to define their cloud environm
 
 Data from our previous studies~\cite{herofake, herocache} are available in the repository for reference. While (1) and (2) can be hand-written according to the use-case requirements, HeROsim provides a synthetic generator to create various traces for (3) using Poisson processes, with variable duration and user request rate, as commonly done in the literature~\cite{herocache}. 
 
-\subsection{Simulation flow}
+\subsection{Flot d'une simulation}
 
 The user may choose the desired orchestration policies and execute the main program. The simulator will:
 
@@ -164,7 +164,7 @@ The simulation advances on handling user requests. The simulator knows the funct
 
 %The simulator is single-threaded, meaning that each policy will be evaluated sequentially. However, multiple instances of HeROsim can be run in parallel with different configurations across multiple CPU cores, or distributed across multiple nodes. With every HeROsim instance running a different orchestration policy, and all instances using a common output directory, this can accelerate the total makespan of the simulation scenario when evaluating numerous orchestration policies. When all the simulator runs are finished, results can be consolidated in a single charts output. \jb{je pense que ce paragraphe peut sauter si manque de place, rien de très interessant}
 
-\subsection{Orchestrator}
+\subsection{Orchestrateur}
 
 The base \textbf{\texttt{Orchestrator}} class provides abstract initialization methods that are to be overridden to manage different structures of system state. For example, a Round Robin scheduler would need to know how many times each function replica has been selected for task placement, while a Least Connected scheduler will need to know the average concurrency in each replica to balance the load. This class is the entry point for users to define their own data structures that will best represent the system state to feed the \texttt{Autoscaler} and \texttt{Scheduler} to manage.
 
@@ -176,7 +176,7 @@ The orchestrator entrypoint method is called each time a user request hits the p
 Finally, this class is responsible for instantiating the selected implementations of \texttt{Autoscaler} and \texttt{Scheduler}. Any combination of these two modules can work together.
 
 %\jb{pour chaque module plus bas, il manque une information claire indiquant quelles stratégies sont impléménentées par ce module. Peut être rajouter une phrase à la fin de chaque module pour dire voila les stratégies implémentées.}\vl{done}
-\subsection{Autoscaler}
+\subsection{Allocateur}
 
 The base \textbf{\texttt{Autoscaler}} class provides the common behavior of the autoscaling platform, including the creation and removal of function replicas. Several abstract methods have to be overridden to implement a new policy: resource selection for replica creation, replica initialization process, replica selection for removal, etc. These methods operate at the granularity of a single function, taking the system state and the list of available hardware resources as input. %Users are free to implement whichever algorithms they wish to evaluate for resource management.
 
@@ -195,7 +195,7 @@ HeROsim ships with the following concurrency threshold-based ready-to-use autosc
     \item HeROcache -- Optimizes allocations for functions chains; maximizes consolidation functions of each application. %More details are given in the "Case study" section.
 \end{itemize}
 
-\subsection{Scheduler}
+\subsection{Ordonnanceur}
 
 The base \textbf{\texttt{Scheduler}} class implements task selection in the gateway queue. One abstract method has to be overridden to implement a new policy: the selection of replica among the pool to place each user request in queue. This method operates at the granularity of one user request and takes the system state and the list of available function replicas as input.
 
@@ -216,7 +216,7 @@ HeROsim ships with the following scheduling policies implemented and ready to us
 \end{itemize}
 
 
-\subsection{User interface}
+\subsection{Interface utilisateur}
 
 %Interactions between the user and the simulator are limited. 
 HeROsim relies on logging to provide insight as to how the simulation unwinds, helping the user debug their policies. When the simulation ends, result files are saved to disk. These files contain digest information on the results of the simulation, including the performance of the policy with regards to evaluation metrics. These results are plotted on various charts that can be used in further publications (see Figure~\ref{figure:herosim-evaluation}). HeROsim can also plot cold starts, cache hits and tail latency at the granularity of user requests. %\vl{viré le paragraphe dessous et résumé en 1 phrase}
@@ -232,7 +232,7 @@ HeROsim relies on logging to provide insight as to how the simulation unwinds, h
 \label{figure:herosim-cost}
 \end{figure}
 
-\section{Case study}
+\section{Étude de cas}
 \label{section:herosim-case-study}
 
 %\jb{je ne m'attendais pas à cela dans la section case study. Je m'attendais plutôt à une section plus conséquente ou l'on donne clairement comment passer du pb à la mise en oeuvre sur le simulateur avec un peu plus de détails techniques. la, ça fait un peu commercial, on donne juste les résultats}\vl{section complètement réécrite}
@@ -363,7 +363,7 @@ Evaluation against HeROfake highlighted the relevance of taking into account sto
 %     \item HeROcache~\cite{herocache}, an allocation and scheduling policy for serverless edge computing that seeks to optimize time-sensitive applications deployment for QoS on energy-constrained devices. HeROcache enforces applications consolidation and manages to reduce average initialization delays by 17.6\% and communication delays by 88.4\%. This results in reducing the static energy consumption of the platform by 80\% while maintaining under 28\% of QoS violations.
 % \end{itemize}
 
-\section{Related work}
+\section{Travaux connexes}
 \label{section:herosim-sota}
 %\jb{c'est TROOOP long !!!, ce n'est pas les related work qui feront que le papier sera accepté, une colonne c'set amplement suffisant. Il faut renforcer la contrib et le case study absolument !!} \vl{ok, on raccourcira à la fin, ce sera facile. j'ai détaillé chaque contrib et je les ai aussi regroupées par caractéristique. On peut garder uniquement les regroupements et virer les détails individuels.}\jb{ok} \vl{done, j'ai gardé les grandes familles (CloudSim, GridSim), j'ai fait les regroupements qui me semblaient pertinents et j'ai raccourci la section à environ une colonne}
 
@@ -414,7 +414,7 @@ Among the cloud simulation tools available, several contributions~\cite{jeonClou
 Finally, some contributions~\cite{nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021} aim at simulating public cloud infrastructures that focus on the brokerage of virtualized resources that are considered unlimited. Our work~\cite{herofake, herocache} focused on the perspective of service providers optimizing serverless platforms for QoS, hence the private cloud orientation of HeROsim.
 
 
-\section{Conclusion}
+\section{Conclusion et perspectives}
 \label{section:herosim-conclusion}
 
 In this paper, we presented HeROsim, a simulation tool that aims at allowing researchers to model heterogeneous cloud infrastructures, describe workloads at a fine granularity, implement diverse resource management and task scheduling policies, and evaluate their efficiency with regard to metrics such as resource usage, energy consumption, per-request QoS violations, or tail latency. % HeROsim can generate charts that help visualizing these results during the implementation phase, and can be used in publications.

@@ -2,14 +2,47 @@
 %\addcontentsline{toc}{chapter}{Introduction}
 %\chaptermark{Introduction}
 
-\section{Motivation}
+\section{Contexte scientifique}
 %\addcontentsline{toc}{section}{Motivation}
+
+En 1961, John McCarthy donne un discours pour célébrer les cent ans du MIT~\cite{greenberger1962management}. Il imagine alors que le partage du temps de calcul des ordinateurs pourrait permettre de vendre leur puissance d'exécution comme un service, à l'image de l'eau ou de l'électricité. Le matériel serait organisé de manière à rendre possible sa location à des clients qui paieraient ce service en fonction du volume, ou du temps d'utilisation.
+
+Grâce à la démocratisation de l'accès à Internet à haut débit, au milieu des années 2000, l'idée de McCarthy se trouve implémentée dans ce que l'on appelle "cloud computing" : entreprises et particuliers peuvent dorénavant réduire drastiquement les coûts associés à l'achat et à l'entretien du matériel nécessaire au fonctionnement de leurs applications, en déléguant la responsabilité de l'infrastructure à des fournisseurs de services, qui bénéficient d'effets d'économie d'échelle en concentrant ces ressources dans d'immenses centres de données.
+
+Ce modèle est appelé "Infrastructure as a Service" : les clients louent et réservent une sous-partie des ressources du fournisseur (calcul, stockage, réseau) dont ils deviennent responsables du fonctionnement~\cite{mellNISTDefinitionCloud}. De nouvelles tendances apparaissent au fil des années avec pour objectif de diminuer la surface des responsabilités du client. Par exemple, dans le modèle "Platform as a Service", les clients n'ont pas directement accès aux machines qui supportent leurs applications, et effectuent la plupart des tâches de gestion via des interfaces spécialisées.
+
+Dans ces modèles, le client paie pour des ressources qui sont parfois dormantes. En effet, il faut la plupart du temps surprovisionner les ressources réservées, de manière à être capable d'absorber la montée en charge lors de pics d'activité.
+
+TODO: nouveau modèle, serverless, quelques caractéristiques principales
+
+TODO: cloud public, FaaS, cloud privé ?
 
 \section{Projet de recherche}
 %\addcontentsline{toc}{section}{Projet de recherche}
 
-\section{Contribution}
-%\addcontentsline{toc}{section}{Contribution}
+\textbf{Problème 1} : Dans le cloud public, les ressources louées aux clients sont vues comme homogènes. Cloud privé, hétérogènes, ...
 
-\section{Organisation}
-%\addcontentsline{toc}{section}{Organisation}
+\boitemagique{Question 1}{
+    Comment dimensionner les allocations de ressources pour une application interactive, et comment ordonnancer efficacement les requêtes utilisateur, lorsque ces derniers ont des besoins hétérogènes en matière de qualité de service ?
+}
+
+\textbf{Problème 2} : À l'edge, lorsque les ressources sont fortement contraintes (en capacité, en énergie), ... Ces problèmes s'accumulent dans un effet boule de neige et dégradent drastiquement la qualité de service lorsque l'on déploie des applications à plusieurs étages...
+
+\boitemagique{Question 2}{
+    Comment prendre en compte les délais d'initialisation et de communications lorsque l'on déploie à l'edge des chaînes de fonctions de courte durée, et comment tirer parti de l'hétérogénéité des nœuds à disposition, pour respecter la qualité de service requise par les utilisateurs et contenir la consommation d'énergie de l'infrastructure ?
+}
+
+\textbf{Problème 3} : Évaluer les politiques d'orchestration...
+
+\boitemagique{Question 3}{
+    ...
+}
+
+\section{Contributions}
+%\addcontentsline{toc}{section}{Contributions}
+
+\section{Organisation de la thèse}
+%\addcontentsline{toc}{section}{Organisation du mémoire}
+
+\section{Publications}
+%\addcontentsline{toc}{section}{Publications}

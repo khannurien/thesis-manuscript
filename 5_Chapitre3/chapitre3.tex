@@ -1,10 +1,12 @@
-\chapter{HeROfake}
+\chapter{HeROfake : Orchestration sur ressources hétérogènes pour le cloud privé}
 
 \section{Introduction}
+\label{section:herofake-introduction}
 
 \begin{table*}[t]
     \centering
-        \caption{State of the Art work on autoscaling platforms}
+    \caption{State of the Art work on autoscaling platforms}
+    \resizebox{\textwidth}{!}{
         \begin{tabular}{lccccccc}
             \toprule
             & Serverless & Target cloud platform     & SLA & Hardware heterogeneity & Resources usage & Energy consumption & Cost-aware \\
@@ -18,140 +20,107 @@
             INFless~\cite{yangINFlessNativeServerless2022}                & \cmark       & Private                   & \cmark& \xmark                     & \cmark            & \xmark                 & \cmark       \\
             SMIF~\cite{choSLADrivenMLInference}                           & \cmark       & Private                   & \cmark& \cmark                   & \cmark            & \xmark                 & \xmark         \\
             Target solution                                                & \cmark       & Private                   & \cmark& \cmark                   & \cmark            & \cmark               & \cmark       \\ \bottomrule
-        \end{tabular}%
+        \end{tabular}
+    }
     \label{table:herofake-sota}
 \end{table*}
 
-%\subsection{The serverless service model}
+\textbf{Modèle serverless}. Le serverless peut être compris à la fois comme un modèle de programmation, appelé Function as a Service (FaaS), et comme un modèle de déploiement pour le cloud. Dans un tel modèle, les développeurs conçoivent leurs applications comme une composition de fonctions sans état dont l'exécution est pilotée par des événements~\cite{SchleierSmith2021WhatSC}. 
+Les services serverless libèrent les locataires d'une réservation complexe des ressources, car ils sont conçus pour gérer les exigences de mise à l'échelle à la demande.
 
-\textbf{Serverless model}. Serverless can be understood as both a programming model, called Function as a Service (FaaS), and a deployment model for the cloud. In such a model, developers design their applications as a composition of stateless functions which execution is event-driven~\cite{SchleierSmith2021WhatSC}. 
-Serverless services free tenants from complex resource reservation as they are designed to handle on-demand scaling requirements. % and address fluctuations in demand, therefore freeing tenants from the burden of having to define explicit scaling strategies.
+Dans le modèle FaaS, les fournisseurs ne facturent les clients qu'en fonction de leur utilisation réelle des ressources~\cite{jonasCloudProgrammingSimplified2019}. Ils sont entièrement responsables du déploiement d'une gestion intelligente des ressources et du multiplexage à une granularité plus fine afin d'optimiser les mesures de qualité de service (QoS) telles que le temps de réponse, la consommation d'énergie, etc.
 
-In the FaaS model, providers only bill customers according to their actual resources usage~\cite{jonasCloudProgrammingSimplified2019}. They are fully responsible for deploying intelligent resource management and multiplexing at a finer granularity to optimize Quality of Service (QoS) metrics such as response time, energy consumption, etc. %while enabling providers to share physical resources at a higher degree of multiplexing, thus achieving better efficiency.
+\textbf{Détection de deepfake et serverless}. Le travail présenté dans cet article faisait partie d'un projet (à l'institut de recherche b{textless\textgreater}com \footnote{\href{https://b-com.com/en}{https://b-com.com/en}}) visant à déployer un service de détection de deepfake économe en énergie dans un cloud hétérogène. Les deepfakes sont des images, des vidéos ou des discours synthétiques, créés numériquement pour imiter une personne existante de manière à tromper les spectateurs. La détection de deepfake consiste à entraîner un réseau neuronal convolutif (CNN) pour détecter des modèles d'incohérences introduits dans le processus de création.
 
-%\subsection{Deepfake and serverless}
+Les fonctions utilisées par notre application deepfake répondent à trois caractéristiques principales pour des charges de travail serverless adaptées~\cite{cncf2018whitepaper} : leur exécution peut être rendue parallèle (plusieurs images indépendantes), elles sont stateless (pure transformation sur les données d'entrée) et event-driven (lancées après l'upload des données).
 
-\textbf{Deepfake detection and serverless}. The work presented in this paper was part of a project (at the b{\textless\textgreater}com research institute \footnote{\href{https://b-com.com/en}{https://b-com.com/en}}) aimed at deploying an energy efficient deepfake detection service in a heterogeneous cloud. Deepfakes are synthetic images, videos or speeches, digitally created to mimic an existing person so as to mislead viewers. Deepfake detection consists in training a Convolutional Neural Network (CNN) to detect patterns of inconsistencies that are introduced in the creation process.
+D'une part, la détection de deepfake à l'aide de réseaux de neurones convolutifs (CNN) est une tâche qui peut tirer parti de la concurrence en exécutant plusieurs convolutions en parallèle et/ou en traitant différentes images sur plusieurs threads. Ces tâches sont essentiellement sans état, car elles appliquent une transformation pure sur les données d'entrée - en prenant une image en entrée et en renvoyant une valeur booléenne en sortie. Une telle application est pilotée par les événements, le calcul commençant après le téléchargement d'une image d'entrée. Ce sont là trois caractéristiques principales des charges de travail serverless appropriées~\cite{cncf2018whitepaper}.
 
-The functions used by our deepfake application satisfy three main characteristics for suitable serverless workloads~\cite{cncf2018whitepaper}: their execution can be made parallel (several independent images and videos), they are stateless (pure transformation on input data) and event-driven (launched after data upload).
+D'autre part, les ressources matérielles nécessaires pour exécuter cette application à l'échelle seraient nombreuses et coûteuses : être en mesure de faire évoluer dynamiquement les ressources en fonction de la demande permettrait au client de réaliser d'importantes économies et au fournisseur d'accepter plus de clients sur le même nombre de nœuds.
 
-%On the one hand, deepfake detection using convolutional neural networks (CNNs) is a task that can take advantage of concurrency by running multiple convolutions in parallel and/or by handling different images on multiple threads. These tasks are essentially stateless, as they apply a pure transformation on input data -- taking an image as input and returning a boolean value as output. Such an application is event-driven, with computation starting following the upload of an input image. These are three main characteristics of suitable serverless workloads~\cite{cncf2018whitepaper}.
+Par conséquent, nous soutenons que le modèle de service serverless est parfaitement adapté à l'inférence à la demande rentable utilisant des CNN.
 
-%On the other hand, the hardware resources needed to run that application at scale would be numerous and costly: being able to dynamically scale the resources in and out following demand would provide important savings to the client, and allow the provider to accept more clients on the same number of nodes.
+\textbf{Hétérogénéité matérielle dans le cloud}. Les infrastructures cloud sont de plus en plus hétérogènes pour répondre aux besoins des applications à forte intensité de données telles que l'apprentissage automatique de modèles ou l'analyse de données massives~\cite{reissHeterogeneityDynamicityClouds}. Cependant, les processeurs spécialisés et les GPU doivent encore être mis à la disposition des clients dans les offres serverless~\cite{khandelwalTaureauDeconstructingServerless2020}. L'accélération matérielle devrait être décidée par le fournisseur sur la base d'une application ou d'une demande.
 
-%Therefore, we argue that the serverless service model is a perfect fit for cost-effective, on-demand inference using CNNs.
+Les travaux de l'état de l'art montrent que l'utilisation de ce matériel dans un cadre cloud permet des gains substantiels en termes de temps d'exécution et de consommation d'énergie~\cite{10.1145/3369583.3392679, 9195730}. Cependant, les orchestrateurs de référence tels que Kubernetes avec Knative ou OpenWhisk ne prennent pas en charge l'allocation dynamique de ce type de matériel.
 
-%\subsection{Hardware heterogeneity in the cloud}
+\textbf{Défi de performance pour le déploiement serverless}. En raison de la nature transitoire des ressources FaaS non réservées, la latence, le débit et la continuité du service sont difficiles à garantir~\cite{vaneykSPECRGCloud2018, dartoisCuckooOpportunisticMapReduce2019}. Lorsque les applications ne reçoivent pas de demandes entrantes, les bacs à sable des fonctions sont détruits au lieu d'être maintenus dans un état d'inactivité. Ensuite, lorsqu'une nouvelle demande arrive, le fournisseur doit (ré)allouer des ressources et initialiser des fonctions pour déployer de nouveaux bacs à sable : c'est ce qu'on appelle un démarrage à froid. Les temps de démarrage à froid sont très pénalisants pour les performances de l'application, ils peuvent même dominer les temps d'exécution totaux~\cite{mullerLambadaInteractiveData2020}.
 
-\textbf{Hardware heterogeneity in the cloud}. Cloud infrastructures are more and more heterogeneous to fit the needs of data-intensive applications such as machine learning model training or big data analytics~\cite{reissHeterogeneityDynamicityClouds}. However, specialized processors and GPUs are yet to be made available to customers in serverless offerings~\cite{khandelwalTaureauDeconstructingServerless2020}. Hardware acceleration should be decided by the provider on a per-application or per-request basis.
+De plus, dans les offres commerciales serverless actuelles, les accords de niveau de service (SLA) sont généralement limités à des tentatives automatisées (redémarrages) en cas d'échec, et les fournisseurs de FaaS limitent généralement le temps d'exécution des fonctions serverless à quelques minutes. L'absence de garanties de qualité de service dans les offres commerciales serverless les empêche d'être plus largement utilisées~\cite{buyyaSLAorientedResourceProvisioning2011}.
 
-State-of-the-art work shows that using such hardware in a cloud setting provides substantial gains in execution time and energy consumption~\cite{10.1145/3369583.3392679, 9195730}. However, reference orchestrators such as Kubernetes with Knative or OpenWhisk lack the support for dynamic allocation of such hardware. %capability to automatically and efficiently benefit from heterogeneous clouds. %deploy applications to nodes that provide relevant hardware to accelerate execution.
+\textbf{Énoncé du problème -- mettre tout ensemble}. Le problème que nous tentons de résoudre dans cet article est de déterminer comment dimensionner automatiquement et de manière réactive des ressources matérielles hétérogènes dans le cloud en fonction de la charge sur l'application et des exigences de qualité de service des utilisateurs, tout en maintenant le coût des ressources et de l'énergie au niveau le plus bas possible pour le fournisseur. Nous considérons une application de détection de deepfake comme cas d'étude pour² notre travail.
 
-%with demand in GPUs and specialized processing cores driven by increasingly data-intensive computations with tasks such as machine learning model training or big data analytics. These heterogeneous computing units are yet to be made available to customers in serverless offerings~\cite{khandelwalTaureauDeconstructingServerless2020}. Hardware acceleration should be decided by the provider on a per-application or per-request basis.
+\textbf{État de l'art}. Des études antérieures ont exploré le besoin d'une plateforme de mise à l'échelle automatique qui prend en charge les tâches de courte durée comprises dans des applications telles que l'apprentissage automatique en tant que service. Le tableau~\ref{table:herofake-sota} résume les différences entre ces solutions et la plateforme cible que nous essayons d'atteindre, et la section~\ref{section:herofake-sota} fournit des détails supplémentaires. Bien que de nombreuses études aient établi la nécessité d'une accélération à la demande comme solution pour garantir le temps de réponse des fonctions, aucune n'a mesuré l'impact de l'exploitation des ressources hétérogènes sur la consommation d'énergie dynamique. En outre, les études précédentes considèrent la consolidation des tâches comme un moyen de libérer des ressources pour d'autres calculs - nous soutenons que ces techniques ouvrent des possibilités pour le fournisseur de services d'appliquer des politiques d'économie d'énergie dans le cloud privé. Enfin, comme les plateformes serverless sont à usage général et conçues pour être hautement configurables, notre solution cible devrait être consciente des coûts pour permettre au fournisseur de faire des choix de configuration se rapportant à leurs propres objectifs.
 
-%\subsection{Performance challenges}
+\textbf{Notre contribution}. Nous soutenons que l'utilisation opportuniste des accélérateurs matériels (GPU et FPGA) pour planifier les tâches de détection de deepfake peut permettre aux fournisseurs de cloud de garantir le temps de réponse des tâches serverless et d'atteindre le SLA tout en réduisant l'utilisation des ressources et la consommation d'énergie.
 
-\textbf{Performance challenge for serverless deployment}. Due to the transient nature of unreserved FaaS resources, latency, throughput and continuity of service are hard to guarantee~\cite{vaneykSPECRGCloud2018, dartoisCuckooOpportunisticMapReduce2019}. When applications do not receive incoming requests, function sandboxes are destroyed instead of being kept in an idle state. Then, when a new request arrives, the provider has to (re)allocate resources and initialize functions to deploy new sandboxes: this is called a cold start. Cold start times are very penalizing for the application performance, they may even dominate the total execution times~\cite{mullerLambadaInteractiveData2020}.
+Dans cet article, nous proposons un cadre complet pour déployer une application de détection de deepfake sur un cloud serverless. Ce cadre comprend une phase hors-ligne et une phase en ligne. Le \textbf{phase hors-ligne} est utilisé pour caractériser la performance et le comportement énergétique des plates-formes matérielles hétérogènes déployées. La \textbf{phase en ligne} consiste en une plateforme de mise à l'échelle automatique et une stratégie d'ordonnancement qui utilisent efficacement les ressources matérielles hétérogènes (caractérisées) pour atteindre les accords de niveau de service par demande tout en réduisant la consommation d'énergie de la plateforme. 
 
-Furthermore, in current commercial serverless offerings, Service-Level Agreements (SLAs) are usually limited to automated retries (restarts) on failure, and FaaS providers generally limit the execution time of serverless functions to a few minutes. The absence of QoS guarantees in commercial serverless offerings prevents them from being more widely used~\cite{buyyaSLAorientedResourceProvisioning2011}.
+Pour cette étude de cas, nous avons conçu un environnement de simulation qui modélise l'infrastructure d'une application de détection de deepfake, exécutée par le fournisseur en tant que Software as a Service à l'aide d'une infrastructure serverless.
 
-%\subsection{Problem statement}
+\textbf{Certains chiffres de performance}. Avec notre politique d'allocation et d'ordonnancement, nous avons été en mesure de traiter 50000 tâches dans le même makespan que Knative avec moins de 36\% de pénalités de QoS. Notre cadre réduit la consommation d'énergie pour l'exécution des tâches de près de 35\% et permet au fournisseur de réduire davantage la consommation d'énergie statique en consolidant les tâches sur moins de 29\% des nœuds disponibles.
 
-\textbf{Problem statement -- putting it all together}. The problem we try to solve in this paper is to determine how to automatically and reactively scale heterogeneous hardware resources in a cloud in adequacy with the application's load and the users' QoS requirements, while keeping the cost in resources and energy as low as possible for the provider. We consider a deepfake detection application as a case study in our work.
+Le document est organisé comme suit : dans une première section, nous décrivons le modèle de plateforme global pour le projet. Ensuite, nous décrivons la plateforme d'exécution et la phase de caractérisation de la charge de travail. Dans la section III, nous décrivons les défis de l'orchestration de ressources serverless, notre modèle de tâches et les politiques d'allocation et d'ordonnancement de l'orchestrateur. La section IV présente notre méthodologie d'évaluation et une discussion des résultats expérimentaux. La section V donne des détails concernant l'état de l'art sur les plateformes d'autoscaling. Enfin, nous concluons par quelques perspectives pour les travaux futurs.
 
-%Rather than reserving nodes in their infrastructure for an interactive application which load is unpredictable~\cite{shahradServerlessWildCharacterizing}, the provider can rely on a serverless platform for cost efficiency. The platform will automatically and reactively scale hardware resources in adequacy with the application's load.
-
-%To be efficient in terms of cost and energy consumption, an autoscaling platform should be able to rightsize the allocated resources in a serverless cloud infrastructure, while being responsive enough to accommodate workload changes without impacting end users with spikes in latency. In order to meet per-user QoS requirements, it should take into account the characteristics of heterogeneous hardware resources, and SLAs should be negotiated on a per-request basis rather than on a per-function basis.
-
-%\subsection{State of the Art}
-\textbf{State-of-the-art}. Previous studies have explored the need for an autoscaling platform that supports short-running tasks comprised in applications such as Machine Learning as a Service. Table~\ref{table:herofake-sota} summarizes how these solutions differ from the target platform we are trying to achieve, and Section~\ref{section:herofake-sota} provides further details. While many have established the need for on-demand acceleration as a solution to guaranteeing function response time, none have measured the impact of leveraging heterogeneous resources on dynamic energy consumption. Furthermore, previous studies consider task consolidation as a means to free resources for further computations -- we argue that such techniques open possibilities for the service provider to apply power saving policies in private clouds. Finally, as serverless platforms are general purpose and designed to be highly configurable, our target solution should be cost-aware to allow the provider to make configuration choices pertaining to their own objectives.
-
-%\subsection{Our contribution}
-%\jb{à revoir ... j'ai l'impression que ça ne décrit pas correctement la contrib}
-
-\textbf{Our contribution}. We argue that opportunistically taking advantage of hardware accelerators (GPUs and FPGAs) to schedule deepfake detection tasks may allow cloud providers to guarantee serverless tasks response time and achieve SLA while reducing resource usage and energy consumption.
-
-In this paper, we propose a full framework to deploy a deepfake detection application on a serverless cloud. This framework comprises an offline and an online phase. The \textbf{offline phase} is used to characterize the performance and energy behavior of the deployed heterogeneous hardware platforms. The \textbf{online phase} consists of an autoscaling platform and a scheduling strategy that make efficient use of (characterized) heterogeneous hardware resources to achieve per-request SLAs while reducing the energy consumption of the platform. 
-
-%\begin{itemize}
-%    \item platform-level sandbox caching to minimize cold start delays \jb{tu fais des choses explicite sur le sujet ?};
-%    \item QoS requirements at the granularity of a task to avoid penalties.
-%\end{itemize}
-
-%This is made possible by implementing these tasks for different hardware architectures, and measuring their performance and energy consumption ahead of scheduling (see Section~\ref{characterization}). \jb{tu insistes sur les inputs, plutôt que sur les techniques }
-
-For this case study, we devised a simulation environment\footnote{The simulator repository will be made publicly available.} that models the infrastructure for a deepfake detection application, run by the provider as a Software as a Service using a serverless infrastructure.   %\vl{oui, il faut que je fasse la demande de divulgation de propriété intellectuelle à bcom - montre moi le mail d'abord, il faut insister sur l'utilité de la mise en ligne}
-
-%By factoring in workload characterization (see Section~\ref{characterization}) in order to predict tasks performances on different execution platforms, we are able to avoid pre-allocating resources while keeping the frequency of cold starts under 0.02\% of function startups.
-
-\textbf{Some performance figures}. With our allocation and scheduling policy, we were able to handle 50000 tasks in the same makespan as Knative with less than 36\% QoS penalties. Our framework reduces energy consumption for the execution of tasks by almost 35\%, and provides the opportunity for the provider to further reduce static power consumption by consolidating tasks on less than 29\% of the available nodes.
-
-The paper is organized as follows: in a first section, we describe the overall platform model for the project. Then, we describe the execution platform and workload characterization phase. In Section III we describe the challenges of serverless resource orchestration, our task model and the orchestrator's allocation and scheduling policies. Section IV presents our evaluation methodology and a discussion of the experimental results. Section V gives details regarding state-of-the-art work on autoscaling platforms. Finally, we conclude with some perspectives for future work.
-
-\section{Deploying Deepfake Detection Tasks in Serverless Cloud}
+\section{Déployer des tâches de détection de deepfake dans un cloud serverless}
+\label{section:herofake-deepfake}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{5_Chapitre3/figures/placement.png}
-\caption{Serverless deepfake detection platform, system overview}
+\caption{Plateforme de détection de deepfake serverless, vue d'ensemble du système}
 \label{figure:herofake-placement}
 \end{figure*}
 
-This section introduces the used serverless platform model and the overall project. % and the lifecycle of a request. 
+Cette section présente le modèle de plateforme serverless utilisé et le projet global.
 
-%Figure~\ref{figure:herofake-placement} highlights (with a red background) the two main parts of our contribution \jb{focale sur 2 point alors que le reste n'est pas encore exposé, bizarre} \vl{déplacé à la fin, mais peut-être qu'on peut juste s'en débarasser ou reformuler ?}:
-%\jb{ça perturbe la lecture --> à enlever/commenter on verra après si on remet}
-%\begin{enumerate}
-%    \item a \textbf{measurement node}, that generates task metadata used to guide the allocation and scheduling decisions.
-%    \item an \textbf{orchestrator}, that provides a gateway as an entry point for user requests, an autoscaler responsible for resources allocation, and a scheduler that places jobs on previously allocated resources;
-%\end{enumerate}
+\subsection{Modèle de la plateforme}
 
-\subsection{Platform model}
+Nous considérons un système de détection de deepfake qui est déployé comme une application serverless composée de trois fonctions sans état qui réalisent des tâches d'inférence sur des images d'entrée. Ces images sont toutes RVB et de taille $224 * 224$ pixels~\footnote{Notez que les vidéos ne sont pas encore prises en compte dans notre projet.}.
 
-We consider a deepfake detection system that is deployed as a serverless application consisting of three stateless functions that achieve inference tasks on input images. These images are all RGB and $224 * 224$ pixels in size~\footnote{Note that videos are not yet considered in our project.}.
+La figure~\ref{figure:herofake-placement} présente la plateforme utilisée, nous distinguons une phase \textit{hors-ligne} (boîte bleue dans la figure) et une phase \textit{en ligne} (boîte verte dans la figure). Pendant la phase hors-ligne, nous collectons les métadonnées relatives à l'exécution des tâches sur les accélérateurs hétérogènes ; pendant la phase en ligne, nous allouons les ressources et programmons les tâches.
 
-Figure~\ref{figure:herofake-placement} introduces the used platform, we differentiate between an \textit{offline} (blue blox in the figure) and an \textit{online} (green box in the figure) phase. During the offline phase, we collect metadata relative to tasks execution on the heterogeneous accelerators; during the online phase, we allocate resources and schedule tasks.
+Les demandes d'invocation de fonctions émanant des utilisateurs sont reçues par le fournisseur et traitées par l'orchestrateur. Dans notre modèle, une invocation de fonction correspond à un \textit{tâche}. L'utilisateur sélectionne l'un des trois modèles fournis (ResNet50, VGG16 et VGG19, voir Section~\ref{section:herofake-offline:workload}) et l'utilise pour détecter un éventuel deepfake sur une image.
 
-Function invocation requests from the users are received on the provider's gateway and handled by the orchestrator. In our model, a function invocation corresponds to a \textit{task}. The user selects one of the three provided models (ResNet50, VGG16 and VGG19, see Section~\ref{offline:workload}) and uses it to detect a possible deepfake on a picture.
+L'infrastructure du fournisseur de cloud est modélisée comme un ensemble de \textit{nœuds} hétérogènes (Section~\ref{model:nodes}) comprenant diverses combinaisons de \textit{plateformes} (Section~\ref{model:platforms}) qui peuvent exécuter des \textit{tâches} entrantes (Section~\ref{model:tasks}). 
 
-The cloud provider's infrastructure is modeled as a set of heterogeneous \textit{nodes} (Section~\ref{model:nodes}) comprising various combinations of \textit{platforms} (Section~\ref{model:platforms}) that can execute incoming \textit{tasks} (Section~\ref{model:tasks}). 
+\subsubsection{Nœuds}
+\label{model:nodes}
+Un nœud est un serveur disponible dans l'infrastructure du fournisseur de services. Dans ce travail, nous ne tenons pas compte de la localité du stockage et des données. Les données d'entrée sont toujours fournies \textit{via} le téléchargement de fichiers par l'utilisateur au moment de sa demande.
+Ainsi, la seule caractéristique qui définit un nœud dans notre modèle d'infrastructure est la taille de la mémoire dédiée. Un nœud est constitué d'un ensemble de plateformes d'exécution définies ci-après.
 
-\subsubsection{Nodes} \label{model:nodes}
-A node is a server available in the service provider's infrastructure. In this work, we do not consider storage and data locality. Input data are always provided \textit{via} file upload by the user at the time of their request.
-As such, the only characteristic that defines a node in our infrastructure model is the size of dedicated memory. A node consists of a set of execution platforms defined hereafter.
+\subsubsection{Plateformes d'exécution}
+\label{model:platforms}
 
-\subsubsection{Execution platforms} \label{model:platforms}
-
-An execution platform is a hardware processing unit available on a node. Each platform consumes a quantity of energy in the "idle" state expressed in kilowatt-hour (kWh). When it starts executing a task, it consumes additional energy characterized by the task's properties/type: it is then in an "active" state. We differentiate "idle" and "active" time for each platform, so as to measure resources usage.
-Platforms are characterized by a \textit{platform type} that encompasses the following parameters:
+Une plate-forme d'exécution est une unité de traitement matérielle disponible sur un nœud. Chaque plateforme consomme une quantité d'énergie à l'état "inactif" exprimée en kilowattheures (kWh). Lorsqu'elle commence à exécuter une tâche, elle consomme une énergie supplémentaire caractérisée par les propriétés/le type de la tâche : elle est alors dans un état "actif". Nous distinguons le temps "inactif" et le temps "actif" pour chaque plateforme, afin de mesurer l'utilisation des ressources.
+Les plateformes sont caractérisées par un \textit{type de plateforme} qui englobe les paramètres suivants :
 
 \begin{itemize}
-    \item \textit{Hardware type} -- CPU, GPU or FPGA;
-    \item \textit{Price} -- the cost of acquisition of such a platform by the cloud provider;
-    \item \textit{Idle energy} -- the baseline energy consumption for the platform when it is not running any task.
+    \item \textit{Type de matériel} -- CPU, GPU ou FPGA ;
+    \item \textit{Prix} -- le coût d'acquisition d'une telle plate-forme par le fournisseur de services cloud ;
+    \item \textit{Énergie au repos} -- la consommation d'énergie de base de la plateforme lorsqu'elle n'exécute aucune tâche.
 \end{itemize}
 
-\textbf{Task caching and cold start model}. We consider a simple task caching mechanism at platform-level, akin to a keep-alive mechanism~\cite{7279063}. In our system, if a platform was previously executing a task of type $t$, and a new task of the same type $t$ is scheduled on that same platform, then the cold start delay will not be incurred. However, if that same platform were to execute a task of different type $tt$, then the task will go through a cold start before entering its execution phase. Finally, if the platform was not previously allocated, the task will also experience a cold start delay.
+\textbf{Mise en cache des tâches et modèle de démarrage à froid}. Nous considérons un mécanisme simple de mise en cache des tâches au niveau de la plate-forme, qui s'apparente à un mécanisme de maintien en vie~\cite{7279063}. Dans notre système, si une plate-forme a déjà exécuté une tâche de type $t$ et qu'une nouvelle tâche du même type $t$ est programmée sur cette même plate-forme, le délai de démarrage à froid n'est pas appliqué. Toutefois, si cette même plate-forme devait exécuter une tâche de type différent $tt$, la tâche subira un démarrage à froid avant d'entrer dans sa phase d'exécution. Enfin, si la plate-forme n'a pas été allouée précédemment, la tâche subira également un délai de démarrage à froid.
 
-\subsection{Overall project description}
+\subsection{Description générale du système}
 
-The b{\textless\textgreater}com research institute works on a project that aims to deploy an application of deepfake detection on a private cloud. Users submit a picture to the system and when their request is fulfilled, they obtain a boolean value as a response. The application targets different classes of users -- some of them can be media or authorities with high QoS requirements, while others can be casual users tolerating a higher latency.
+L'institut de recherche b{\textless\textgreater}com travaille sur un projet qui vise à déployer une application de détection de deepfake sur un cloud privé. Les utilisateurs soumettent une image au système et lorsque leur demande est satisfaite, ils obtiennent une valeur booléenne en guise de réponse. L'application vise différentes catégories d'utilisateurs : certains d'entre eux peuvent être des médias ou des autorités ayant des exigences élevées en matière de qualité de service, tandis que d'autres peuvent être des utilisateurs occasionnels tolérant une latence plus élevée.
 
-To differentiate between these classes of users, we propose different levels of per-request SLA. Users with higher requirements will agree to pay a higher per-request price, however if we fail to fulfill their request in the allotted response time, we will consent to a discount -- the higher the QoS level, the higher the discount. Hence, there is a strong monetary incentive for the provider to achieve QoS.
+Pour différencier ces catégories d'utilisateurs, nous proposons différents niveaux d'accords de niveau de service par demande. Les utilisateurs ayant des exigences plus élevées accepteront de payer un prix plus élevé par demande, mais si nous ne parvenons pas à satisfaire leur demande dans le temps de réponse imparti, nous consentirons à une remise - plus le niveau de qualité de service est élevé, plus la remise est importante. Le fournisseur est donc fortement incité, sur le plan pécuniaire, à assurer la qualité de service.
 
-\textbf{Offline phase}. In our platform, the lifecycle of the application starts during an offline phase with the developer providing the code of their functions for different hardware architectures \Circled{1}. That code is stored in a function repository. Functions are then deployed on a measurement node \Circled{2} where they are run in order to generate metadata relative to the functions: memory requirements, execution time, cold start time and energy consumption for each function are written to a metadata store \Circled{3}. The offline phase is required to run once for a given function on a given platform, it is described in Section~\ref{offline}.
+\textbf{Phase hors-ligne}. Dans notre plateforme, le cycle de vie de l'application commence par une phase hors-ligne au cours de laquelle le développeur fournit le code de ses fonctions pour différentes architectures matérielles \Circled{1}. Ce code est stocké dans un référentiel de fonctions. Les fonctions sont ensuite déployées sur un nœud de mesure \Circled{2} où elles sont exécutées afin de générer des métadonnées relatives aux fonctions : les besoins en mémoire, le temps d'exécution, le temps de démarrage à froid et la consommation d'énergie pour chaque fonction sont écrits dans un magasin de métadonnées \Circled{3}. La phase hors-ligne doit être exécutée une fois pour une fonction donnée sur une plateforme donnée, elle est décrite dans la section~\ref{section:herofake-offline}.
 
-\textbf{Online phase}. When a user sends a request to the application \Circled{4}, they provide an input picture and specify their desired QoS level. The request is appended to a request queue \Circled{5} at the orchestrator level. When the scheduler pops the request from the queue, the metadata store is queried to retrieve the appropriate function metadata \Circled{6}.
+\textbf{Phase en ligne}. Lorsqu'un utilisateur envoie une demande à l'application \Circled{4}, il fournit une image d'entrée et spécifie le niveau de qualité de service souhaité. La demande est ajoutée à une file d'attente \Circled{5} au niveau de l'orchestrateur. Lorsque le planificateur extrait la demande de la file d'attente, le magasin de métadonnées est interrogé pour récupérer les métadonnées de fonction appropriées \Circled{6}.
 
-The scheduler then proceeds to try to schedule a task (i.e. a function's invocation) to fulfill the request. Tasks are placed on already deployed function \textit{replicas} \Circled{7}. Such replicas can either be containers or virtual machines, i.e. sandboxed execution environments for the given function. 
-Concurrently, the autoscaler monitors the request queues in all the function replicas \Circled{8}. The role of the autoscaler is to rightsize the resources allocation with regard to the fluctuations in load on each function. 
-The designed scheduler and the autoscaler are described in Section~\ref{online}.
+L'ordonnanceur tente ensuite de planifier une tâche (c'est-à-dire l'invocation d'une fonction) pour répondre à la demande. Les tâches sont placées sur des \textit{répliques} de fonctions \Circled{7} déjà déployées. Ces répliques peuvent être des conteneurs ou des machines virtuelles, c'est-à-dire des environnements d'exécution dédiés pour la fonction donnée.
+Simultanément, l'autoscaler surveille les files d'attente de requêtes dans toutes les répliques de fonctions \Circled{8}. Le rôle de l'autoscaler est de dimensionner l'allocation des ressources en fonction des fluctuations de charge pour chaque fonction.
+L'ordonnanceur et l'autoscaler sont décrits dans la section~\ref{section:herofake-online}.
 
-%gives further details regarding the scheduling strategy.
-%Section~\ref{section:herofake-autoscaling-strategy} gives further details regarding the autoscaling strategy.
-\section{Offline phase: measurement and metadata extraction}
-\label{offline}
-\subsection{Execution platform benchmarks}
+\section{Phase hors-ligne : mesures et extraction des métadonnées}
+\label{section:herofake-offline}
+
+\subsection{Caractérisation des plateformes d'exécution}
 
 \begin{table}[t]
 \caption{Execution platform characterization}
@@ -169,15 +138,14 @@ Xilinx Alveo U250             & FPGA          & 7695         & 0.030       \\ \h
 \label{table:herofake-platforms}
 \end{table}
 
-As the usage of deep learning inference and energetic impacts grow simultaneously in computing, the power efficiency of the target devices becomes a major concern. The FPGA-based acceleration boards are described as a relevant competitor against the dominant GPU approach. Our study proposes a benchmark, using convolutional neural network (CNN)-based approaches for deepfake detection on CPU, GPU, and FPGA technologies regarding power efficiency during inference time. Our comparison includes power usage, inference speed, and accuracy using traditional CPU and GPU processing against FPGA. Those metrics are crucial for an efficient orchestration on top of heterogeneous platforms.
+L'utilisation de l'inférence par apprentissage profond et les impacts énergétiques augmentant simultanément dans l'informatique, l'efficacité énergétique des dispositifs cibles devient une préoccupation majeure. Les cartes d'accélération basées sur les FPGA sont décrites comme un concurrent pertinent face à l'approche dominante des GPU. Notre étude propose un benchmark, utilisant des approches basées sur les réseaux neuronaux convolutifs (CNN) pour la détection de deepfake sur les technologies CPU, GPU et FPGA en ce qui concerne l'efficacité énergétique pendant le temps d'inférence. Notre comparaison porte sur la consommation d'énergie, la vitesse d'inférence et la précision en utilisant le traitement CPU et GPU traditionnel par rapport au FPGA. Ces mesures sont cruciales pour une orchestration efficace sur des plateformes hétérogènes.
 
-%For our experiments, the performance comparison has been made between a CPU, a GPU, and a FPGA. 
-The used CPU was an Intel Xeon CPU ES-1620 v4 (3.5 GHz) while the GPU was an Nvidia GeForce RTX 2070 Super which can be used with the new versions of AI frameworks. Therefore, both were compatible with TensorFlow, i.e the platform used for inference. with regard to the FPGA, we used the Alveo U250, a cloud computing card from Xilinx, which is compatible with Vitis-AI~\cite{vitis-ai}. The silicon processes used for both devices are similar (12 nm for the GPU and 16 nm for the FPGA), but the GPU may get a slight advantage in this benchmark for its more advanced silicon technology.
+Le CPU utilisé était un Intel Xeon CPU ES-1620 v4 (3,5 GHz) tandis que le GPU était un Nvidia GeForce RTX 2070 Super qui peut être utilisé avec les nouvelles versions des frameworks d'IA. Par conséquent, les deux étaient compatibles avec TensorFlow, c'est-à-dire la plateforme utilisée pour l'inférence. En ce qui concerne le FPGA, nous avons utilisé l'Alveo U250, une carte de cloud computing de Xilinx, qui est compatible avec Vitis-AI~\cite{vitis-ai}. Les processus de silicium utilisés pour les deux dispositifs sont similaires (12 nm pour le GPU et 16 nm pour le FPGA), mais le GPU peut obtenir un léger avantage dans ce benchmark grâce à sa technologie de silicium plus avancée.
 
-In order to carry out the inference on the FPGA, we used Vitis-AI. At the time of this study, the latest available version (v. 2.0) has been used. Vitis-AI proposes two methods for the optimization of the models. The first one is the pruning, which consists in a reduction of the complexity of the model by a compression while removing some non-critical sections of the tree. The second one is the quantization, where we convert the 32 bits floating weights into 8 bits integer. The latter method, which is freely available, is the method we used to optimize our model before the compilation, which converts our model into DPU (Deep Learning Processing Unit) instructions.
+Pour effectuer l'inférence sur le FPGA, nous avons utilisé Vitis-AI. Au moment de cette étude, la dernière version disponible (v. 2.0) a été utilisée. Vitis-AI propose deux méthodes pour l'optimisation des modèles. La première est l'élagage, qui consiste à réduire la complexité du modèle par une compression tout en supprimant certaines sections non critiques de l'arbre. La seconde est la quantification, où l'on convertit les poids flottants de 32 bits en entiers de 8 bits. Cette dernière méthode, qui est librement disponible, est celle que nous avons utilisée pour optimiser notre modèle avant la compilation, qui convertit notre modèle en instructions DPU (Deep Learning Processing Unit).
 
-\subsection{Workload characterization}
-\label{offline:workload}
+\subsection{Caractérisation des tâches logicielles}
+\label{section:herofake-offline:workload}
 
 \begin{table}[t]
 \caption{Workload characterization }
@@ -195,9 +163,9 @@ VGG19    & \multicolumn{1}{c|}{1.9}  & 3.4  & \multicolumn{1}{c|}{2.559} & \mult
 \label{table:herofake-tasks}
 \end{table}
 
-For the purpose of this study, three popular models have been trained. The first one is based on residual networks (ResNet50), which uses residual blocks and can be efficiently trained~\cite{NEURIPS2019_7716d0fc}. The second one is VGG16 (VGG for Visual Geometry Group), which uses only convolutions as blocks~\cite{DBLP:journals/corr/SimonyanZ14a} and the third one is VGG19, a variant of VGG16 with three additional layers~\cite{biom10070984}. Those networks are trained on a GPU, as training is not the subject of this study.
+Pour les besoins de cette étude, trois modèles populaires ont été formés. Le premier est basé sur les réseaux résiduels (ResNet50), qui utilise des blocs résiduels et peut être entraîné efficacement~\cite{NEURIPS2019_7716d0fc}. Le deuxième est VGG16 (VGG pour Visual Geometry Group), qui utilise uniquement des convolutions comme blocs~\cite{DBLP:journals/corr/SimonyanZ14a} et le troisième est VGG19, une variante de VGG16 avec trois couches supplémentaires~\cite{biom10070984}. Ces réseaux sont entraînés sur un GPU, l'entraînement n'étant pas le sujet de cette étude.
 
-\subsection{Performance measurements}
+\subsection{Mesures de performances}
 
 \begin{figure}[t]
 \centering
@@ -206,10 +174,9 @@ For the purpose of this study, three popular models have been trained. The first
 \label{figure:herofake-time-inference}
 \end{figure}
 
-%The first consideration in this benchmark is to compare the performance in terms of inference time with the different technologies. 
-As the FPGA acceleration card is intended to be more efficient than a CPU or a GPU~\cite{5272532}, making a comparison of the inference time with these three technologies is a first requirement to enable the comparison of the energy cost per image. The performance evaluation in terms of execution time was realized with the same 10,000 images for the three different models. We built a two classes deepfake dataset, the real ones from the CelebA dataset~\cite{https://doi.org/10.48550/arxiv.1411.7766}, and the fake ones generated using a Generative Adversarial Network (GAN)~\cite{jimaging7080128}. The quantization and compilation of the graph was performed with Vitis-AI in order to run it on the FPGA. Only considering the inference time, it turned out that on the three tested models (ResNet50, VGG16 and VGG19), the FPGA is 13.08 to 13.79 times faster than the CPU but also 2.52 to 4.48 times faster than the GPU (see Figure~\ref{figure:herofake-time-inference}).
+La carte d'accélération FPGA étant censée être plus efficace qu'un CPU ou un GPU~\cite{5272532}, la comparaison du temps d'inférence avec ces trois technologies est une première condition pour permettre la comparaison du coût énergétique par image. L'évaluation des performances en termes de temps d'exécution a été réalisée avec les mêmes 10 000 images pour les trois modèles différents. Nous avons construit un ensemble de données deepfake à deux classes, les vraies provenant de l'ensemble de données CelebA~\cite{https://doi.org/10.48550/arxiv.1411.7766}, et les fausses générées à l'aide d'un Generative Adversarial Network (GAN)~\cite{jimaging7080128}. La quantification et la compilation du graphe ont été effectuées avec Vitis-AI afin de l'exécuter sur le FPGA. En ne considérant que le temps d'inférence, il s'est avéré que sur les trois modèles testés (ResNet50, VGG16 et VGG19), le FPGA est de 13,08 à 13,79 fois plus rapide que le CPU mais aussi de 2,52 à 4,48 fois plus rapide que le GPU (voir Figure~\ref{figure:herofake-time-inference}).
 
-\subsection{Energy consumption measurements}
+\subsection{Mesures de consommation d'énergie}
 
 \begin{figure}[t]
 \centering
@@ -218,11 +185,11 @@ As the FPGA acceleration card is intended to be more efficient than a CPU or a G
 \label{figure:herofake-consumption-per-image}
 \end{figure}
 
-The instant power consumption measured during inference is  the overall consumption of the machine (including CPU, memory, mainboard, and power supply) while performing the inference. 
-Measurements have been done using a power distribution unit (PDU) (Raritan PX3-5190R) which is able to monitor instant power and energy consumption of the server (Dell Precision T5810). The results show that inference on CPU yields the lowest instant power consumption. This result is quite expected as the inference on GPU or FPGA also includes power consumption from the CPU. % the power usage of the GPU and the FPGA adds-up to the CPU power.
+La consommation d'énergie instantanée mesurée pendant l'inférence est la consommation globale de la machine (y compris l'unité centrale, la mémoire, la carte mère et l'alimentation) pendant l'exécution de l'inférence. 
+Les mesures ont été effectuées à l'aide d'une unité de distribution d'énergie (PDU) (Raritan PX3-5190R) capable de surveiller la puissance instantanée et la consommation d'énergie du serveur (Dell Precision T5810). Les résultats montrent que l'inférence sur le CPU produit la consommation d'énergie instantanée la plus faible. Ce résultat est assez attendu car l'inférence sur GPU ou FPGA inclut également la consommation d'énergie du CPU.
 
 
-However, the sole instant power consumption does not reflect the total cost advantage of each platform properly. The execution time needed to process all the images must be considered. The relevant measurement is energy cost per image. The energy consumption has been measured in kilowatt-hour (kWh) for the 10,000 images, then converted into milliwatt-hour (mWh) per image. From that point of view, it is clear that the FPGA is the most energy efficient with regard to the execution time, consuming 6.2 to 6.9 times less than the CPU and 3.3 times to 6.2 times less than the GPU (see Figure~\ref{figure:herofake-consumption-per-image}).
+Cependant, la seule consommation d'énergie instantanée ne reflète pas correctement le coût total de chaque plateforme. Le temps d'exécution nécessaire pour traiter toutes les images doit être pris en compte. La mesure pertinente est le coût énergétique par image. La consommation d'énergie a été mesurée en kilowattheures (kWh) pour les 10 000 images, puis convertie en milliwattheures (mWh) par image. De ce point de vue, il est clair que le FPGA est le plus économe en énergie en ce qui concerne le temps d'exécution, consommant de 6,2 à 6,9 fois moins que le CPU et de 3,3 à 6,2 fois moins que le GPU (voir Figure~{figure:herofake-consumption-per-image}).
 
 \subsection{Discussion}
 
@@ -233,9 +200,9 @@ However, the sole instant power consumption does not reflect the total cost adva
 \label{figure:herofake-cost-over-time}
 \end{figure}
 
-The results of this benchmark show a clear advantage of the inference on FPGA regarding performance and energy efficiency. The gains in performance are significant, especially with deep learning networks with higher complexity~\cite{8782524}. Computing resources based on servers equipped with FPGA acceleration boards, instead of GPU acceleration boards, would benefit from these advantages.
+Les résultats de ce benchmark montrent un net avantage de l'inférence sur FPGA en termes de performance et d'efficacité énergétique. Les gains de performance sont significatifs, en particulier avec les réseaux d'apprentissage profond plus complexes~\cite{8782524}. Les ressources informatiques basées sur des serveurs équipés de cartes d'accélération FPGA, au lieu de cartes d'accélération GPU, bénéficieraient de ces avantages.
 
-The raw energy consumption of the inference device does not reflect the total cost of the solution. Indeed, one must also include the cost of the equipment itself. This is a major point in the comparison between GPU and FPGA, because there is a price gap between the two technologies: the GPU (RTX 2070 Super) being used for this benchmark was introduced around 600€, while the FPGA (Alveo U250) is sold around 6000€. The cost of the electric energy to perform the inference is very low (we used the European average of 0.1833€ per kWh as proposed in~\cite{energy-price}), compared to the initial cost of the device: the runtime needed to benefit from the cost advantage of the FPGA is in the order of several months of continuous operation. Figure~\ref{figure:herofake-cost-over-time} depicts cumulative cost (in euros) of the usage of a server with either GPU or FPGA acceleration versus time (in years). Our cost estimate includes the number of GPU needed with their cost to equalize the FPGA performances and uses a 2x factor~\cite{shehabiUnitedStatesData2016}, to account for the total power consumption of the infrastructure (mainly cooling and networking). The FPGA can become a cost effective solution after a few months for complex CNNs. For networks with lower complexity, the cost advantage of the FPGA is reached after more than two years.
+La consommation d'énergie brute du dispositif d'inférence ne reflète pas le coût total de la solution. En effet, il faut également inclure le coût de l'équipement lui-même. C'est un point important dans la comparaison entre GPU et FPGA, car il existe un écart de prix entre les deux technologies : le GPU (RTX 2070 Super) utilisé pour ce benchmark a été introduit aux alentours de 600€, alors que le FPGA (Alveo U250) est vendu aux alentours de 6000€. Le coût de l'énergie électrique pour effectuer l'inférence est très faible (nous avons utilisé la moyenne européenne de 0,1833 € par kWh proposée dans~\cite{energy-price}), comparé au coût initial du dispositif : la durée d'exécution nécessaire pour bénéficier de l'avantage de coût du FPGA est de l'ordre de plusieurs mois de fonctionnement continu. La figure~\ref{figure:herofake-cost-over-time} représente le coût cumulé (en euros) de l'utilisation d'un serveur avec accélération GPU ou FPGA en fonction du temps (en années). Notre estimation du coût comprend le nombre de GPU nécessaires et leur coût pour égaliser les performances des FPGA et utilise un facteur 2x~\cite{shehabiUnitedStatesData2016}, pour tenir compte de la consommation d'énergie totale de l'infrastructure (principalement le refroidissement et la mise en réseau). Le FPGA peut devenir une solution rentable après quelques mois pour les CNN complexes. Pour les réseaux moins complexes, l'avantage financier du FPGA est atteint après plus de deux ans.
 
 \begin{figure}[t]
 \centering
@@ -244,51 +211,30 @@ The raw energy consumption of the inference device does not reflect the total co
 \label{figure:herofake-power-usage}
 \end{figure}
 
-The previous analysis is valid in the situation where the inference is always performed at full load. Indeed when breaking down the power consumption of the GPU between idle power and inference power, it is clear that the GPU is able to dynamically scale its power usage with the intensity of the processing. The FPGA on the other side seems to have very limited power management. Once the DPU design is loaded into the device, its power usage at idle remains very high (see Figure. \ref{figure:herofake-power-usage}). Adding to the 38W of the FPGA board power, there is indeed a residual 60W power consumption when the DPU is idle. Even though further evolution of the DPU implementation on the FPGA may fix this issue (like reducing clock tree activity when idle), this has an impact on the total cost and must be considered if the device is not always used at full load. With only 12W of idle power, the GPU is a better candidate when full-load device usage cannot be guaranteed.
+L'analyse précédente est valable dans le cas où l'inférence est toujours effectuée à pleine charge. En effet, lorsque l'on décompose la consommation d'énergie du GPU entre la consommation au repos et la consommation pour l'inférence, il est clair que le GPU est capable d'adapter dynamiquement sa consommation d'énergie à l'intensité du traitement. Le FPGA, quant à lui, semble avoir une gestion de l'énergie très limitée. Une fois que la conception du DPU est chargée dans le dispositif, sa consommation d'énergie au repos reste très élevée (voir la figure. \ref{figure:herofake-power-usage}). Si l'on ajoute les 38 W de la carte FPGA, il y a en effet une consommation résiduelle de 60 W lorsque le DPU est inactif. Même si l'évolution de l'implémentation du DPU sur le FPGA peut résoudre ce problème (par exemple en réduisant l'activité de l'arbre d'horloge lorsqu'il est inactif), cela a un impact sur le coût total et doit être pris en compte si le dispositif n'est pas toujours utilisé à pleine charge. Avec seulement 12 W d'énergie au repos, le GPU est un meilleur candidat lorsque l'utilisation à pleine charge du dispositif ne peut être garantie.
 
-As the trend towards CNNs with more complexity continues~\cite{8807741}, using the most efficient devices will become a major challenge. The FPGA solution offers a new option to perform inference. However, FPGAs are not a drop-in replacement for GPUs yet: the compilation flow remains complex and time-consuming. A trade-off between the flexibility of the GPUs and the efficiency of the FPGAs will have to be made. The next section discusses a first orchestrator that considers the above-mentionned characterization for allocating and scheduling heterogeneous resources.
+Comme la tendance vers des CNN plus complexes se poursuit~\cite{8807741}, l'utilisation des dispositifs les plus efficaces deviendra un défi majeur. La solution FPGA offre une nouvelle option pour effectuer l'inférence. Cependant, les FPGA ne remplacent pas encore les GPU : le flux de compilation reste complexe et prend du temps. Il faudra trouver un compromis entre la flexibilité des GPU et l'efficacité des FPGA. La section suivante traite d'un premier orchestrateur qui prend en compte la caractérisation mentionnée ci-dessus pour l'allocation et l'ordonnancement de ressources hétérogènes.
 
-\section{Online phase: Autoscaling and scheduling}
-\label{online}
-In this section, we formulate the problem that our contribution addresses, and give a detailed description of our model. Finally, we present a formal description of our strategy for the autoscaling of resources and scheduling of tasks. 
+\section{Phase en ligne : allocation des ressources et placement des tâches}
+\label{section:herofake-online}
 
-%In order to optimize the placement of tasks following incoming requests, we propose an online scheduler that takes into account the level of QoS requirements associated with each task. To meet these requirements, the autoscaler has to be able to opportunistically allocate hardware accelerators according to the task's deadline, given its characteristics on each execution platform. These characteristics are made available in the task's metadata.
+Dans cette section, nous formulons le problème que notre contribution aborde, et nous donnons une description détaillée de notre modèle. Enfin, nous présentons une description formelle de notre stratégie pour la mise à l'échelle automatique des ressources et l'ordonnancement des tâches. 
 
-\subsection{Serverless resource orchestration challenges}
+\subsection{Défis pour l'orchestration dynamique}
 
-Scheduling workloads in the serverless paradigm is a two-fold problem: providers have to dynamically handle resource allocation (i.e. managing resources pools when scaling the number of replicas for an application) and job placement (i.e. mapping tasks to existing replicas).
+L'ordonnancement des charges de travail dans le paradigme serverless est un problème à deux volets : les fournisseurs doivent gérer dynamiquement l'allocation des ressources (c'est-à-dire gérer les pools de ressources lors de la mise à l'échelle du nombre de répliques pour une application) et le placement des tâches (c'est-à-dire le mappage des tâches aux répliques existantes).
 
-Increasing the replica count introduces a performance challenge: when a new replica is spun up, be it as a container or a virtual machine, the execution sandbox has to go through its initialization phase. This is called a "cold start".
+L'augmentation du nombre de répliques pose un problème de performance : lorsqu'une nouvelle réplique est créée, que ce soit sous la forme d'un conteneur ou d'une machine virtuelle, le bac à sable d'exécution doit passer par sa phase d'initialisation. C'est ce qu'on appelle un "démarrage à froid".
 
-Commercial solutions such as AWS Lambda often avoid the cold start problem by maintaining pools of pre-warmed sandboxes~\cite{vahidiniaColdStartServerless2020}. These virtual machines (VMs) or containers are started in anticipation and paused in a post-initialization state. When activity resumes, incoming requests can be served without suffering a cold start delay, at the expense of resources multiplexing on the provider side. While this solution allows reducing, or even eliminating cold start delays, it takes a toll on the provider's resources multiplexing capacity~\cite{hellersteinServerlessComputingOne2019} and raises the total cost of ownership (TCO).
+Les solutions commerciales telles que AWS Lambda évitent souvent le problème du démarrage à froid en maintenant des pools de bacs à sable préchauffés~\cite{vahidiniaColdStartServerless2020}. Ces machines virtuelles (VM) ou conteneurs sont démarrés par anticipation et mis en pause dans un état post-initialisation. Lorsque l'activité reprend, les demandes entrantes peuvent être servies sans souffrir d'un délai de démarrage à froid, au détriment du multiplexage des ressources du côté du fournisseur. Bien que cette solution permette de réduire, voire d'éliminer les délais de démarrage à froid, elle pèse sur la capacité de multiplexage des ressources du fournisseur et augmente le coût total de possession (TCO).
 
-% Load is unpredicTable~\cite{shahradServerlessWildCharacterizing}
-%\begin{itemize}
-%    \item stochastic barrier;
-%    \item need for an online solution.
-%\end{itemize}
+En outre, les applications de Machine Learning as a Service (MLaaS) présentent une charge très fluctuante~\cite{gujaratiSwayamDistributedAutoscaling2017}, ce qui renforce l'argument selon lequel une stratégie d'allocation des ressources réactive est nécessaire pour redimensionner l'infrastructure. Cependant, comme le temps d'exécution des tâches d'inférence est de l'ordre du centième ou du dixième de seconde, tandis que le temps d'initialisation des bacs à sable peut aller du centième de seconde à la seconde~\cite{mancoMyVMLighter2017}, nous avons besoin d'un mécanisme pour éviter d'encourir d'énormes coûts de latence pour l'exécution des fonctions.
 
-%Furthermore, Machine Learning as a Service (MLaaS) applications exhibit highly fluctuating load~\cite{gujaratiSwayamDistributedAutoscaling2017}, thus reinforcing the argument that overprovisioning resources for such a service is not a viable solution.
+Les tâches critiques nécessitent des garanties de niveau de service de la part du fournisseur. Les accords de niveau de service dans le cloud consistent généralement à convenir d'un taux de disponibilité des ressources dans le temps ; si le fournisseur ne respecte pas cet accord, une remise est proposée au client. Bien que cela puisse fonctionner pour des ressources réservées, nous pouvons voir que cela n'a pas de sens dans le paradigme serverless. La possibilité de garantir le temps de réponse des tâches permettrait à un fournisseur serverless d'atteindre des accords de niveau de service par invocation~\cite{zhangMArkExploitingCloud}.
 
-Furthermore, Machine Learning as a Service (MLaaS) applications exhibit highly fluctuating load~\cite{gujaratiSwayamDistributedAutoscaling2017}, thus reinforcing the argument that a reactive resource allocation strategy is necessary to rightsize the infrastructure. However, as the execution time of inference tasks is in the ballpark of hundredths to tenths of a second, while the initialization time of sandboxes can range between hundredths of a second to seconds~\cite{mancoMyVMLighter2017}, we need a mechanism to avoid incurring huge latency costs to the execution of functions.
+L'utilisation d'accélérateurs matériels est une possibilité d'améliorer les rapports performance-coût. Bien qu'il s'agisse d'un investissement coûteux (voir Figure~\ref{figure:herofake-cost-over-time}), ces dispositifs permettent d'accélérer considérablement les tâches parallèles (voir Figure~\ref{figure:herofake-time-inference}), améliorant ainsi le temps de réponse des fonctions, avec un coût énergétique réduit (voir Figure~\ref{figure:herofake-consumption-per-image}).
 
-% Service level is not guaranteed
-%\begin{itemize}
-%    \item resources availability over time is not the most relevant QoS metric;
-%    \item risks of overcommitting resources.
-%\end{itemize}
-
-Mission critical tasks require service level guarantees from the provider. SLAs in cloud computing typically consist in agreeing on a resource availability rate over time; if the provider fails to meet this agreement, a discount is offered to the customer. While this may work for reserved resources, we can see that it does not make sense in the serverless paradigm. The ability to guarantee task response time would allow a serverless provider to achieve per-invocation SLAs~\cite{zhangMArkExploitingCloud}.
-
-% Cloud resources are heterogeneous
-%\begin{itemize}
-%    \item various levels of performance;
-%    \item various levels of cost.
-%\end{itemize}
-
-A possibility to improve performance-cost ratios is to make use of hardware accelerators. Despite being a costly investment (see Figure~\ref{figure:herofake-cost-over-time}), these devices can achieve important speedups for parallel tasks (see Figure~\ref{figure:herofake-time-inference}), thus improving function response time, with a decreased cost in energy (see Figure~\ref{figure:herofake-consumption-per-image}).
-
-\subsection{Task model} \label{model:tasks}
+\subsection{Modèle de tâche} \label{model:tasks}
 
 \begin{table}[t]
     \caption{Notation dictionary}
@@ -321,104 +267,86 @@ A possibility to improve performance-cost ratios is to make use of hardware acce
     \end{center}
 \end{table}
 
-Applications are composed of functions. A function execution is called a \textit{task}. In this work, there are no dependencies between these tasks: the application is made up of pure, stateless functions. The events that trigger the execution of a task arrive in the system at a random, bounded interval. We formulate the hypothesis that a request always succeeds and leads to the execution of a \textit{task} (an instance of a \textit{function}). When a task has started its execution on its allocated platform, it runs for the totality of its execution time. We do not consider preemption or failures in this contribution: a task always finishes its execution successfully, albeit its response time can exceed its QoS requirements. We do not consider possible interference between workloads on the same node~\cite{dartoisInvestigatingMachineLearning2021}. 
+Les applications sont composées de fonctions. L'exécution d'une fonction est appelée \textit{tâche}. Dans ce travail, il n'y a pas de dépendances entre ces tâches : l'application est composée de fonctions pures et sans état. Les événements qui déclenchent l'exécution d'une tâche arrivent dans le système à un intervalle aléatoire et borné. Nous formulons l'hypothèse qu'une requête aboutit toujours et conduit à l'exécution d'une \textit{task} (une instance de \textit{fonction}). Lorsqu'une tâche a commencé son exécution sur la plate-forme qui lui a été attribuée, elle s'exécute pendant la totalité de son temps d'exécution. Nous ne prenons pas en compte la préemption ou les défaillances dans cette contribution : une tâche termine toujours son exécution avec succès, même si son temps de réponse peut dépasser ses exigences en matière de qualité de service. Nous ne tenons pas compte des interférences possibles entre les charges de travail sur le même nœud~\cite{dartoisInvestigatingMachineLearning2021}. 
 
-We consider tasks that can indiscriminately be executed on heterogeneous execution platforms. In the context of our specific case study, implementation of the different functions has been done by hand for each platform; however, work exists to allow automatic cross-compilation to heterogeneous architectures~\cite{hortaXartrekRuntimeExecution2021, 10.1145/3445814.3446699}. The following metadata have been measured for each function, on each execution platform: 
-
-%In our task model, a \textit{vector} \jb{pas clair cettte histoire de vecteur}expresses a value that can be different according to the execution platform (CPU, GPU or FPGA) allocated for the task's execution. Each function is associated with its metadata:
+Nous considérons les tâches qui peuvent être exécutées sans distinction sur des plateformes d'exécution hétérogènes. Dans le contexte de notre étude de cas spécifique, la mise en œuvre des différentes fonctions a été effectuée à la main pour chaque plateforme ; cependant, des travaux existent pour permettre une compilation croisée automatique pour les architectures hétérogènes~\cite{hortaXartrekRuntimeExecution2021, 10.1145/3445814.3446699}. Les métadonnées suivantes ont été mesurées pour chaque fonction, sur chaque plateforme d'exécution : 
 
 \begin{itemize}
-    \item \textit{Memory requirements} -- the quantity of memory (in GB) allocated for the task;
-    \item \textit{Cold start duration} -- the duration of sandbox initialization when running the task on a platform that does not have the function in cache;
-    \item \textit{Execution time} -- the expected duration of effective execution of the task, excluding its initialization phase;
-    \item \textit{Energy consumption} -- the difference between idle and active energy incurred by the execution platform when it runs the task.
+    \item \textit{Besoins mémoire en pic} -- la quantité de mémoire (en GB) allouée à la tâche ;
+    \item \textit{Durée de démarrage à froid} -- la durée de l'initialisation du bac à sable lors de l'exécution de la tâche sur une plate-forme qui n'a pas la fonction en cache ;
+    \item \textit{Temps d'exécution} -- la durée prévue de l'exécution effective de la tâche, à l'exclusion de sa phase d'initialisation ;
+    \item \textit{Consommation d'énergie} -- la différence entre l'énergie inactive et l'énergie active encourue par la plate-forme d'exécution lorsqu'elle exécute la tâche.
 \end{itemize}
 
-Equation~\ref{eq:herofake-HRO-total-time} breaks down the expected response time for the execution of a function $f$ on a platform $P$ on node $N$.
+L'équation~\ref{eq:herofake-HRO-total-time} décompose le temps de réponse attendu pour l'exécution d'une fonction $f$ sur une plateforme $P$ sur un nœud $N$.
+
 \begin{equation}
-\begin{split}
-%\resizebox{0.80\columnwidth}{!}{%
-    %\begin{math}
     {TT}_{{f}_{N, P}} = {WT}_{{f}_{N, P}} + {CST}_{{f}_{N, P}} + {ET}_{{f}_{N, P}}
-    %\end{math}%
-%}
-\end{split}
 \label{eq:herofake-HRO-total-time}
 \end{equation}
 
-Where:
+Où :
+
 \begin{itemize}
-    \item ${WT}_{{f}_{N, P}}$ is the duration of the scheduling decision, including the time spent by the user request in the queue;
-    \item ${CST}_{{f}_{N, P}}$ is the duration of initialization for the function invocation, including its potential cold start time; 
-    \item ${ET}_{{f}_{N, P}}$ is the execution time of the function on the platform.
+    \item ${WT}_{{f}_{N, P}}$ correspond à la durée de la décision d'ordonnancement, y compris le temps passé par la requête en file d'attente ;
+    \item ${CST}_{{f}_{N, P}}$ est la durée de l'initialisation de l'invocation de la fonction, y compris son temps potentiel de démarrage à froid ;
+    \item ${ET}_{{f}_{N, P}}$ est le temps d'exécution de la fonction sur la plate-forme.
 \end{itemize}
 
-We propose different levels of QoS depending on users' needs in terms of guarantees on execution time. Each level of QoS presents a different \textit{duration deviation} (noted $QD$ in Equation. ~\ref{eq:herofake-task-penalty}) -- a factor by which the worst execution time for a function is multiplied to give an upper bound on the execution time of this function for this QoS level.
+Nous proposons différents niveaux de qualité de service en fonction des besoins des utilisateurs en termes de garanties sur le temps d'exécution. Chaque niveau de qualité de service présente un \textit{écart de durée} différent (noté $QD$ dans l'équation~\ref{eq:herofake-task-penalty}) -- un facteur par lequel le pire temps d'exécution d'une fonction est multiplié pour donner une limite supérieure au temps d'exécution de cette fonction pour ce niveau de qualité de service.
 
-Predicted function execution time is always based on the worst execution time (noted $WET_{f}$), e.g. a task's execution time when scheduled on the execution platform showing the least level of performance for said function:
+Le temps d'exécution prédit d'une fonction est toujours basé sur le pire temps d'exécution (noté $WET_{f}$), c'est-à-dire le temps d'exécution d'une tâche lorsqu'elle est programmée sur la plate-forme d'exécution présentant le niveau de performance le plus faible pour cette fonction :
+
 
 \begin{equation}
-\begin{split}
     \forall \, (N, P), \, WET_{f} = \max ET_{N, P}
-\end{split}
 \label{eq:herofake-task-wet}
 \end{equation}
 
-After a task is scheduled on an execution platform, it will go through its total time of execution described in equation \ref{eq:herofake-HRO-total-time}. The task deadline is computed by multiplying the function's worst response time (as expressed in Equation~\ref{eq:herofake-task-wet}) by the QoS duration deviation associated to the user's request's QoS level. Equation~\ref{eq:herofake-task-penalty} shows that we set a boolean value $QP_{f_{N, P}}$ for each function invocation if the tasks misses its deadline. 
+Une fois qu'une tâche est programmée sur une plate-forme d'exécution, elle passe par sa durée totale d'exécution décrite dans l'équation \ref{eq:herofake-HRO-total-time}. L'échéance de la tâche est calculée en multipliant le pire temps de réponse de la fonction (tel qu'exprimé dans l'équation~\ref{eq:herofake-task-wet}) par l'écart de durée de la qualité de service associé au niveau de qualité de service de la demande de l'utilisateur. L'équation~\ref{eq:herofake-task-penalty} montre que nous fixons une valeur booléenne $QP_{f_{N, P}}$ pour chaque invocation de fonction si la tâche ne respecte pas son délai. 
+
 
 \begin{equation}
-\begin{split}
     QP_{f_{N, P}} = TT_{f_{N, P}} \cdot QD_{f_{N, P}} > WET_{f}
-\end{split}
 \label{eq:herofake-task-penalty}
 \end{equation}
 
-\subsection{Autoscaling strategy} \label{section:herofake-autoscaling-strategy}
+\subsection{Stratégie d'allocation de ressources} \label{section:herofake-autoscaling-strategy}
 
-In a serverless platform, the autoscaler has the responsibility to allocate hardware resources for function executions. For any function, an autoscaler can allocate $n$ \textit{replicas}. The number of replicas for a given function at any moment determines the concurrency level.
+Dans une plateforme serverless, l'autoscaler a la responsabilité d'allouer des ressources matérielles pour les exécutions de fonctions. Pour toute fonction, un autoscaler peut allouer $n$ \textit{répliques}. Le nombre de répliques pour une fonction donnée à un moment donné détermine le niveau de concurrence.
 
-In Knative, the number of replicas for a given function (Equation~\ref{eq:herofake-kn-replica-count}) depends on the moving average load for a function, i.e. the average number of in-flight requests for the function on a 60 second window (in-system concurrency per function). It is bounded by a concurrency threshold per replica, i.e. the maximum number of requests queued in a function's replica at any moment. The default value in Knative is 100 in-flight requests in each replica~\cite{knative-autoscaling}.
+Dans Knative, le nombre de répliques pour une fonction donnée (équation~\ref{eq:herofake-kn-replica-count}) dépend de la charge moyenne mobile pour une fonction, c'est-à-dire le nombre moyen de requêtes en vol pour la fonction sur une fenêtre de 60 secondes (concurrence dans le système par fonction). Il est limité par un seuil de concurrence par réplique, c'est-à-dire le nombre maximum de demandes en file d'attente dans la réplique d'une fonction à tout moment. La valeur par défaut dans Knative est de 100 requêtes en vol dans chaque réplique~\cite{knative-autoscaling}.
 
 \begin{equation}
-\begin{split}
     replicaCount_{f} = \frac{concurrency_{f}}{threshold}
-\end{split}
 \label{eq:herofake-kn-replica-count}
 \end{equation}
 
-This sizing mechanism allows allocating CPUs under Knative, in reaction to changes in the current state of concurrency in the system. The main contribution of the autoscaler we propose is to upgrade Knative in order to take into account the heterogeneity of the execution platforms.
+Ce mécanisme de dimensionnement permet d'allouer des CPU sous Knative, en réaction aux changements de l'état actuel de la concurrence dans le système. La principale contribution de l'autoscaler que nous proposons est d'améliorer Knative afin de prendre en compte l'hétérogénéité des plateformes d'exécution.
 
-Simple Knative mechanism does not hold when the infrastructure consists of a variety of execution platforms. Indeed, such platforms exhibit various levels of performance, energy consumption and cost. This has a consequence on the number of replicas the provider has to deploy on these platforms: for a given level of application load, heterogeneous replicas will be able to handle different numbers of tasks in the same makespan. For our platform to handle heterogeneity in the underlying infrastructure, we propose a per-function and \textbf{per-hardware type} replica count as in Equation~\ref{eq:herofake-HRO-replica-count}.
+Le mécanisme Knative simple ne fonctionne pas lorsque l'infrastructure est constituée d'une variété de plateformes d'exécution. En effet, ces plateformes présentent différents niveaux de performance, de consommation d'énergie et de coût. Cela a une conséquence sur le nombre de répliques que le fournisseur doit déployer sur ces plateformes : pour un niveau donné de charge d'application, les répliques hétérogènes seront capables de traiter différents nombres de tâches dans le même délai. Pour que notre plateforme puisse gérer l'hétérogénéité de l'infrastructure sous-jacente, nous proposons un nombre de répliques par fonction et \textbf{par type de matériel} comme dans l'équation~\ref{eq:herofake-HRO-replica-count}.
 
 \begin{equation}
-\begin{split}
     replicaCount_{f, h} = \frac{concurrency_{f, h}}{x_{f, h}}
-\end{split}
 \label{eq:herofake-HRO-replica-count}
 \end{equation}
 
-An autoscaling decision can introduce opportunity costs in the system: hardware accelerators are scarcely available as compared to CPUs, and allocating them for a given function at a given time will make them unavailable for further computations. In order for the autoscaler to decide when it is relevant to allocate such accelerators, it has to be \textbf{cost-aware}. 
+Une décision d'autoscaling peut introduire des coûts d'opportunité dans le système : les accélérateurs matériels sont peu disponibles par rapport aux CPU, et le fait de les allouer à une fonction donnée à un moment donné les rendra indisponibles pour d'autres calculs. Pour que l'autoscaler puisse décider quand il est pertinent d'allouer de tels accélérateurs, il doit être conscient des coûts. 
 
-In order to determine the concurrency threshold per replica $x_{f, h}$ for a function $f$ on hardware type $h$ (e.g. GPU and FPGA), we fixed the concurrency threshold per replica on CPUs to $x_{f, c} = 100$ as it is the default value in Knative~\cite{knative-concurrency}. Then, we used the measurements from the offline phase (Table~\ref{table:herofake-tasks}) to establish a composite ratio (including performance, energy, platform price) as described in Equation~\ref{eq:herofake-HRO-concurrency-target}. In our policy, we chose to favor response time by setting $k_{ET} = \frac{2}{3}$, $k_{EC} = \frac{1.5}{6}$ and $k_{HP} = \frac{0.5}{6}$. For example, for the function ResNet50 (described in Table~\ref{model:tasks}), task queues in replicas are sized to 100 for CPUs, 489 for GPUs and 1292 for FPGAs.
+Afin de déterminer le seuil de concurrence par réplique $x_{f, h}$ pour une fonction $f$ sur un type de matériel $h$ (par exemple, GPU et FPGA), nous avons fixé le seuil de concurrence par réplique sur les CPU à $x_{f, c} = 100$, comme c'est la valeur par défaut dans Knative~\cite{knative-concurrency}. Ensuite, nous avons utilisé les mesures de la phase hors-ligne (Table~\ref{table:herofake-tasks}) pour établir un ratio composite (incluant la performance, l'énergie, le prix de la plateforme) comme décrit dans l'équation~\ref{eq:herofake-HRO-concurrency-target}. Dans notre politique, nous avons choisi de favoriser le temps de réponse en fixant $k_{ET} = \frac{2}{3}$, $k_{EC} = \frac{1,5}{6}$ et $k_{HP} = \frac{0,5}{6}$. Par exemple, pour la fonction ResNet50 (décrite dans Table~\ref{model:tasks}), les files d'attente de tâches dans les réplicas sont dimensionnées à 100 pour les CPU, 489 pour les GPU et 1292 pour les FPGA.
 
 \begin{equation}
-\begin{split}
-\resizebox{0.90\columnwidth}{!}{%
-    \begin{math}
     x_{f, h} = x_{f, c} \cdot (k_{ET} \cdot \frac{ET_{{f}_{c}}}{ET_{{f}_{h}}} + k_{EC} \cdot \frac{EC_{{f}_{c}}}{EC_{{f}_{h}}} + k_{HP} \cdot \frac{HP_{{f}_{c}}}{HP_{{f}_{h}}})
-    \end{math}%
-}
-\end{split}
 \label{eq:herofake-HRO-concurrency-target}
 \end{equation}
 
-When the concurrency threshold for a function is exceeded in the queues of replicas on a given hardware type, the autoscaler will proceed to \textit{scale out} the function: a new replica will be spun up to handle further user requests.
+Lorsque le seuil de simultanéité d'une fonction est dépassé dans les files d'attente des répliques sur un type de matériel donné, l'autoscaler procède à la \textit{scale out} de la fonction : une nouvelle réplique est mise en route pour traiter les demandes ultérieures des utilisateurs.
 
-Allocation starts with the complete list of nodes available in the infrastructure. First, we build a subset of the available nodes, called \textit{suitable nodes}. Given the memory requirements we measured for each function, we eliminate nodes that currently do not have enough memory available to run a replica for the function. Each replica deployed on a node's execution platform consumes the total quantity of memory required by the function type. If the node is out of memory, its execution platforms cannot be used to deploy any more replica.
+L'allocation commence par la liste complète des nœuds disponibles dans l'infrastructure. Nous commençons par constituer un sous-ensemble de nœuds disponibles, appelé \textit{nœuds appropriés}. Compte tenu des besoins en mémoire que nous avons mesurés pour chaque fonction, nous éliminons les nœuds qui ne disposent pas actuellement de suffisamment de mémoire pour exécuter une réplique de la fonction. Chaque réplique déployée sur la plateforme d'exécution d'un nœud consomme la quantité totale de mémoire requise par le type de fonction. Si le nœud n'a plus de mémoire, ses plateformes d'exécution ne peuvent plus être utilisées pour déployer d'autres répliques.
 
-In order to select the type of resource to allocate for this replica, the autoscaler minimizes the cost function given in Equation~\ref{eq:herofake-HRO-allocation-cost-function}. 
-In our policy, as for the autoscaling, we chose to favor total task execution time by setting $k_{TT} = \frac{2}{3}$, $k_{EC} = \frac{1.5}{6}$ and $k_{HP} = \frac{0.5}{6}$. 
-Depending on which hardware is available in the pool at scale out time, the autoscaler will favor creating a new function replica on the platform that will execute the task in the lowest total time, including cold start, with the lowest energy consumption and the lowest price.
+Afin de sélectionner le type de ressource à allouer à cette réplique, l'autoscaler minimise la fonction de coût donnée dans l'équation~\ref{eq:herofake-HRO-allocation-cost-function}. 
+Dans notre politique, comme pour l'autoscaling, nous avons choisi de favoriser le temps total d'exécution des tâches en fixant $k_{TT} = \frac{2}{3}$, $k_{EC} = \frac{1.5}{6}$ et $k_{HP} = \frac{0.5}{6}$. 
+En fonction du matériel disponible dans le pool au moment de la mise à l'échelle, l'autoscaler favorisera la création d'une nouvelle réplique de fonction sur la plateforme qui exécutera la tâche dans le temps total le plus court, y compris le démarrage à froid, avec la consommation d'énergie la plus faible et le prix le plus bas.
 
 \begin{equation}
 \begin{split}
@@ -429,32 +357,30 @@ Depending on which hardware is available in the pool at scale out time, the auto
 \label{eq:herofake-HRO-allocation-cost-function}
 \end{equation}
 
-On the contrary, when concurrency for a function falls beneath the threshold on a given hardware type, the autoscaler will employ a best effort policy and try to deallocate any replica with an empty task queue on said hardware type. If a replica does have an empty task queue, it will be released into the available platforms pool, and the memory it had been allocated on the node will be freed.
+Au contraire, lorsque la concurrence pour une fonction tombe en dessous du seuil sur un type de matériel donné, l'autoscaler emploiera une politique de meilleur effort et essaiera de désallouer tout réplica avec une file d'attente de tâches vide sur ce type de matériel. Si une réplique a une file d'attente de tâches vide, elle sera libérée dans le pool de plates-formes disponibles et la mémoire qui lui avait été allouée sur le nœud sera libérée.
 
-The different weights ($k$) used in Equations~\ref{eq:herofake-HRO-concurrency-target} and~\ref{eq:herofake-HRO-allocation-cost-function} can be modified by the provider to customize the allocation policy according to different priorities.
+Les différents poids ($k$) utilisés dans les équations~\ref{eq:herofake-HRO-concurrency-target} et~\ref{eq:herofake-HRO-allocation-cost-function} peuvent être modifiés par le fournisseur afin de personnaliser la politique d'allocation en fonction de différentes priorités.
 
-\subsection{Scheduling strategy} \label{section:herofake-scheduling-strategy}
+\subsection{Stratégie d'ordonnancement} \label{section:herofake-scheduling-strategy}
 
-Workload characterization is instrumental to performance prediction, as it can guide scheduling decisions that lead to the fulfillment of QoS requirements~\cite{mampageHolisticViewResource2022}. Our scheduling strategy relies on tasks metadata as described in Section~\ref{model:tasks}. Building knowledge about serverless tasks is achieved during an offline phase on our platform, as code is pushed to the provider's registries ahead of actual execution~\cite{shahradServerlessWildCharacterizing}.
+La caractérisation de la charge de travail est essentielle à la prédiction des performances, car elle peut guider les décisions d'ordonnancement qui conduisent à la satisfaction des exigences de qualité de service~\cite{mampageHolisticViewResource2022}. Notre stratégie d'ordonnancement s'appuie sur les métadonnées des tâches décrites dans la section~\ref{model:tasks}. La construction de connaissances sur les tâches serverless est réalisée au cours d'une phase hors-ligne sur notre plateforme, car le code est poussé vers les registres du fournisseur avant l'exécution réelle~\cite{shahradServerlessWildCharacterizing}.
 
-In Knative, the scheduler handles incoming tasks in a FIFO fashion. To manage the different levels of QoS requirements, we propose that our scheduler pops tasks from the gateway queue by \textbf{earliest deadline first}. We compute the task deadline by using its worst execution time on the platform using Equation~\ref{eq:herofake-task-wet}, and multiplying it by the allowed duration deviation set by the QoS level. After the task execution, we will check if we missed its deadline and set the associated penalty accordingly, as described in Equation~\ref{eq:herofake-task-penalty}. 
+Dans Knative, le planificateur gère les tâches entrantes de manière FIFO. Pour gérer les différents niveaux d'exigences en matière de qualité de service, nous proposons que notre ordonnanceur retire les tâches de la file d'attente de l'orchestrateur par \textbf{échéance la plus proche}. Nous calculons l'échéance de la tâche en utilisant sa pire durée d'exécution sur la plateforme à l'aide de l'équation~\ref{eq:herofake-task-wet}, et en la multipliant par l'écart de durée autorisé fixé par le niveau de qualité de service. Après l'exécution de la tâche, nous vérifierons si nous avons dépassé son échéance et fixerons la pénalité associée en conséquence, comme décrit dans l'équation~\ref{eq:herofake-task-penalty}. 
 
-We iterate on the function's replicas to fetch and predict the following metrics based on task metadata:
+Nous itérons sur les répliques de la fonction pour récupérer et prédire les métriques suivantes basées sur les métadonnées de la tâche :
 
 \begin{itemize}
-    \item \textbf{potential penalty}: we compute the length of the platform's queue and check whether the task's deadline will be missed, as described in Equation~\ref{eq:herofake-task-penalty};
-    \item \textbf{energy consumption}: we retrieve the offline measurements to establish the dynamic energy consumption for this task on the platform;
-    \item \textbf{task consolidation}: we compute the length of the platform's task queue $Q$ by summing the total times of all queued tasks, as described in Equations~\ref{eq:herofake-HRO-scheduling-platform-queue} (queue length) and~\ref{eq:herofake-HRO-total-time} (task total time). 
+    \item \textbf{pénalité potentielle} : nous calculons la longueur de la file d'attente de la plateforme et vérifions si l'échéance de la tâche sera dépassée, comme décrit dans l'équation~\ref{eq:herofake-task-penalty} ;
+    \item \textbf{consommation d'énergie} : nous récupérons les mesures hors-ligne pour établir la consommation d'énergie dynamique de cette tâche sur la plateforme ;
+    \item \textbf{fusion des tâches} : nous calculons la longueur de la file d'attente des tâches de la plate-forme $Q$ en additionnant les durées totales de toutes les tâches en file d'attente, comme décrit dans les équations~\ref{eq:herofake-HRO-scheduling-platform-queue} (longueur de la file d'attente) et~\ref{eq:herofake-HRO-total-time} (durée totale de la tâche). 
 \end{itemize}
 
 \begin{equation}
-\begin{split}
     len \, Q_{N, P} = \sum TT_{f_{N, P}}
-\end{split}
 \label{eq:herofake-HRO-scheduling-platform-queue}
 \end{equation}
 
-These values are normalized to fit in a weighted cost function described in Equation~\ref{eq:herofake-HRO-scheduling-cost-function}. We used $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0.5}{6}$ and $k_{TC} = \frac{1.5}{6}$ (same as for the autoscaler). The scheduler then minimizes that cost function for all replicas $(N, P)$ (i.e. node and execution platform).
+Ces valeurs sont normalisées pour s'adapter à une fonction de coût pondérée décrite dans l'équation~\ref{eq:herofake-HRO-scheduling-cost-function}. Nous avons utilisé $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0.5}{6}$ et $k_{TC} = \frac{1.5}{6}$ (comme pour l'autoscaler). L'ordonnanceur minimise ensuite cette fonction de coût pour toutes les répliques $(N, P)$ (c'est-à-dire le nœud et la plate-forme d'exécution).
 
 \begin{equation}
 \begin{split}
@@ -465,9 +391,10 @@ These values are normalized to fit in a weighted cost function described in Equa
 \label{eq:herofake-HRO-scheduling-cost-function}
 \end{equation}
 
-If the scheduler cannot find an available replica to execute the task, it will be pushed back to the gateway's task queue. This will increase in-system concurrency for the function, nudging the autoscaler into allocating another replica on relevant hardware.
+Si l'ordonnanceur ne trouve pas de réplique disponible pour exécuter la tâche, celle-ci sera repoussée dans la file d'attente de l'orchestrateur. Cela augmentera la concurrence dans le système pour la fonction, poussant l'autoscaler à allouer une autre réplique sur le matériel approprié.
 
-\section{Evaluation}
+\section{Évaluation}
+\label{section:herofake-evaluation}
 
 \begin{figure*}[t]
     \subfloat[Task consolidation (based on the unused node count)\label{figure:herofake-evaluation-full-nodes}]{
@@ -497,91 +424,82 @@ If the scheduler cannot find an available replica to execute the task, it will b
     \label{figure:herofake-evaluation-hro-mixed}
 \end{figure*}
 
-\subsection{Experimental setup}
+\subsection{Protocole expérimental}
 
-We used measurements from the evaluation of three different machine learning models (see Table~\ref{table:herofake-tasks}). These models have been implemented on three different execution platforms (see Table~\ref{table:herofake-platforms}) as explained in Section~\ref{offline}.
+Nous avons utilisé des mesures provenant de l'évaluation de trois modèles d'apprentissage automatique différents (voir Tableau~\ref{table:herofake-tasks}). Ces modèles ont été mis en œuvre sur trois plateformes d'exécution différentes (voir Tableau~\ref{table:herofake-platforms}) comme expliqué dans la Section~\ref{section:herofake-offline}.
 
-These data served as input for a simulator we built using SimPy~\cite{simpy}. The simulator follows the system model described in sections~\ref{model:nodes}, \ref{model:platforms}, \ref{model:tasks}.
+Ces données ont servi d'entrée à un simulateur que nous avons construit en utilisant SimPy~\cite{simpy}. Le simulateur suit le modèle de système décrit dans les sections~\ref{model:nodes}, \ref{model:platforms}, \ref{model:tasks}.
 
-We measured cold start delays for our case study applications, see Table~\ref{table:herofake-tasks}. It appears that execution times are dominated by cold start delays, making adequate resource allocation a stringent requirement to comply with SLAs.
+Nous avons mesuré les délais de démarrage à froid pour les applications de notre étude de cas, voir le tableau~\ref{table:herofake-tasks}. Il apparaît que les délais d'exécution sont dominés par les délais de démarrage à froid, ce qui fait de l'allocation adéquate des ressources une exigence stricte pour respecter les accords de niveau de service.
 
-In the performance evaluation part, we compare two autoscalers:
-\begin{itemize}
-    \item HeROfake (HRO) -- Our heterogeneity-aware, metadata-based resource allocator;
-    \item Knative (KN) -- We modeled the Knative autoscaler behavior to the best of our knowledge.
-\end{itemize}
-
-Our evaluation extends to four schedulers:
+Dans la partie consacrée à l'évaluation des performances, nous comparons deux autoscalers :
 
 \begin{itemize}
-    \item HeROfake (HRO) -- Our cost-aware scheduler that minimizes SLA violations, energy consumption and resource usage;
-    \item Knative (KN) -- Knative selects a platform on the most available node~\cite{sureshENSUREEfficientScheduling2020}. Execution platforms are sorted by in-flight requests count. The platform with the shortest queue is selected;
-    \item Random Placement (RP) -- Tasks are assigned a random execution platform on a random node;
-    %\item Round Robin (RR) -- Load is balanced across nodes by assigning execution platforms to tasks in a cyclic fashion;
-    \item Bin Packing First-Fit (BPFF) -- Tasks are consolidated on the minimum number of execution platforms. While a node still has enough memory available for new replicas, it is systematically chosen until it runs out of memory; then, a new node is selected. BPFF is likely to be the scheduling policy for AWS Lambda~\cite{wangPeekingCurtainsServerlessb}.
+    \item HeROfake (HRO) -- Notre allocateur de ressources basé sur les métadonnées et conscient de l'hétérogénéité ;
+    \item Knative (KN) -- Nous avons modélisé le comportement de l'autoscaler Knative au mieux de nos connaissances.
 \end{itemize}
 
-%Note that for each strategy, we still apply some pre-filtering on execution platforms: a task is never assigned a node that could not achieve its execution (i.e. a node that does not meet the task's memory requirements, or that does not provide a suitable execution platform).
-
-We designed a two-step performance evaluation based on simulations:
+Notre évaluation comporte quatre ordonnanceurs :
 
 \begin{itemize}
-    \item \textbf{Comparison against baselines} (Figure~\ref{figure:herofake-evaluation-hro-full}): in this part, we compared our HeROfake combination of autoscaler and scheduler (HRO-HRO) to: (1) full-featured Knative autoscaler and scheduler (KN-KN), (2) Knative autoscaler with BPFF scheduler (KN-BPFF), (3) Knative autoscaler with RP scheduler (KN-RP); 
-    \item \textbf{Impact of HeROfake components on the overall performance} (Figure~\ref{figure:herofake-evaluation-hro-mixed}): here we discuss the individual impact of each of the autoscaler and the scheduler. To do so, we devised different strategies: (1) using HeROfake autoscaler with Knative scheduler, and (2) using Knative autoscaler with HeROfake scheduler, and we compared those strategies with full featured HeROfake and Knative.
+    \item HeROfake (HRO) -- Notre ordonnanceur conscient des coûts qui minimise les violations de SLA, la consommation d'énergie et l'utilisation des ressources ;
+    \item Knative (KN) -- Knative sélectionne une plateforme sur le nœud le plus disponible~\cite{sureshENSUREEfficientScheduling2020}. Les plates-formes d'exécution sont triées en fonction du nombre de demandes en cours d'exécution. La plateforme avec la file d'attente la plus courte est sélectionnée ;
+    \item Random Placement (RP) -- Les tâches sont assignées à une plateforme d'exécution aléatoire sur un nœud aléatoire ;
+    \item Bin Packing First-Fit (BPFF) -- Les tâches sont consolidées sur le nombre minimum de plateformes d'exécution. Tant qu'un nœud dispose de suffisamment de mémoire pour accueillir de nouvelles répliques, il est systématiquement choisi jusqu'à ce qu'il n'ait plus de mémoire ; un nouveau nœud est alors sélectionné. BPFF sera probablement la politique d'ordonnancement pour AWS Lambda~\cite{wangPeekingCurtainsServerlessb}.
 \end{itemize}
 
-The naming of each scenario in these figures consists of two parts divided by a dash symbol. The first part corresponds to the allocation policy; the second part corresponds to the scheduling policy (for example, HRO-KN means we used the HeROfake autoscaler in conjunction with the Knative scheduler). 
+Nous avons conçu une évaluation des performances en deux étapes basée sur des simulations :
 
-%In order to measure the relevance of both our autoscaler and scheduler policies, we proceeded to evaluate them in two configurations. Figure~\ref{figure:herofake-evaluation-hro-full} shows our solution (HRO-HRO) evaluated against vanilla Knative (KN-KN), and Knative autoscaler with baseline schedulers (KN-BPFF, KN-RP). Figure~\ref{figure:herofake-evaluation-hro-mixed} shows our autoscaler and scheduler mixed with Knative's autoscaler and scheduler to evaluate the impact of each component on the overall performances. 
+\begin{itemize}
+    \item \textbf{Comparaison avec les lignes de base} (Figure~\ref{figure:herofake-evaluation-hro-full}) : dans cette partie, nous avons comparé notre combinaison HeROfake d'autoscaler et d'ordonnanceur (HRO-HRO) à : (1) l'autoscaler et l'ordonnanceur Knative complet (KN-KN), (2) l'autoscaler Knative avec l'ordonnanceur BPFF (KN-BPFF), (3) l'autoscaler Knative avec l'ordonnanceur RP (KN-RP) ; 
+    \item \textbf{Impact des composants HeROfake sur la performance globale} (Figure~\ref{figure:herofake-evaluation-hro-mixed}) : nous discutons ici de l'impact individuel de chacun des autoscalers et de l'ordonnanceur. Pour ce faire, nous avons conçu différentes stratégies : (1) en utilisant l'autoscaler HeROfake avec l'ordonnanceur Knative, et (2) en utilisant l'autoscaler Knative avec l'ordonnanceur HeROfake, et nous avons comparé ces stratégies avec les fonctionnalités complètes de HeROfake et Knative.
+\end{itemize}
 
-For each of the combinations of autoscaler and scheduler policies, we ran the experiment on a synthetic workload scenario consisting of 50000 tasks (user requests). Tasks are assigned a random type (ResNet50, VGG16 or VGG19) and a random QoS level (high, medium, low) following a uniform distribution, with QoS duration deviations respectively set to 2, 3 and 4. The infrastructure for the scenario consists of 10 nodes (10 CPUs, 6 GPUs, 2 FPGAs).
+La dénomination de chaque scénario dans ces figures se compose de deux parties divisées par un symbole de tiret. La première partie correspond à la politique d'allocation, la seconde à la politique d'ordonnancement (par exemple, HRO-KN signifie que nous avons utilisé l'autoscaler HeROfake en conjonction avec l'ordonnanceur Knative). 
 
-Weights for the concurrency level (Equation~\ref{eq:herofake-HRO-concurrency-target}) have been set to $k_{ET} = \frac{2}{3}$, $k_{EC} = \frac{1.5}{6}$ and $k_{HP} = \frac{0.5}{6}$. Weights for the scale out decision (Equation~\ref{eq:herofake-HRO-allocation-cost-function}) have been set to $k_{TT} = \frac{2}{3}$, $k_{EC} = \frac{1.5}{6}$ and $k_{HP} = \frac{0.5}{6}$. Weights for the scheduling decision (Equation~\ref{eq:herofake-HRO-scheduling-cost-function}) have been set to $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0.5}{6}$ and $k_{TC} = \frac{1.5}{6}$. 
+Pour chacune des combinaisons de politiques d'autoscaler et d'ordonnanceur, nous avons réalisé l'expérience sur un scénario de charge de travail synthétique composé de 50000 tâches (demandes d'utilisateurs). Les tâches se voient attribuer un type aléatoire (ResNet50, VGG16 ou VGG19) et un niveau de QoS aléatoire (élevé, moyen, faible) suivant une distribution uniforme, avec des écarts de durée de QoS respectivement fixés à 2, 3 et 4. L'infrastructure du scénario se compose de 10 nœuds (10 CPU, 6 GPU, 2 FPGA).
 
-\subsection{Experimental results}
+Les pondérations pour le niveau de concurrence (équation~\ref{eq:herofake-HRO-concurrency-target}) ont été fixées à $k_{ET} = \frac{2}{3}$, $k_{EC} = \frac{1,5}{6}$ et $k_{HP} = \frac{0,5}{6}$. Les pondérations pour la décision de réduction d'échelle (équation~\ref{eq:herofake-HRO-allocation-cost-function}) ont été fixées à $k_{TT} = \frac{2}{3}$, $k_{EC} = \frac{1,5}{6}$ et $k_{HP} = \frac{0,5}{6}$. Les pondérations pour la décision d'ordonnancement (équation~\ref{eq:herofake-HRO-scheduling-cost-function}) ont été fixées à $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0,5}{6}$ et $k_{TC} = \frac{1,5}{6}$. 
 
-\subsubsection{Comparison against baselines}
+\subsection{Analyse des résultats}
 
-\textbf{Tasks consolidation}. Figure~\ref{figure:herofake-evaluation-full-nodes} shows that our combination of autoscaler and scheduler achieves the highest number of unused nodes. Under Knative's autoscaler, the BPFF scheduler ensures the best consolidation, but that policy still needs more than three times the nodes we need with our policy.% We can see that our scheduler comes second best at task consolidation, with almost 70\% of nodes left unused -- a negligible degradation compared to HRO-BPFF.
+\subsubsection{Comparaison aux politiques de base}
 
-\textbf{Service Level Agreements}. Figure~\ref{figure:herofake-evaluation-full-penalty} shows that HRO-HRO performs the best in terms of QoS violations, with 35\% of tasks missing their deadlines. This is a huge improvement with regard to the Knative results, where tasks miss their deadlines more than 99\% of the time: the delay introduced by the reactive allocation of resources cannot be compensated in time using only CPUs.
+\textbf{Consolidation des tâches}. La figure~\ref{figure:herofake-evaluation-full-nodes} montre que notre combinaison d'autoscaler et d'ordonnanceur permet d'obtenir le plus grand nombre de nœuds inutilisés. Avec l'autoscaler de Knative, l'ordonnanceur BPFF assure la meilleure consolidation, mais cette politique nécessite toujours plus de trois fois les nœuds dont nous avons besoin avec notre politique.
 
-\textbf{Energy consumption}. Figure~\ref{figure:herofake-evaluation-full-energy} shows that our policy, with the HRO autoscaler and scheduler working in conjunction, consistently performs the best in terms of dynamic energy consumption. This is obviously because we allocate hardware accelerators; however, during our evaluation, the makespan for our scenario is similar under Knative and HRO policies (around 13.5 minutes). The BPFF scheduling policy also performs the worst in terms of execution time, as it maximizes the task queues in execution platforms, thus yielding the worst results in terms of energy consumption.
+\textbf{Accords de niveau de service}. La figure~\ref{figure:herofake-evaluation-full-penalty} montre que HRO-HRO est le plus performant en termes de violations de la QoS, avec 35\% de tâches qui ne respectent pas les délais. Il s'agit d'une amélioration considérable par rapport aux résultats de Knative, où les tâches ne respectent pas les délais dans plus de 99\% des cas : le retard introduit par l'allocation réactive des ressources ne peut pas être compensé à temps en utilisant uniquement des unités centrales.
 
-%This is obviously because we allocate hardware accelerators; however, under a BPFF scheduler, our autoscaler shows results barely better than Knative's autoscaler: seeking task consolidation on platforms and nodes seems to yield the worst energy efficiency.
+\textbf{Consommation d'énergie}. La figure~\ref{figure:herofake-evaluation-full-energy} montre que notre politique, avec l'autoscaler et l'ordonnanceur HRO fonctionnant conjointement, est toujours la plus performante en termes de consommation d'énergie dynamique. Cela s'explique évidemment par le fait que nous allouons des accélérateurs matériels ; cependant, au cours de notre évaluation, la durée d'exécution de notre scénario est similaire avec les politiques Knative et HRO (environ 13,5 minutes). La politique d'ordonnancement BPFF est également la moins performante en termes de temps d'exécution, car elle maximise les files d'attente des tâches dans les plateformes d'exécution, ce qui donne les pires résultats en termes de consommation d'énergie.
 
-\subsubsection{Impact of each component}
+\subsubsection{Impact des composants individuels}
 
-\textbf{Tasks consolidation}. Figure~\ref{figure:herofake-evaluation-mixed-nodes} shows that HRO-HRO performs the best at task consolidation, leaving just under 70\% of the available nodes unused, while Knative's scheduler under our autoscaling policy only achieves 40\% of unused nodes. This result is expected, as Knative's scheduler employs a Least Connected policy. We see mediocre consolidation results for KN-HRO, but for a different reason: this is because our scheduler tries to minimize QoS violations and spreads the task across all the allocated CPUs.
+\textbf{Consolidation des tâches}. La figure~\ref{figure:herofake-evaluation-mixed-nodes} montre que HRO-HRO est le plus performant en matière de consolidation des tâches, laissant un peu moins de 70\% des nœuds disponibles inutilisés, alors que l'ordonnanceur de Knative, dans le cadre de notre politique d'autoscaling, n'atteint que 40\% de nœuds inutilisés. Ce résultat est attendu, car l'ordonnanceur de Knative utilise une politique de moindre connexion. Les résultats de consolidation de KN-HRO sont médiocres, mais pour une raison différente : notre ordonnanceur tente de minimiser les violations de la qualité de service et répartit la tâche sur tous les processeurs alloués.
 
-\textbf{Service Level Agreements}. Figure~\ref{figure:herofake-evaluation-mixed-penalty} shows that our scheduler does not perform well in conjunction with Knative's autoscaler. This is because our scheduler tries to minimize penalties: when given only CPUs to work with, it will behave similarly to Knative's scheduler and spread tasks across theses CPUs to limit QoS violations. However, our scheduler under the Knative autoscaler still manages to keep QoS violations at around 50\% of tasks, showing that there is room for improvement even when deploying inference tasks on CPUs only. Note that during our evaluation, the Knative autoscaler gave the worst results regarding cold starts frequency (6.5 more under KN-HRO than under HRO-KN).
+\textbf{Accords de niveau de service}. La figure~\ref{figure:herofake-evaluation-mixed-penalty} montre que notre ordonnanceur ne fonctionne pas bien en conjonction avec l'autoscaler de Knative. En effet, notre ordonnanceur tente de minimiser les pénalités : lorsqu'il ne dispose que de CPU, il se comporte de la même manière que l'ordonnanceur de Knative et répartit les tâches sur ces CPU afin de limiter les violations de la qualité de service. Cependant, notre ordonnanceur sous l'autoscaler Knative parvient toujours à maintenir les violations de la qualité de service à environ 50\% des tâches, ce qui montre qu'il y a une marge d'amélioration même lorsque les tâches d'inférence sont déployées sur des CPU uniquement. Notez que lors de notre évaluation, l'autoscaler Knative a donné les pires résultats en ce qui concerne la fréquence des démarrages à froid (6,5 fois plus fréquents avec KN-HRO qu'avec HRO-KN).
 
-\textbf{Energy consumption}. Figure~\ref{figure:herofake-evaluation-mixed-energy} shows that energy consumption is always lower when using our autoscaler, which can allocate hardware accelerators. However, our scheduler used with Knative's autoscaler yields the worst results in terms of energy consumption. This is again the result of the scheduler trying to minimize penalties and spreading task across a maximum number of CPUs.
+\textbf{Consommation d'énergie}. La figure~\ref{figure:herofake-evaluation-mixed-energy} montre que la consommation d'énergie est toujours plus faible lorsque l'on utilise notre autoscaler, qui peut allouer des accélérateurs matériels. Cependant, notre planificateur utilisé avec l'autoscaler de Knative donne les pires résultats en termes de consommation d'énergie. Cela s'explique à nouveau par le fait que l'ordonnanceur tente de minimiser les pénalités et de répartir les tâches sur un nombre maximal de CPU.
 
-\section{State of the Art} \label{section:herofake-sota}
+\section{État de l'art}
+\label{section:herofake-sota}
 
-Previous work focused on autoscaling platforms for the deployment of short-lived tasks, comprised in applications exhibiting unpredictable load patterns. Table~\ref{table:herofake-sota} summarises how these contributions differ from our target platform.
+Les travaux antérieurs se sont concentrés sur les plates-formes de mise à l'échelle automatique pour le déploiement de tâches de courte durée, comprises dans des applications présentant des modèles de charge imprévisibles. Le tableau~\ref{table:herofake-sota} résume les différences entre ces contributions et notre plateforme cible.
 
-%Gujarati et al.~\cite{gujaratiSwayamDistributedAutoscaling2017} propose a distributed framework for allocating and scaling resources to support on-demand inference workloads, while meeting SLA on incoming requests and decreasing resource utilization. Ling et al.~\cite{lingPigeonDynamicEfficient2019} propose a function-level scheduler for Kubernetes that allows running short-lived functions using a pool of pre-warmed containers, mapping each FaaS service to suitable containers according to its hardware resources requirements. Zhang et al.~\cite{zhangMArkExploitingCloud} propose a hybrid autoscaling mechanism that opportunistically uses serverless instances to cover sudden spikes in load, while relying on a pool of reserved GPU-enabled AWS VMs for the majority of inference tasks, in order to achieve reduced operation costs and achieve SLO. Suresh et al.~\cite{sureshENSUREEfficientScheduling2020} propose a function-level scheduler that caterogizes tasks between interactive, short-lived, event-triggered tasks, and massively parallel, batch, back-end tasks, with the objective to decrease resource usage and provide acceptable latency guarantees. Mampage et al.~\cite{mampageDeadlineawareDynamicResource2021} propose a function placement and resource management policy that targets reduced resource consumption while meeting users' applications deadlines. Singhvi et al.~\cite{singhviAtollScalableLowLatency2021} propose parting with reactive sandbox allocation and instead proactively provisioning nodes so as to meet user-defined function deadlines. Yang et al.~\cite{yangINFlessNativeServerless2022} propose a serverless platform aimed at deploying and scaling inference tasks under user-defined SLOs, with low-latency, high-throughput constraints. Cho et al.~\cite{choSLADrivenMLInference} propose a serverless scheduler that takes into account heterogeneity in the infrastructure and in the users' requests to achieve SLAs (target latency, inference per second) and optimize for resource usage.
+Certaines de ces contributions ont tenté d'atteindre le SLA avec des ressources non réservées~\cite{gujaratiSwayamDistributedAutoscaling2017, zhangMArkExploitingCloud, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, handaoui2020releaser, handaoui2020salamander, yalles2022riscless}.
+Parmi ces contributions, certaines se concentrent sur l'utilisation de ressources matérielles hétérogènes supplémentaires pour accélérer l'exécution de la charge de travail~\cite{zhangMArkExploitingCloud, lingPigeonDynamicEfficient2019, yangINFlessNativeServerless2022}.
+Elles nécessitent souvent un surprovisionnement des ressources pour utiliser l'accélération matérielle, par exemple en s'appuyant sur des instances AWS réservées qui donnent accès aux GPU~\cite{zhangMArkExploitingCloud}, en utilisant un pool de conteneurs préchauffés~\cite{lingPigeonDynamicEfficient2019}, ou même en provisionnant de manière proactive les nœuds pour respecter les délais des fonctions définies par l'utilisateur~\cite{singhviAtollScalableLowLatency2021}. Ces solutions intéressantes peuvent toutefois s'avérer insuffisantes en termes d'utilisation des ressources et entraîneraient une consommation d'énergie supplémentaire dans un cloud privé.
 
-Some of these contributions attempted to achieve SLA with unreserved resources~\cite{gujaratiSwayamDistributedAutoscaling2017, zhangMArkExploitingCloud, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, handaoui2020releaser, handaoui2020salamander, yalles2022riscless}.
-Among these contributions, some focus on the use of additional heterogeneous hardware resources to accelerate workload execution~\cite{zhangMArkExploitingCloud, lingPigeonDynamicEfficient2019, yangINFlessNativeServerless2022}.
-They often require overprovisioning resources to make use of hardware acceleration, e.g. by relying on reserved AWS instances that provide access to GPUs~\cite{zhangMArkExploitingCloud}, using a pool of pre-warmed containers~\cite{lingPigeonDynamicEfficient2019}, or even proactively provisioning nodes to meet user-defined function deadlines~\cite{singhviAtollScalableLowLatency2021}. These interesting solutions however may fall short in terms of resource usage and would incur additional energy consumption in a private cloud.
+En outre, certains auteurs se concentrent sur des infrastructures homogènes \cite{gujaratiSwayamDistributedAutoscaling2017, sureshENSUREEfficientScheduling2020, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, yangINFlessNativeServerless2022}. Ces études pourraient difficilement s'adapter au contexte du cloud privé que nous visons, où les ressources sont généralement transitoires et hétérogènes. En outre, certaines de ces contributions proposent des modèles de tâches qui ne couvrent pas les accords de niveau de service définis par l'utilisateur et par demande~\cite{sureshENSUREEfficientScheduling2020, lingPigeonDynamicEfficient2019}. Enfin, certaines de ces contributions sont axées sur les performances plutôt que sur les coûts, ce qui est crucial dans notre contexte de cloud privé~\cite{gujaratiSwayamDistributedAutoscaling2017, lingPigeonDynamicEfficient2019, singhviAtollScalableLowLatency2021, choSLADrivenMLInference}.
 
-Furthermore, some authors focus on homogeneous infrastructures \cite{gujaratiSwayamDistributedAutoscaling2017, sureshENSUREEfficientScheduling2020, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, yangINFlessNativeServerless2022}. Those studies could hardly fit the private cloud setting we target, where resources are usually transient and heterogeneous. Also, some of these contributions propose task models that do not cover user-defined, per-request SLA~\cite{sureshENSUREEfficientScheduling2020, lingPigeonDynamicEfficient2019}. Finally, some of these contributions are performance-oriented rather than cost-oriented which is crucial in our cloud context~\cite{gujaratiSwayamDistributedAutoscaling2017, lingPigeonDynamicEfficient2019, singhviAtollScalableLowLatency2021, choSLADrivenMLInference}.
+Bien que l'alimentation soit l'un des éléments les plus importants du coût total de possession (TCO) dans un centre de données - dépassant parfois le coût d'achat du matériel~\cite{7279063} -- à notre connaissance, aucune de ces contributions ne couvre l'impact de l'allocation et du placement dynamiques sur la consommation d'énergie, ni ne considère la consommation d'énergie comme une mesure de la qualité de service. Il s'agit d'une limitation sérieuse, car l'optimisation de la consolidation des tâches ouvre la voie à des politiques d'étranglement et de mise hors tension qui peuvent avoir un impact majeur sur l'efficacité énergétique d'un centre de données~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}.
 
-In spite of power being one of the topmost part of the total cost of ownership (TCO) in a datacenter -- sometimes exceeding the cost of buying hardware~\cite{7279063} -- to the best of our knowledge, none of these contributions cover the impact of dynamic allocation and dynamic placement on energy consumption, nor do they consider energy consumption as a QoS metric. This is a serious limitation, as optimizing for task consolidation opens possibilities for throttling and powering-off policies that can have a major impact on a datacenter's energy efficiency~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}.
+\section{Conclusion et perspectives}
 
-\section{Conclusion and Future Work}
+Dans cet article, nous avons présenté HeROfake, notre cadre pour le déploiement de tâches de détection de deepfake interactives et de courte durée sur un cloud privé hétérogène serverless.
 
-In this paper, we introduced HeROfake, our framework for the deployment of short-lived, interactive deepfake detection tasks on a private, heterogeneous serverless cloud.
+Nous avons présenté les deux phases qui composent ce cadre : une phase hors-ligne au cours de laquelle nous caractérisons les performances des plateformes d'exécution et les exigences des tâches ; et une phase en ligne au cours de laquelle nous allouons dynamiquement les ressources et planifions les tâches à exécuter sur ces plateformes.
 
-We presented the two phases that make up this framework: an offline phase during which we characterize execution platform performances and task requirements; and an online phase during which we dynamically allocate resources and schedule tasks to run on those platforms.
+Les résultats expérimentaux montrent que si le temps total d'exécution des tâches dans HeROfake est similaire à celui de la version vanille de Knative, nous obtenons une réduction de plus de 60\% des pénalités de qualité de service ; les tâches sont consolidées sur moins de 40\% des nœuds de l'infrastructure, 77\% des plates-formes d'exécution restant inutilisées ; enfin, la consommation d'énergie dynamique est réduite de 35\% par rapport à Knative.
 
-Experimental results show that while total task execution time in HeROfake is similar to vanilla Knative, we achieve more than 60\% reduction in QoS penalties; tasks are consolidated on less than 40\% of the infrastructure's nodes, with 77\% execution platforms left unused; and dynamic energy consumption is reduced by 35\% as compared to Knative.
+L'inclusion du traitement vidéo dans le cadre est un défi intéressant, car il introduirait des dépendances entre les tâches. Les exécutions de fonctions ne seraient plus \textit{stateless}, ce qui entraînerait la nécessité de s'attaquer au problème du stockage des données intermédiaires dans une infrastructure serverless.
 
-The inclusion of video handling in the framework is an interesting challenge, as it would introduce dependencies between tasks. Function executions would not be \textit{stateless} anymore, resulting in the necessity to tackle the problem of intermediate data storage in a serverless infrastructure.%M since function state has to be persisted in disaggregated storage, applications can suffer from the shipping time of data to compute nodes \cite{mullerLambadaInteractiveData2020}.
-
-%This perspective can be linked to the introduction of heterogeneity in user requests. Input data size and locality could vary a lot between pictures and videos, and open possibilities of batching requests to study the impact on the performances of our platform.
-
-We also intend to extend the simulator with a parser so as to be able to use real datacenter traces as input scenarios, instead of using synthetic workloads only. %This could give us the opportunity to learn from these traces and apply machine learning algorithms in the workload characterization phase, allowing us to generalize our framework to arbitrary applications without generating \textit{a priori} metadata on tasks.
+Nous avons également l'intention d'étendre le simulateur avec un analyseur syntaxique afin d'être en mesure d'utiliser des traces de centres de données réels comme scénarios d'entrée, au lieu d'utiliser uniquement des charges de travail synthétiques.
