@@ -3,239 +3,177 @@
 \section{Introduction}
 \label{section:herosim-introduction}
 
-Serverless computing unlocks the potential for finely-tuned optimization of resource usage. In such a model, developers design their applications as a composition of stateless functions which execution is event-driven. %~\cite{SchleierSmith2021WhatSC}. 
-Customers are billed according to their actual resource usage, and providers are responsible for deploying intelligent resource management to optimize Quality of Service (QoS) metrics such as response time and energy consumption.%, and resource usage.
+Le modèle de service serverless permet une élasticité rapide et un service mesuré à la granularité la plus fine dans le cloud. Il libère le potentiel d'optimisation fine de l'utilisation des ressources. Dans un tel modèle, les développeurs conçoivent leurs applications comme une composition de fonctions sans état dont l'exécution est dirigée par des événements~\cite{SchleierSmith2021WhatSC}. 
+Les clients sont facturés en fonction de leur utilisation réelle des ressources, et les fournisseurs sont chargés de déployer une gestion intelligente des ressources afin d'optimiser les mesures de qualité de service (QoS) telles que le temps de réponse, la consommation d'énergie et l'utilisation des ressources.
 
-%Serverless enables rapid elasticity and a measured service at the finest granularity. 
+Le serverless s'accompagne d'un ensemble de défis qui doivent être relevés par les fournisseurs de services. Par exemple, la surcharge de latence causée par l'allocation dynamique du matériel pour les nouvelles instances de fonction, appelée délai de démarrage à froid, est un problème clé~\cite{Lannurien2023}. Un autre problème récurrent est l'architecture dite "data-shipping", dans laquelle des gigaoctets de données stockées à distance sont téléchargés vers des kilooctets de code sur les nœuds de calcul~\cite{yuFollowingDataNot}, ce qui entraîne une dégradation considérable des performances.
 
-%On the service provider's side, the double responsibility of dynamic resource allocation and task placement leaves the door open for optimization opportunities. 
+Pour surmonter de tels défis, il faut concevoir des politiques d'orchestration qui guident les décisions d'autoscaling et d'ordonnancement.
+L'orchestration est un processus dynamique : chaque décision crée un nouvel état pour le système, ce qui conduit à une explosion combinatoire. De plus, les plateformes serverless sont des logiciels génériques qui exposent de nombreux boutons que le fournisseur peut régler. Ces paramètres peuvent avoir un impact sur la latence des requêtes des utilisateurs, le débit de la plateforme, l'utilisation des ressources du centre de données et la consommation d'énergie. Comme il est coûteux d'expérimenter en production, nous soutenons que les outils de simulation sont essentiels pour les fournisseurs de cloud serverless privés qui cherchent à optimiser ces mesures de qualité de service en fonction de leurs propres objectifs.
 
+Ces politiques doivent être évaluées en fonction de leur pertinence dans différents cas d'utilisation. Différentes mesures peuvent être utiles pour cette évaluation, par exemple la durée de vie pour un scénario donné, le temps de réponse des fonctions, la consommation d'énergie dynamique et statique, etc.
 
-Serverless comes with a bag of challenges that need to be addressed by service providers. For example, the latency overhead caused by dynamically allocating hardware for new function instances, called a cold start delay, is a a key issue~\cite{Lannurien2023}. Another recurring problem is the data-shipping architecture, where gigabytes of data remotely stored are pulled toward kilobytes of code on the compute nodes%~\cite{yuFollowingDataNot}
-, leading to dramatic performance degradation.
+Il y a deux façons possibles d'évaluer si les politiques que nous concevons ont un impact positif sur ces mesures : la simulation (estimation) ou la mise en œuvre (mesure). Il y a un compromis entre le temps et la précision dans les deux approches ; choisir la simulation plutôt que la mise en œuvre permet une exploration rapide de l'espace du problème et l'itération sur les solutions possibles. En particulier, la modélisation à événements discrets nous permet d'explorer des solutions en représentant les différents composants de la plateforme avec des processus qui modélisent l'état du système et son évolution dans le temps.
 
-Overcoming such challenges requires devising orchestration policies that guide autoscaling and scheduling decisions.
-Orchestration is a dynamic process: each decision creates a new state for the system, leading to combinatorial explosion. Moreover, serverless platforms are generic software that expose many knobs for the provider to tweak. These settings can impact user request latency, platform throughput, datacenter resource usage, and energy consumption. As it is costly to experiment in production, we argue that simulation tools are instrumental for private serverless cloud providers looking to optimize these QoS metrics.% with regards to their own objectives.
+Les outils de simulation des politiques d'orchestration dans le cloud serverless privé doivent permettre de tracer les événements d'allocation des ressources et de placement des tâches à la \textbf{granularité la plus fine}, afin de comprendre l'impact des politiques sur les métriques de performance. Pour représenter des cas d'utilisation réalistes, le logiciel doit offrir la possibilité de modéliser des applications qui présentent des dépendances \textbf{données et temporelles entre les exécutions de tâches}. En outre, le simulateur doit prendre en charge l'hétérogénéité globale dans le cloud : d'une part, les centres de données sont constitués de divers matériels présentant différents niveaux de coût et de performance ; d'autre part, il existe un large éventail de clients ayant des exigences différentes en matière de qualité de service. Enfin, le simulateur devrait pouvoir \textbf{rejouer les traces d'exécution} pour différentes politiques d'orchestration et \textbf{comparer les résultats} en termes de métriques de qualité de service pour chaque politique évaluée.
 
-%\ob{As with all solutions for exploring a huge space of solutions, there is no single solution, no single strategy that can be applied without taking into account which functions need to be executed, on which data, in which execution context (cluster topology, function being executed, ...). }
+Des travaux antérieurs ont proposé différents outils de simulation intéressants pour le nuage, voir le tableau~\ref{table:herosim-sota}. Certains d'entre eux ne ciblent pas le paradigme serverless~\cite{calheiros_cloudsim_2011, wickremasinghe_cloudanalyst_2010, cai_elasticsim_2017, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012, mahmudIFogSim2ExtendedIFogSim2021}. Parmi les simulateurs serverless, certains se concentrent sur les offres de cloud public~\cite{nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021}, principalement pour permettre de concevoir des stratégies hybrides où une partie des charges de travail est déchargée sur un cloud public moins cher. Pour les nuages privés, certains simulateurs ne prennent pas en compte la consommation d'énergie~\cite{jeonCloudSimExtensionSimulatingDistributed2019, cai_elasticsim_2017, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012} ; d'autres ne prennent pas en compte l'hétérogénéité du matériel~\cite{jeonCloudSimExtensionSimulatingDistributed2019, nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021}. La plupart des simulateurs ne permettent pas de modéliser des applications composées de fonctions multiples avec des dépendances de données~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, jeonCloudSimExtensionSimulatingDistributed2019, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012, mahmudIFogSim2ExtendedIFogSim2021}. Dans certaines études, la qualité de service ne peut pas être appliquée à la granularité d'une requête utilisateur~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, cai_elasticsim_2017, nunez_icancloud_2012, mahmudIFogSim2ExtendedIFogSim2021, mastenbroekOpenDCConvenientModeling2021, mahmoudiSimFaaSPerformanceSimulator2021}.
 
-%These policies must be evaluated with regard to their relevance in various use cases. Different metrics can be of use for this evaluation, \textit{e.g.} makespan for a given scenario, function response time, dynamic and static energy consumption, etc.
-
-%There are two possible ways to assess if the policies we devise have a positive impact on these metrics: simulation (estimate) or implementation (measure). There is a tradeoff between time and precision in the two approaches; choosing simulation over implementation allows fast exploration of the problem space and iteration over possible solutions. % at the expense of...
-
-% Discrete-event modeling allows us to explore solutions by representing the different components of the platform with processes that model the state of the system and its evolution over time.
-
-
-% serverless : on veut tracer les événements d'allocation/déallocation + les événements de placement de tâches, à la granularité la plus fine pour comprendre chacune des décisions
-% applications : on veut modéliser des dépendances temporelles/de données entre les invocations de fonctions
-% cloud privé : on veut voir précisément quelles ressources sont mobilisées
-% QoS : on veut pouvoir différencier les besoins utilisateur à la granularité d'une requête
-% qualité des politiques : on veut pouvoir comparer différentes politiques d'orchestration au regard de métriques de QoS
-
-%\vl{premier jet ci-dessous :}
-
-Simulation tools for orchestration policies in private serverless cloud need to allow tracing resource allocation events and task placement events at the \textbf{finest granularity}, in order to understand the impact of policies on performance metrics. To represent realistic use cases, the software must offer the possibility of modeling applications that exhibit \textbf{data and temporal dependencies between task executions}. Furthermore, the simulator needs to support the \textbf{heterogeneity} of cloud computing: on the one hand, datacenters are made of various hardware that exhibit different levels of cost and performance; on the other hand, there is a wide range of customers with \textbf{different QoS requirements}. Finally, the simulator should be able to \textbf{replay execution traces} for different orchestration policies and \textbf{compare the outcomes} in terms of QoS metrics under each evaluated policy.
-
-Previous work proposed different interesting simulation tools for the cloud, see Table~\ref{table:herosim-sota}. Some of these do not target the serverless paradigm~\cite{calheiros_cloudsim_2011, wickremasinghe_cloudanalyst_2010, cai_elasticsim_2017, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012, mahmudIFogSim2ExtendedIFogSim2021}. Among serverless simulators, some focus on public cloud offerings~\cite{nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021}, mainly to allow devising hybrid strategies where part of the workloads are offloaded to cheaper public cloud. For private clouds, some simulators do not consider energy consumption~\cite{jeonCloudSimExtensionSimulatingDistributed2019, cai_elasticsim_2017, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012}; others do not take hardware heterogeneity into account~\cite{jeonCloudSimExtensionSimulatingDistributed2019, nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021}. Most simulators do not allow modeling applications composed of multiple functions with data dependencies~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, jeonCloudSimExtensionSimulatingDistributed2019, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012, mahmudIFogSim2ExtendedIFogSim2021}. In certain studies, QoS cannot be enforced at the granularity of a single-user request~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, cai_elasticsim_2017, nunez_icancloud_2012, mahmudIFogSim2ExtendedIFogSim2021, mastenbroekOpenDCConvenientModeling2021, mahmoudiSimFaaSPerformanceSimulator2021}. % Finally, few simulators target emerging serverless paradigms that represent the state of available platforms~\cite{jeonCloudSimExtensionSimulatingDistributed2019}. 
-% To address these limitations, we propose \textbf{HeROsim}~\cite{herosim}, a simulator~\footnote{We used the SimPy~\cite{simpy} library (MIT licensed) for the discrete-event simulation engine.} that models a generic serverless platform. The software design given in Figure~\ref{figure:herosim-software-architecture} follows the reference architecture of state-of-the-art orchestrators such as Google Knative~\cite{knative} or Apache OpenWhisk~\cite{openwhisk}. Such orchestrators consist of two main modules:
-
-To address these limitations, we propose \textbf{HeROsim}~\footnote{\href{https://github.com/b-com/HeROsim}{https://github.com/b-com/HeROsim}}, a free and open source \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration \textbf{sim}ulator with the following features:
-
-%\ob{annonce ici la contribution du papier en une phrase ou deux.
-%C'est quoi la contribution visé, June présentation de l'architecture ? Si oui, comment tu évalues sa qualité... }
-
-%\vl{premier jet ci-dessous :}
+Pour remédier à ces limitations, nous proposons \textbf{HeROsim}~\footnote{\href{https://github.com/b-com/HeROsim}{https://github.com/b-com/HeROsim}}, un \textbf{He}stéréogène \textbf{R}ressources \textbf{O}rchestration \textbf{sim}ulateur libre et à source ouverte présentant les caractéristiques suivantes :
 
 \begin{itemize}
-    \item Fine-grained description of serverless applications on heterogeneous hardware.%: performance, data flow, memory requirements, energy consumption.
-    \item Dynamic allocation of hardware resources and placement of QoS-enabled user requests.%: HeROsim offers entry points for users to implement their own policies for resource selection.
-    \item Evaluation of orchestration policies according to QoS metrics such as latency and energy. %: HeROsim allows comparing the results of different strategies with regards to some popular QoS metrics.
+    \item Description fine des applications serverless sur du matériel hétérogène : performances, flux de données, besoins en mémoire, consommation d'énergie ;
+    \item Allocation dynamique des ressources matérielles et placement des requêtes utilisateur compatibles avec la qualité de service : HeROsim offre des points d'entrée aux utilisateurs pour mettre en œuvre leurs propres politiques de sélection des ressources ;
+    \item Évaluation des politiques d'orchestration en fonction de paramètres de qualité de service tels que la latence et l'énergie : HeROsim permet de comparer les résultats de différentes stratégies par rapport à certains paramètres de qualité de service courants.
 \end{itemize}
 
-%The software design follows the reference architecture of state-of-the-art orchestrators such as Google Knative~\footnote{\href{https://knative.dev}{https://knative.dev}} or Apache OpenWhisk~\footnote{\href{https://openwhisk.apache.org}{https://openwhisk.apache.org}}. Such orchestrators consist of two main modules:
+La conception du logiciel suit l'architecture de référence des orchestrateurs de l'état de l'art tels que Google Knative~\footnote{\href{https://knative.dev}{https://knative.dev}} ou Apache OpenWhisk~\footnote{\href{https://openwhisk.apache.org}{https://openwhisk.apache.org}}. Ces orchestrateurs se composent de deux modules principaux :
 
-% \begin{itemize}
-%     \item The \textbf{autoscaler} determines how to automatically and reactively scale hardware resources in a cloud in adequacy with the applications' load.
-%     \item The \textbf{scheduler} determines on which replica to queue user requests for a given function according to QoS requirements.
-% \end{itemize}
+\begin{itemize}
+    \item Le \textbf{autoscaler} détermine comment mettre à l'échelle automatiquement et de manière réactive les ressources matérielles dans un nuage en adéquation avec la charge des applications.
+    \item Le \textbf{scheduler} détermine sur quelle réplique mettre en file d'attente les requêtes utilisateur pour une fonction donnée en fonction des exigences de qualité de service.
+\end{itemize}
 
-% \vl{déplacer cette dernière phrase dans la conclusion ? mais comment "conclure l'introduction" ?}
-
-% HeROsim allows researchers to model heterogeneous cloud infrastructures, describe workloads at a fine granularity, implement diverse resource management and task scheduling policies, and evaluate their efficiency with regards to metrics such as resource usage, energy consumption, per-request QoS violations or tail latency. HeROsim can generate charts that help visualizing these results during the implementation phase, and can be used in publications.
-
-%The article is organized as follows: the first section gives an overview of the workings of a serverless platform; the next section details the design of HeROsim; the "Case study" section shows how HeROsim can be leveraged through two use cases from our previous publications; then we discuss state-of-the-art work; and finally, we conclude the paper.
-% Section~\ref{section:herosim-overview} gives an overview of the workings of a serverless platform; Section~\ref{section:herosim-herosim} details the design of HeROsim and describes the flow of a simulation run using our tool; Section~\ref{section:herosim-case-study} shows how HeROsim can be used through two use cases from our previous publications; Section~\ref{section:herosim-sota} discusses state-of-the-art work; finally, Section~\ref{section:herosim-conclusion} concludes the paper by giving some perspectives for future work.
-
-%\vadjust{\pagebreak}
-
-%\vspace*{-10pt}
+L'article est organisé comme suit : la première section donne un aperçu du fonctionnement d'une plateforme serverless ; la section suivante détaille la conception de HeROsim ; la section " Étude de cas " montre comment HeROsim peut être exploité à travers deux cas d'utilisation tirés de nos publications précédentes ; nous discutons ensuite des travaux de l'état de l'art ; et enfin, nous concluons l'article.
 
 \section{Présentation générale de la plateforme simulée}
 \label{section:herosim-overview}
 
-% \vl{premier jet de figure générale... à revoir : passage de la plateforme à l'infrastructure. reprendre la figure HeROcache ?}
-
 \begin{figure*}[t]
     \centering
     \includegraphics[width=0.9\textwidth]{7_Chapitre5/figures/platform.png}
-    \caption{High-level view of a serverless platform, as modeled in HeROsim. The autoscaler allocates hardware resources for function replicas; while the scheduler places user requests in queue on those replicas.}
+    \caption{Vue de haut niveau d'une plateforme serverless, telle que modélisée dans HeROsim. L'autoscaler alloue des ressources matérielles pour les répliques de fonctions ; tandis que l'ordonnanceur place les requêtes utilisateur en file d'attente sur ces répliques}.
 \label{figure:herosim-platform}
 \end{figure*}
 
-% Cloud infrastructure
+Dans le cloud, les clients réservent généralement des ressources. Il s'agit généralement d'un sous-ensemble virtualisé de ressources matérielles hétérogènes disponibles sur des serveurs appelés nœuds. Une fois la réservation effectuée, les fournisseurs de services offrent un accès à distance au client, qui est responsable du déploiement de ses applications et facturé en fonction de la quantité de ressources qu'il a réservées~\cite{Lannurien2023}.
 
+Dans le paradigme serverless, les clients commencent par pousser leur code dans un référentiel du côté du fournisseur, voir la figure~\ref{figure:herosim-platform}. Le fournisseur alloue des ressources qui sont automatiquement mises à l'échelle en fonction de la charge. Pour que ce mécanisme fonctionne, les applications sont divisées en petites unités d'exécution sans état appelées \textbf{fonctions}. Ces fonctions sont sans état : si elles produisent des données de sortie, celles-ci doivent être conservées dans un stockage persistant~\cite{yuFollowingDataNot}.
 
-%In cloud computing, customers typically book resources. These are usually a virtualized subset of heterogeneous hardware resources available on servers called nodes. Once the reservation has been made, service providers deliver remote access to the customer, who is responsible for the deployment of their applications and billed according to the amount of resources they reserved~\cite{Lannurien2023}.
+Dans les modèles de service traditionnels, les ressources sont mises à l'échelle sur deux dimensions : horizontalement (nouvelles instances d'application créées sur d'autres nœuds) et verticalement (ressources supplémentaires allouées aux instances existantes). Dans les plateformes serverless, les ressources sont mises à l'échelle horizontalement : les variations de charge des applications sont absorbées par l'ajout de nouvelles instances des fonctions, appelées \textbf{replicas}, et leur suppression lorsqu'elles ne sont plus nécessaires. Une réplique peut être créée pour chaque requête utilisateur ou réutilisée pour plusieurs requêtes d'utilisateurs. Nous pouvons considérer les répliques de fonctions comme des files d'attente de requêtes ayant des capacités différentes.
 
-% Functions, applications
-In the serverless paradigm, customers start by pushing their code to a repository on the provider's side, see Figure~\ref{figure:herosim-platform}. %The provider allocates resources that are automatically scaled according to the load. 
-For this mechanism to work, applications are divided into small steteless execution units called \textbf{functions}. %These functions are stateless~\cite{yuFollowingDataNot}. %: Should they produce any output data, these must be kept in persistent storage~\cite{yuFollowingDataNot}.
+Ces répliques sont créées par l'\textbf{autoscaler}. Pour gérer le nombre de répliques déployées pour chaque fonction, il existe trois stratégies principales : basée sur les requêtes, basée sur la concurrence et basée sur les métriques~\cite{mahmoudiSimFaaSPerformanceSimulator2021}. Dans le cadre de l'autoscaling basé sur les requêtes, les requêtes arrivant dans le système sont traitées par des répliques inactives. Si aucune réplique inactive n'est disponible, une nouvelle instance est créée. Dans l'autoscaling basé sur la concurrence, chaque réplique peut mettre en file d'attente plusieurs requêtes d'utilisateurs et les traiter séquentiellement en fonction d'un seuil de concurrence prédéfini~\cite{herofake}. Dans l'autoscaling basé sur les métriques, le nombre de répliques déployées dépend de divers objectifs, tels que le taux de requêtes par seconde (RPS) à atteindre. Pour ce faire, il faut surveiller les performances du système à l'usage de l'autoscaler.
 
-% Space-sharing, time-sharing -- different models
-%In traditional service models, resources are scaled across two dimensions: horizontally (new application instances created on further nodes) and vertically (additional resources allocated to existing instances). 
-In serverless platforms, resources are scaled horizontally: variations in load on applications are absorbed by adding new instances of the functions, called \textbf{replicas}, and removing them when no longer needed. A replica can be created for each user request or reused for multiple user requests. We can consider function replicas as request queues with different capacities.
+Les répliques peuvent se trouver dans trois états différents : initialisation, exécution et inactivité~\cite{SchleierSmith2021WhatSC}. Lorsqu'une réplique de fonction vient d'être créée, elle est en état d'initialisation : la plateforme instancie son environnement d'exécution, extrait son code d'un registre distant et le met éventuellement en cache sur le nœud de déploiement, puis commence à exécuter la fonction. Lorsque la réplique traite les requêtes utilisateur, elle est en état d'exécution. Dans le cas contraire, la réplique est inactive et peut être supprimée. Lorsque les répliques sont supprimées, les ressources matérielles sont libérées. Toutefois, la création d'une nouvelle réplique pour traiter les requêtes utilisateur entraîne un surcoût appelé \textbf{démarrage à froid}. Les orchestrateurs adoptent diverses politiques pour atténuer ce problème, allant de l'application d'une période de maintien en vie sur les répliques de fonctions pour éviter de les détruire trop tôt, à l'allocation proactive de répliques.
 
-% Autoscaler types (scale to zero, horizontal/vertical...)
-These replicas are created by the \textbf{autoscaler}. To manage the number of replicas deployed for each function, there are three main strategies: request-based, concurrency-based, and metrics-based~\cite{mahmoudiSimFaaSPerformanceSimulator2021}. In request-based autoscaling, requests coming in the system are handled by idle replicas. If no idle replica is available, a new instance is created. In concurrency-based autoscaling, each replica can queue multiple user requests and handle them sequentially according to a predefined concurrency threshold~\cite{herofake}. In metrics-based autoscaling, the number of deployed replicas depends on various objectives, such as the request rate per second (RPS) to meet. %This requires monitoring the performance of the system for use by the autoscaler.
-
-% Replica (function instance) state (initializing, running, idle)
-Replicas can be in three different states: initializing, running, and idle.%~\cite{SchleierSmith2021WhatSC}. 
-When a function replica has just been created, it is in initializing state: the platform instantiates its execution environment, pulls its code from a remote registry and optionally caches it on the deployment node, and starts executing the function. When the replica handles user requests, it is in running state. Otherwise, the replica is idle, and can be removed.
-% Cold start problem, warm start, data-shipping architectures
-When replicas are removed, hardware resources are freed. However, when a new replica is created to handle user requests, this incurs an overhead called a \textbf{cold start}. Orchestrators adopt various policies to mitigate this issue.% ranging from enforcing a keep-alive period on function replicas to avoid destroying them too early, to proactively allocating replicas.
-
-% Scheduler policies (bin-packing, load balancing...)
-Finally, user requests are mapped to the available function replicas by the \textbf{scheduler} that implements different strategies: for example AWS Lambda\footnote{\href{https://aws.amazon.com/en/lambda/}{https://aws.amazon.com/en/lambda/}} uses a bin-packing algorithm, while an open source platform such as Knative implements a load balancing policy~\cite{Lannurien2023}. %These strategies have different outcomes with regard to resource usage and QoS, but it can be difficult to predict to what extent they will impact workloads before deployment.
+Enfin, les requêtes utilisateur sont attribuées aux répliques de fonctions disponibles par l'\textbf{ordonnanceur} qui met en œuvre différentes stratégies : par exemple AWS Lambda\footnote{\href{https://aws.amazon.com/en/lambda/}{https://aws.amazon.com/en/lambda/}} utilise un algorithme de bin-packing, tandis qu'une plateforme open source telle que Knative met en œuvre une politique d'équilibrage de la charge~\cite{Lannurien2023}. Ces stratégies ont des résultats différents en ce qui concerne l'utilisation des ressources et la qualité de service, mais il peut être difficile de prédire dans quelle mesure elles auront un impact sur les charges de travail avant le déploiement.
 
 \section{Choix de conception}
 \label{section:herosim-herosim}
 
-%This section introduces the design choices and hypotheses made for the development of HeROsim.%, in order to help users get started implementing their own policy in simulation.
+Cette section présente les choix de conception et les hypothèses formulées pour le développement de HeROsim.
 
-% \begin{figure}[t]
-%     \centering
-%     \includegraphics[width=\columnwidth]{7_Chapitre5/figures/software-architecture.png}
-%     \caption{FIXME: High-level view of the simulator's architecture \jb{illisible}}
-% \label{figure:herosim-software-architecture}
-% \end{figure}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{7_Chapitre5/figures/software-architecture.png}
+    \caption{Vue de haut niveau de l'architecture du simulateur.}
+\label{figure:herosim-software-architecture}
+\end{figure}
 
-HeROsim uses the SimPy~\footnote{\href{https://simpy.readthedocs.io}{https://simpy.readthedocs.io}} library as the discrete-event simulation engine. It ships three base classes -- \texttt{Orchestrator}, \texttt{Autoscaler} and \texttt{Scheduler} -- that should be subclassed by users willing to implement their own  algorithms. As the bulk of the platform behavior is inherited from the base classes, implementation overhead for a new policy is minimal: the simplest couple of autoscaler and scheduler (Random Placement policy) are implemented in less than 20 LOCs.
+HeROsim utilise la bibliothèque SimPy~\footnote{\href{https://simpy.readthedocs.io}{https://simpy.readthedocs.io}} comme moteur de simulation à événements discrets. Il fournit trois classes de base - \texttt{Orchestrator}, \texttt{Autoscaler} et \texttt{Scheduler} - qui devraient être sous-classées par les utilisateurs désireux d'implémenter leurs propres algorithmes. Comme l'essentiel du comportement de la plate-forme est hérité des classes de base, le coût de mise en œuvre d'une nouvelle politique est minime : le couple le plus simple d'autoscaler et d'ordonnanceur (politique de placement aléatoire) est mis en œuvre en moins de 20 lignes de code.
 
 \subsection{Données d'entrée}
 
-HeROsim exposes a declarative interface for users to define their cloud environment, workloads and QoS constraints. The simulator replays an allocation and placement scenario under different orchestration policies. A simulator run requires the following JSON inputs to define such a scenario:
+HeROsim expose une interface déclarative permettant aux utilisateurs de définir leur environnement cloud, leurs charges de travail et leurs contraintes de qualité de service. Le simulateur reproduit un scénario d'allocation et de placement selon différentes politiques d'orchestration. Une exécution du simulateur nécessite les entrées JSON suivantes pour définir un tel scénario :
 
 \begin{enumerate}
-    \item A \textbf{workload description}; details on the \textbf{characteristics of the functions}  invoked during the scenario, \textit{i.e.} their execution time and cold start time, memory requirements, energy consumption, image size, input and output data size These metadata could be defined by \textbf{measuring} and \textbf{analyzing} the applications' behavior on a testbed configuration. % (see Figure~\ref{figure:herosim-characterization}).
-    \item An \textbf{infrastructure description}; the listing of the different \textbf{nodes available}, their different hardware execution platforms, storage devices, network bandwidth. Execution platforms are defined in terms of idle energy consumption and retail price; storage devices are characterized by their capacity, bandwidth, and latency. These data are specific to a target platform and could be \textbf{measured} or obtained from manufacturers.
-    \item An \textbf{execution trace}; the arrival times for all \textbf{user requests} to the applications, associated with their desired QoS level, in chronological order. These data can be extracted from real-world \textbf{observations} of the applications in production, or statistically estimated. % (see Figure~\ref{figure:herosim-characterization}), or statistically estimated. 
+    \item Une \textbf{description des applications} comportant les mesures des des \textbf{caractéristiques des fonctions} invoquées au cours du scénario, \textit{i.e.} leurs temps d'exécution et de démarrage à froid, leurs besoins mémoire, leur consommation d'énergie, la taille de l'image des fonctions, la taille des entrées/sorties lors des phases de communication. Ces métadonnées peuvent être définies en \textbf{mesurant} et \textbf{analysant} le comportement des applications sur une configuration de banc d'essai (voir figure~\ref{figure:herosim-characterization}) ;
+    \item Une \textbf{description de l'infrastructure} listant les différents \textbf{nœuds disponibles} et les plateformes d'exécution qu'ils comportent, leurs supports de stockage et la bande passante disponible sur le réseau. Les plateformes d'exécution sont définies en termes de consommation d'énergie au repos et de prix de détail ; les dispositifs de stockage sont caractérisés par leur capacité, leur bande passante et leur latence. Ces données sont spécifiques à une plateforme cible et peuvent être \textbf{mesurées} ou obtenues auprès des fabricants ;
+    \item Une \textbf{trace d'exécution} faisant état des temps d'arrivée pour toutes les \textbf{requêtes utilisateur} vers les applications déployées, associées au niveau de qualité de service demandé par l'utilisateur, dans l'ordre chronologique. Ces données peuvent être extraites par \textbf{observations} réelles des applications en production (voir figure~\ref{figure:herosim-characterization}), ou estimées statistiquement.
 \end{enumerate}
 
-Data from our previous studies~\cite{herofake, herocache} are available in the repository for reference. While (1) and (2) can be hand-written according to the use-case requirements, HeROsim provides a synthetic generator to create various traces for (3) using Poisson processes, with variable duration and user request rate, as commonly done in the literature~\cite{herocache}. 
+Les données de nos études précédentes~\cite{herofake, herocache} sont disponibles dans le référentiel pour référence. Alors que (1) et (2) peuvent être rédigés à la main en fonction des exigences du cas d'utilisation, HeROsim fournit un générateur synthétique pour créer diverses traces pour (3) en utilisant des processus de Poisson, avec une durée variable et un taux requêtes par seconde, comme cela est couramment fait dans la littérature~\cite{herocache}. 
 
 \subsection{Flot d'une simulation}
 
-The user may choose the desired orchestration policies and execute the main program. The simulator will:
+L'utilisateur peut choisir les politiques d'orchestration souhaitées et exécuter le programme principal. Le simulateur :
 
 \begin{itemize}
-    \item Initialize the infrastructure as described: the scenario starts with all the nodes idle, waiting for new requests.
-    \item Initialize the orchestrator with chosen autoscaler and scheduler.
-    \item Follow the arrival times of events from the execution trace, and pass the user requests to the orchestrator.
-    \item Let the scheduler try to place these requests on function replicas.
-    \item Let the autoscaler allocate and deallocate hardware resources that host these replicas to handle user requests.
+    \item Initialise l'infrastructure comme décrit : le scénario commence avec tous les nœuds inactifs, en attente de nouvelles requêtes ;
+    \item Initialise l'orchestrateur avec l'autoscaler et l'ordonnanceur choisis ;
+    \item Suit les temps d'arrivée des événements à partir de la trace d'exécution et transmet les requêtes utilisateur à l'orchestrateur ;
+    \item Laisse l'ordonnanceur essayer de placer ces requêtes sur des répliques de fonctions ;
+    \item Laisse l'autoscaler allouer et désallouer les ressources matérielles qui hébergent ces répliques pour traiter les requêtes utilisateur.
 \end{itemize}
 
-% The simulation advances on \textbf{task executions}, \textit{i.e.} when functions are scheduled \jb{bizarre cette phrase}\vl{et comme ça ?}.
+La simulation progresse dans le traitement des requêtes utilisateur. Le simulateur connaît le temps de réponse des fonctions sur la base des métadonnées d'entrée mesurées au préalable. Ces métadonnées concernent le matériel et les charges de travail spécifiques que l'utilisateur souhaite ordonnancer. Elles peuvent être obtenues de différentes manières ; la figure~\ref{figure:herosim-characterization} donne un aperçu de la méthodologie que nous avons utilisée pour caractériser les différentes charges de travail et plates-formes d'exécution tout au long de nos expériences ; voir~\cite{herofake, herocache} pour plus de détails.
 
-The simulation advances on handling user requests. The simulator knows the functions' response time based on the input metadata. % metadata measured beforehand. These metadata concern the specific hardware and workloads the user is interested in scheduling. They can be obtained in many ways; Figure~\ref{figure:herosim-characterization} shows an overview of the methodology we used to characterize various workloads and execution platforms throughout our experiments; see~\cite{herofake, herocache} for more details.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{7_Chapitre5/figures/characterization.png}
+    \caption{Une vue d'ensemble de notre méthodologie de caractérisation.}
+\label{figure:herosim-characterization}
+\end{figure}
 
-% \begin{figure}[t]
-%     \centering
-%     \includegraphics[width=\columnwidth]{7_Chapitre5/figures/characterization.png}
-%     \caption{An overview of our characterization methodology.}
-% \label{figure:herosim-characterization}
-% \end{figure}
+Pendant la simulation, les journaux sont écrits sur le disque. Lorsque toutes les requêtes utilisateur ont été traitées, la simulation s'arrête et renvoie les résultats et les graphiques résumant la simulation, respectivement dans les répertoires \texttt{result} et \texttt{chart}.
 
-%During the simulation, logs are written to the disk. When all the user requests have been processed, the simulation stops and returns results and charts summarizing the simulation run. \vl{c'est expliqué dans User Interface, on peut le retirer ici} %, respectively in the \texttt{result} and \texttt{chart} directories.
-
-
-
-
-
-%The simulator is single-threaded, meaning that each policy will be evaluated sequentially. However, multiple instances of HeROsim can be run in parallel with different configurations across multiple CPU cores, or distributed across multiple nodes. With every HeROsim instance running a different orchestration policy, and all instances using a common output directory, this can accelerate the total makespan of the simulation scenario when evaluating numerous orchestration policies. When all the simulator runs are finished, results can be consolidated in a single charts output. \jb{je pense que ce paragraphe peut sauter si manque de place, rien de très interessant}
+Le simulateur est monotâche, ce qui signifie que chaque politique sera évaluée de manière séquentielle. Cependant, plusieurs instances de HeROsim peuvent être exécutées en parallèle avec différentes configurations sur plusieurs cœurs de CPU, ou distribuées sur plusieurs nœuds. Chaque instance de HeROsim exécutant une politique d'orchestration différente et toutes les instances utilisant un répertoire de sortie commun, cela peut accélérer la durée totale du scénario de simulation lors de l'évaluation de nombreuses politiques d'orchestration. Lorsque toutes les exécutions du simulateur sont terminées, les résultats peuvent être consolidés dans un seul tableau de sortie.
 
 \subsection{Orchestrateur}
 
-The base \textbf{\texttt{Orchestrator}} class provides abstract initialization methods that are to be overridden to manage different structures of system state. For example, a Round Robin scheduler would need to know how many times each function replica has been selected for task placement, while a Least Connected scheduler will need to know the average concurrency in each replica to balance the load. This class is the entry point for users to define their own data structures that will best represent the system state to feed the \texttt{Autoscaler} and \texttt{Scheduler} to manage.
+La classe de base \textbf{\texttt{Orchestrator}} fournit des méthodes d'initialisation abstraites qui doivent être surchargées pour gérer différentes structures de l'état du système. Par exemple, un ordonnanceur Round Robin devra savoir combien de fois chaque réplique de fonction a été sélectionnée pour le placement des tâches, tandis qu'un ordonnanceur Least Connected devra connaître la concurrence moyenne dans chaque réplique pour équilibrer la charge. Cette classe est le point d'entrée permettant aux utilisateurs de définir leurs propres structures de données qui représenteront au mieux l'état du système à gérer par l'autoscaler et l'ordonnanceur.
 
-Users can implement the system state management process they need to support their orchestration policies. The base orchestrator is provided with a simple system that can serve as-is, or be extended. %as an example for more advanced techniques. 
-In our implementation, a monitoring process is called periodically to keep track of the average concurrency in each function replica. This is useful for threshold-based policies.
+Les utilisateurs peuvent mettre en œuvre le processus de gestion de l'état du système dont ils ont besoin pour soutenir leurs politiques d'orchestration. L'orchestrateur de base est doté d'un système simple qui peut fonctionner tel quel ou être étendu. Dans notre implémentation, un processus de surveillance est appelé périodiquement pour garder une trace de la concurrence moyenne dans chaque réplique de fonction. Ceci est utile pour les politiques basées sur des seuils.
 
-The orchestrator entrypoint method is called each time a user request hits the platform. It takes the system state and the user request as input. It can be overridden in each orchestration policy implementation to enable fine-grained autoscaling and scheduling as needed.
+La méthode du point d'entrée de l'orchestrateur est appelée chaque fois qu'une requête utilisateur arrive sur la plateforme. Elle prend en entrée l'état du système et la requête utilisateur. Elle peut être surchargée dans chaque implémentation de politique d'orchestration pour permettre une mise à l'échelle automatique et une ordonnanceur à grain fin selon les besoins.
 
-Finally, this class is responsible for instantiating the selected implementations of \texttt{Autoscaler} and \texttt{Scheduler}. Any combination of these two modules can work together.
+Enfin, cette classe est responsable de l'instanciation des implémentations sélectionnées pour \texttt{Autoscaler} et \texttt{Scheduler}. Toute combinaison de ces deux modules peut être instanciée.
 
-%\jb{pour chaque module plus bas, il manque une information claire indiquant quelles stratégies sont impléménentées par ce module. Peut être rajouter une phrase à la fin de chaque module pour dire voila les stratégies implémentées.}\vl{done}
 \subsection{Allocateur}
 
-The base \textbf{\texttt{Autoscaler}} class provides the common behavior of the autoscaling platform, including the creation and removal of function replicas. Several abstract methods have to be overridden to implement a new policy: resource selection for replica creation, replica initialization process, replica selection for removal, etc. These methods operate at the granularity of a single function, taking the system state and the list of available hardware resources as input. %Users are free to implement whichever algorithms they wish to evaluate for resource management.
+La classe de base \textbf{\texttt{Autoscaler}} fournit le comportement commun de la plateforme d'autoscaling, y compris la création et la suppression des répliques de fonctions. Plusieurs méthodes abstraites doivent être remplacées pour mettre en œuvre une nouvelle politique : sélection des ressources pour la création de répliques, processus d'initialisation des répliques, sélection des répliques pour la suppression, etc. Ces méthodes opèrent à la granularité d'une seule fonction, en prenant l'état du système et la liste des ressources matérielles disponibles comme données d'entrée. Les utilisateurs sont libres de mettre en œuvre les algorithmes qu'ils souhaitent évaluer pour la gestion des ressources.
 
-HeROsim's autoscaler was primarily designed for horizontal scaling. Function replicas are created by allocating one execution platform and the required amount of peak memory on a node. An execution platform cannot host more than one function replica at a time. To accommodate higher load on an application without QoS degradation, new function replicas need to be allocated by the autoscaler, provided that enough hardware resources are available. Newly allocated replicas will go through an initialization phase during which function images have to be retrieved through the network. The autoscaler can manage an image cache in node memory and on node-local storage to accelerate cold starts.
+L'autoscaler de HeROsim a été principalement conçu pour une mise à l'échelle horizontale. Les répliques de fonctions sont créées en allouant une plateforme d'exécution et la quantité requise de mémoire de crête sur un nœud. Une plateforme d'exécution ne peut pas héberger plus d'une réplique de fonction à la fois. Pour faire face à l'augmentation de la charge d'une application sans dégradation de la qualité de service, de nouvelles répliques de fonctions doivent être allouées par l'autoscaler, à condition qu'il y ait suffisamment de ressources matérielles disponibles. Les répliques nouvellement allouées passent par une phase d'initialisation au cours de laquelle les images des fonctions doivent être récupérées via le réseau. L'autoscaler peut gérer un cache d'images dans la mémoire du nœud et sur le stockage local du nœud afin d'accélérer les démarrages à froid.
 
-Removing idle replicas is done on a best-effort basis: the autoscaler tries to remove replicas with empty task queues. By default, a replica with pending tasks cannot be removed.
+La suppression des répliques inactives se fait au mieux : l'autoscaler tente de supprimer les répliques dont les files d'attente de tâches sont vides. Par défaut, une réplique avec des tâches en attente ne peut pas être supprimée.
 
-The autoscaler keeps track of each allocation event to compute resource usage at the end of the simulation. HeROsim allows the user to know which nodes and execution platforms have been enrolled during the scenario, at which time and for which duration, and for which function deployment they were chosen. This also enables HeROsim to compute energy consumption at different granularities: static power needed by allocated hardware, and dynamic power used by applications during their execution.
+L'autoscaler garde une trace de chaque événement d'allocation pour calculer l'utilisation des ressources à la fin de la simulation. HeROsim permet à l'utilisateur de savoir quels nœuds et quelles plates-formes d'exécution ont été enrôlés pendant le scénario, à quel moment et pour quelle durée, et pour quel déploiement de fonction ils ont été choisis. Cela permet également à HeROsim de calculer la consommation d'énergie à différentes granularités : la puissance statique nécessaire au matériel alloué et la puissance dynamique utilisée par les applications pendant leur exécution.
 
-HeROsim ships with the following concurrency threshold-based ready-to-use autoscaling policies:
+HeROsim est livré avec les politiques de mise à l'échelle automatique suivantes, basées sur des seuils de concurrence et prêtes à l'emploi :
 
 \begin{itemize}
-    \item Random -- Selects a random node and execution platform for new replicas.
-    \item Knative -- Selects the least loaded node to allocate new replicas, \textit{i.e.} balances workloads across a large number of nodes.
-    \item HeROfake -- Leverages hardware heterogeneity to minimize QoS penalties, energy consumption and Total Cost of Ownership. %More details are given in the "Case study" section.
-    \item HeROcache -- Optimizes allocations for functions chains; maximizes consolidation functions of each application. %More details are given in the "Case study" section.
+    \item Random -- Sélectionne un nœud aléatoire et une plateforme d'exécution pour les nouvelles répliques ;
+    \item Knative -- Sélectionne le nœud le moins chargé pour allouer de nouvelles répliques, \textit{i.e} équilibre les charges de travail sur un grand nombre de nœuds ;
+    \item HeROfake -- Exploite l'hétérogénéité du matériel pour minimiser les pénalités de qualité de service, la consommation d'énergie et le coût total de possession. Plus de détails sont donnés dans la section "Étude de cas" ;
+    \item HeROcache -- Optimise les allocations pour les chaînes de fonctions ; maximise les fonctions de consolidation de chaque application. Plus de détails sont donnés dans la section "Étude de cas".
 \end{itemize}
 
 \subsection{Ordonnanceur}
 
-The base \textbf{\texttt{Scheduler}} class implements task selection in the gateway queue. One abstract method has to be overridden to implement a new policy: the selection of replica among the pool to place each user request in queue. This method operates at the granularity of one user request and takes the system state and the list of available function replicas as input.
+La classe de base \textbf{\texttt{Scheduler}} met en œuvre la sélection des tâches dans la file d'attente de la passerelle. Une méthode abstraite doit être surchargée pour mettre en œuvre une nouvelle politique : la sélection d'une réplique parmi le pool pour placer chaque requête utilisateur dans la file d'attente. Cette méthode opère à la granularité d'une requête utilisateur et prend en entrée l'état du système et la liste des répliques de fonctions disponibles.
 
-User requests arrive in a queue at the scheduler level. Users can implement their own priority policy for task selection, or choose a policy already available in the simulator, \textit{e.g.} FIFO or Earliest Deadline First~\cite{herofake}.
+Les requêtes utilisateur arrivent dans une file d'attente au niveau de l'ordonnanceur. Les utilisateurs peuvent mettre en œuvre leur propre politique de priorité pour la sélection des tâches ou choisir une politique déjà disponible dans le simulateur, \textit{e.} FIFO ou Earliest Deadline First~\cite{herofake}.
 
-HeROsim's scheduler has been designed without task failure or migrations in mind: the default behavior considers tasks that always run to completion on their replica. However, tasks will be marked as "in penalty" if scheduling misses their deadline. Users can leverage this boolean value to evaluate the quality of their policies with regard to request latency: it indicates what proportion of requests are handled in a timely fashion. 
+L'ordonnanceur de HeROsim a été conçu sans tenir compte des défaillances ou des migrations de tâches : le comportement par défaut considère les tâches qui s'exécutent toujours jusqu'à leur terme sur leur réplique. Cependant, les tâches seront marquées comme "en pénalité" si l'ordonnanceur manque son échéance. Les utilisateurs peuvent utiliser cette valeur booléenne pour évaluer la qualité de leurs politiques en ce qui concerne la latence des requêtes : elle indique la proportion de requêtes qui sont traitées en temps voulu. 
 
-%If there is no replica available at the time of scheduling a user request, the scheduler will make a call to the autoscaler to force the creation of a first replica for the function. In the meantime, the request will be put back in queue and postponed. Postponed tasks are flagged as such, so that, for instance, they can have higher priority if the user wants to enforce such a policy~\cite{herocache}. \vl{paragraphe pas forcément indispensable ? c'est un "cas particulier" (scale from zero) de l'autoscaler}
+S'il n'y a pas de réplique disponible au moment de l'ordonnancement d'une requête utilisateur, l'ordonnanceur fera un appel à l'autoscaler pour forcer la création d'une première réplique pour la fonction. Dans l'intervalle, la requête est remise dans la file d'attente et reportée. Les tâches reportées sont signalées comme telles, de sorte que, par exemple, elles peuvent avoir une priorité plus élevée si l'utilisateur souhaite appliquer une telle politique~\cite{herocache}.
 
-HeROsim ships with the following scheduling policies implemented and ready to use:
+HeROsim est livré avec les politiques d'ordonnanceur suivantes implémentées et prêtes à l'emploi :
 
 \begin{itemize}
-    \item Random -- Selects a random replica for task placement.
-    \item Knative -- Selects the replica with the shortest in-flight request queue for task placement.
-    \item BPFF -- Selects the replica with the longest in-flight request queue for task placement.
-    \item HeROfake -- Selects the replica that minimizes a compound score according to the task's deadline, energy consumption of the function and scattering of tasks across nodes. %More details are given in the "Case study" section.
-    \item HeROcache -- Selects the replica similar to HeROfake, but takes the storage and commuincation into account. %operations into account to compute the request's end-to-end latency, and takes the functions chains into account when scoring replicas with regards to tasks consolidation. %More details are given in the "Case study" section.
+    \item Random -- Sélectionne une réplique aléatoire pour le placement des tâches ;
+    \item Knative -- Sélectionne la réplique avec la file d'attente la plus courte pour le placement des tâches ;
+    \item BPFF -- Sélectionne la réplique avec la plus longue file d'attente de requêtes en vol pour le placement des tâches ;
+    \item HeROfake -- Sélectionne la réplique qui minimise un score composé en fonction de l'échéance de la tâche, de la consommation d'énergie de la fonction et de la dispersion des tâches sur les nœuds. Plus de détails sont donnés dans la section "Étude de cas" ;
+    \item HeROcache -- Sélectionne la réplique similaire à HeROfake, mais prend en compte les opérations de stockage et de communication pour calculer la latence de bout en bout de la requête, et prend en compte les chaînes de fonctions lors de l'évaluation des répliques en ce qui concerne la consolidation des tâches. De plus amples détails sont donnés dans la section "Étude de cas".
 \end{itemize}
 
 
 \subsection{Interface utilisateur}
 
-%Interactions between the user and the simulator are limited. 
-HeROsim relies on logging to provide insight as to how the simulation unwinds, helping the user debug their policies. When the simulation ends, result files are saved to disk. These files contain digest information on the results of the simulation, including the performance of the policy with regards to evaluation metrics. These results are plotted on various charts that can be used in further publications (see Figure~\ref{figure:herosim-evaluation}). HeROsim can also plot cold starts, cache hits and tail latency at the granularity of user requests. %\vl{viré le paragraphe dessous et résumé en 1 phrase}
+HeROsim s'appuie sur la journalisation pour fournir un aperçu du déroulement de la simulation, ce qui aide l'utilisateur à déboguer ses politiques. À la fin de la simulation, les fichiers de résultats sont enregistrés sur le disque. Ces fichiers contiennent des informations sommaires sur les résultats de la simulation, y compris les performances de la politique en ce qui concerne les mesures d'évaluation. Ces résultats sont représentés sur différents graphiques qui peuvent être utilisés dans des publications ultérieures (voir figure~\ref{figure:herosim-evaluation}).
 
-% HeROsim can also generate additional charts that can be of use when debugging the behavior of an orchestration policy. Users can visualize the proportion of cold starts and cache hits across function invocations. HeROsim can plot tail latency for all user requests, helping the user rightsize their infrastructure. The execution trace generator will plot requests inter-arrival times on a chart to provide visual cues on the characteristics of the workload.
-
-%There is ongoing work on extending HeROsim to propose a web interface to visualize the simulation state in real time. This interface might be shipped with a future version of the simulator.
+HeROsim peut également générer des graphiques supplémentaires qui peuvent être utiles lors du débogage du comportement d'une politique d'orchestration. Les utilisateurs peuvent visualiser la proportion de démarrages à froid et d'accès au cache parmi les invocations de fonctions. HeROsim peut tracer la latence de la queue pour toutes les requêtes des utilisateurs, aidant ainsi l'utilisateur à dimensionner son infrastructure. Le générateur de traces d'exécution trace les temps d'arrivée des requêtes sur un graphique afin de fournir des indications visuelles sur les caractéristiques de la charge de travail.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{7_Chapitre5/figures/serverless-cost.png}
-    \caption{Breakdown of the end-to-end latency cost incurred by autoscaling and scheduling decisions.}
+    \caption{Répartition du coût de latence de bout en bout induit par les décisions d'autoscaling et d'ordonnancement.}
 \label{figure:herosim-cost}
 \end{figure}
 
 \section{Étude de cas}
 \label{section:herosim-case-study}
-
-%\jb{je ne m'attendais pas à cela dans la section case study. Je m'attendais plutôt à une section plus conséquente ou l'on donne clairement comment passer du pb à la mise en oeuvre sur le simulateur avec un peu plus de détails techniques. la, ça fait un peu commercial, on donne juste les résultats}\vl{section complètement réécrite}
 
 \begin{figure*}[t]
     \center
@@ -261,111 +199,51 @@ HeROsim relies on logging to provide insight as to how the simulation unwinds, h
     \label{figure:herosim-evaluation}
 \end{figure*}
 
-%This simulation tool has been developed to support research work on orchestration policies in private serverless cloud. We argued that various challenges limit the relevance of serverless for users, and hinders the cost efficiency of the model for service providers:
-
-% \begin{itemize}
-%     \item The absence of QoS guarantees in serverless platforms prevents meeting the users' requirements in different use cases~\cite{Lannurien2023}.
-%     \item Serverless platforms consider the underlying infrastructure as homogeneous and miss on the opportunity to further optimize task placements~\cite{herofake}.
-%     \item Most orchestrators do not consider the costs linked with storage operations that can dominate functions' execution time~\cite{herocache}.
-% \end{itemize}
-
-%We investigated the design of a serverless platform that would tackle these challenges. Implementing the software necessary for our experiments would have been time-consuming, hence resorting to simulation was considered a more cost-efficient approach.
-
-We present two case studies that made use of HeROsim to evaluate orchestration policies.
-We devised strategies that rely on heterogeneous platform and workload characterization. % (see Figure~\ref{figure:herosim-characterization}).
-%We measured several metrics related to our applications on various hardware platforms. 
-We proposed a cost model that integrates these values to estimate the performance of autoscaling and scheduling under different policies, see Figure~\ref{figure:herosim-cost}.
-
-% In both studies, we used HeROsim to evaluate our policies against various baselines, as well as to individually measure the impact of different autoscaler and scheduler configurations. Figure~\ref{figure:herosim-evaluation} shows the output charts that the simulator generated while evaluating HeROcache.
-
-
-
-%\jb{dans ton intro, tu as indiqué des critères qu'un simulateur doit avoir. il faudrait dans la partie case study, dire dans des section séparaées comment chaque critère est pris en compte par case study. Je pense que ça serait interessant.}\vl{done}
+Nous présentons deux études de cas qui ont utilisé HeROsim pour évaluer les politiques d'orchestration.
+Nous avons conçu des stratégies qui reposent sur la caractérisation des plateformes hétérogènes et des charges de travail (voir figure~\ref{figure:herosim-characterization}). Nous avons mesuré plusieurs métriques liées à nos applications sur diverses plateformes matérielles et proposé un modèle de coût qui intègre ces valeurs pour estimer les performances de l'autoscaling et de l'ordonnanceur sous différentes politiques (figure~\ref{figure:herosim-cost}).
 
 \subsection{HeROfake}
-% TODO: On-demand deepfake detection (inference tasks)
-% TODO: Stateless tasks, no dependencies
 
-In this first case study, \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration for deep\textbf{fake} detection~\cite{herofake}, we investigated the deployment of a deepfake detection application on a serverless platform in a private cloud. %In particular, we were interested in leveraging heterogeneous resources for serverless orchestration when optimizing the platform for QoS and energy consumption.
+Dans cette première étude de cas, \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration for deep\textbf{fake} detection~\cite{herofake}, nous avons étudié le déploiement d'une application de détection de deepfake sur une plateforme serverless dans un cloud privé. En particulier, nous nous sommes intéressés à l'exploitation de ressources hétérogènes pour l'orchestration serverless lors de l'optimisation de la plateforme pour la QoS et la consommation d'énergie.
 
-The application runs inference tasks to detect deepfakes in potentially tampered-with images, submitted by users with various QoS level requirements. % Its objective is to detect potentially tampered-with images; pictures that might have been computer-manipulated to mislead viewers.
-It consists of three independent and stateless neural network tasks that were implemented on heterogeneous hardware: CPU, GPU and FPGA. %These implementations were used for measurements.%, but it would have been challenging to actually run real-world scenarios on a serverless platform including these hardware architectures.
+L'application exécute des tâches d'inférence pour détecter les deepfakes dans des images potentiellement trafiquées, soumises par des utilisateurs avec diverses exigences de niveau de QoS. Son objectif est de détecter les images potentiellement falsifiées, c'est-à-dire les images susceptibles d'avoir été manipulées par ordinateur pour tromper les spectateurs. Il se compose de trois tâches de réseau neuronal indépendantes et sans état qui ont été mises en œuvre sur du matériel hétérogène : CPU, GPU et FPGA. Ces implémentations ont été utilisées pour les mesures, mais il aurait été difficile d'exécuter réellement des scénarios du monde réel sur une plateforme serverless incluant ces architectures matérielles.
 
-% TODO: Challenges: per-request QoS requirements, leverage heterogeneous hardware, scarcely available, actual executions impossible
+Dans HeROfake, chaque exécution de tâche a un coût associé mesuré en \textbf{latence}. L'allocation de nouvelles répliques sur des ressources matérielles inactives introduit un \textbf{délai de démarrage à froid} ; le traitement des requêtes utilisateur sur différents matériels a divers \textbf{temps d'exécution de la fonction}. La latence de chaque requête utilisateur est finalement comparée à la \textbf{exigence de qualité de service} de la requête : si l'échéance de la requête n'a pas été respectée, la tâche est en \textbf{pénalité}. Ces éléments constituent la base de notre modèle de coût, voir la figure~\ref{figure:herosim-cost}.
 
-%HeROfake did not consider applications (functions chains), hence user requests corresponded to single task executions. 
-In HeROfake, each task execution has an associated cost measured in \textbf{latency}. Allocating new replicas on idle hardware resources introduces a \textbf{cold start delay}; handling user requests on different hardware has various \textbf{function execution time}. Latency for each user request is ultimately compared with the request's \textbf{QoS requirement}: if the request deadline was missed, the task is in \textbf{penalty}. These elements constitute the basis of our cost model, see Figure~\ref{figure:herosim-cost}.
+Les différentes architectures matérielles ont également des coûts monétaires et énergétiques différents qui ont été pris en compte dans le modèle de coût. Nous avons mis en œuvre un autoscaler et un ordonnanceur qui cherchent à estimer et à minimiser ce coût composite à la granularité de chaque requête utilisateur. L'autoscaler cherche à allouer des plateformes qui minimisent le coût global, y compris l'utilisation des ressources, la consommation d'énergie et le coût total de possession. L'ordonnanceur cherche à sélectionner les répliques qui traitent les requêtes avec le moins de pénalités et la plus faible consommation d'énergie.
 
-% TODO: Strategy: cost minimization, heterogeneous threshold-based autoscaling, EDF scheduling
+HeROfake a été évalué à l'aide d'un scénario synthétique avec une distribution uniforme des temps d'arrivée des requêtes, des appels de fonction et des niveaux de qualité de service. HeROfake s'est avéré performant (en termes de pénalités de QoS, de consolidation et d'énergie) par rapport à Knative (l'orchestrateur serverless de Google) et Bin-Packing First Fit (la politique d'Amazon dans Lambda)~cite{herofake}. 
 
-Different hardware architectures also have different monetary and energy costs that were factored in the cost model. We implemented an autoscaler and a scheduler policy that seek to estimate and minimize this composite cost at the granularity of each user request. The autoscaler seeks to allocate platforms that minimize the overall cost, including resource usage, energy consumption and Total Cost of Ownership. The scheduler seeks to select replicas that handle requests with least penalties and lowest energy consumption.
+Notre objectif principal était d'étudier la pertinence de la prise en compte de l'hétérogénéité matérielle lors de l'allocation des ressources et de l'ordonnancement des requêtes utilisateur en ce qui concerne diverses mesures de qualité de service, \textit{i.e.} la latence de bout en bout et la consommation d'énergie. Les résultats expérimentaux ont montré que si le temps total d'exécution des tâches dans HeROfake est similaire à celui de la version vanille de Knative, nous obtenons une réduction de plus de 60\% des pénalités de qualité de service ; les tâches sont consolidées sur moins de 40\% des nœuds de l'infrastructure, 77\% des plates-formes d'exécution restant inutilisées ; et la consommation d'énergie dynamique est réduite de 35\% par rapport à Knative.
 
-% TODO: Scenario
-
-% TODO: HeROfake was evaluated using a synthetic scenario with uniform distribution of request inter-arrival times, function calls and QoS levels.
-
-% TODO: Results
-
-%HeROfake proved to perform well (in terms of QoS penalties, consolidation, and energy) against Knative (Google's serverless orchestrator) and Bin-Packing First Fit (Amazon's policy in Lambda)~\cite{herofake}. 
-
-%Our main goal was to investigate the relevance of taking hardware heterogeneity into account when allocating resources and scheduling user requests with regards to various QoS metrics, \textit{i.e.} end-to-end latency and energy consumption.
-
-%Experimental results showed that while total task execution time in HeROfake is similar to vanilla Knative, we achieve more than 60\% reduction in QoS penalties; tasks are consolidated on less than 40\% of the infrastructure's nodes, with 77\% execution platforms left unused; and dynamic energy consumption is reduced by 35\% as compared to Knative.
-
-%HeROsim also allowed us to evaluate the impact of the individual components of our framework. Results showed that, even allocating CPUs only, scheduling inference tasks with our QoS-aware policy could keep SLA violations under 50\%. 
-
+HeROsim nous a également permis d'évaluer l'impact des différents composants de notre cadre. Les résultats ont montré que, même en allouant uniquement des CPU, l'ordonnanceur des tâches d'inférence avec notre politique consciente de la qualité de service pouvait maintenir les violations des accords de niveau de service en dessous de 50\%. 
 
 \subsection{HeROcache}
 
-% TODO: Intermittent intrusion detection (pre-processing and inference tasks)
+Ici, une stratégie d'orchestration consciente des contraintes temporelles et de données a été proposée. Nous avons exploré le déploiement d'un système de détection d'intrusion (IDS) sur une plate-forme serverless. En particulier, nous avons étudié les avantages de l'orchestration consciente des données lors de l'exploitation de matériel hétérogène pour déployer des applications sensibles au temps sur des dispositifs périphériques à ressources limitées, du point de vue du fournisseur de services.
 
-Here, a \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration with a \textbf{cache} strategy for a storage-aware execution was deisgned. We explored the deployment of an Intrusion Detection System (IDS) on a serverless platform. In particular, we explored the benefits of data-aware orchestration when leveraging heterogeneous hardware to deploy time-sensitive applications on resources-constrained edge devices.%, from the perspective of the service provider.
+L'objectif de l'application est de détecter le trafic TCP potentiellement malveillant dans les journaux de réseau soumis par les utilisateurs. Comme cette application IDS est spécifiquement destinée aux missions de drones, son schéma d'accès est étroitement lié aux schémas saisonniers, ce qui en fait une bonne adaptation au paradigme serverless.
 
+L'application se compose de deux couches : deux fonctions de prétraitement qui opèrent sur les journaux du trafic réseau, et quatre fonctions d'inférence qui détectent des modèles d'activité malveillante dans les journaux. Ces fonctions ont été mises en œuvre sur différentes architectures matérielles (CPU, FPGA, GPU). 
 
-%The goal of the application is to detect potentially malicious TCP traffic in user-submitted networking logs. As this IDS application is specifically targeted at drones missions, its access pattern is tightly related to seasonal patterns that make it a good fit for the serverless paradigm.
+Il existe des dépendances de données entre les deux couches de l'application. Nous les avons modélisées sous forme de graphes acycliques dirigés (DAG) d'appels de fonctions. Nous avons utilisé le module Python \texttt{TopologicalSorter} du module \texttt{graphlib} pour la représentation JSON des graphes et pour les parcourir pendant l'exécution.
 
-% TODO: Stateful application, temporal and data dependencies
+Au niveau de l'orchestrateur, nous avons dû modifier la granularité des requêtes utilisateur : une requête concerne une application, qui peut être composée d'une ou plusieurs fonctions, appelées dans l'ordre défini par le DAG de l'application. Chaque fonction peut prendre des données en entrée et produire des données en sortie. Ces données sont définies par leur taille en octets.
 
-The application consists of two layers: two preprocessing functions that operate on logs of network traffic, and four inference functions that detect patterns of malicious activity in the logs. These functions have been implemented on various edge hardware architectures (CPUs, FPGA, GPU). 
+Alors que HeROfake ne prend pas en compte les opérations de stockage, HeROcache met en œuvre la \textbf{récupération des images de fonctions}, \textbf{la mise en cache des images de fonctions} et les \textbf{communications entre fonctions} dans l'orchestrateur de base. Ces opérations augmentent la latence de la requête utilisateur d'une quantité de temps calculée sur la base de la caractérisation de la plate-forme et de la fonction, voir figure~\ref{figure:herosim-cost} : par exemple, HeROsim estime le temps de récupération de l'image de la fonction sur la base de la largeur de bande du réseau spécifiée par l'utilisateur dans la description de l'infrastructure, la taille de l'image de la fonction spécifiée par le type de charge de travail, et la performance du stockage local du nœud spécifiée par le type de stockage.
 
-% TODO: Challenges: dependencies between functions, resources-constrained edge nodes, slow communications through remote storage, node-local storage contention (function cache vs intermediate data storage)
-There are data dependencies between the two layers of the application. We modeled them as a Directed Acyclic Graphs (DAG) of function calls. % We used Python's \texttt{TopologicalSorter} from the \texttt{graphlib} module for JSON representation of the graphs and to traverse them during runtime.
+L'introduction d'opérations de stockage au niveau du nœud individuel nous a permis d'évaluer une stratégie de préchargement d'images de fonctions afin d'accélérer les démarrages à froid dans les invocations futures.
 
-%At the orchestrator level, we had to change the granularity of user requests: a user request concerns an application, which can be made up of one or more functions, called in the order defined by the application's DAG. Each function can take input data and produce output data. These data are defined by their size in bytes.
+Dans HeROcache, l'autoscaler cherche à accroître la consolidation des fonctions entre les applications, à réduire le makespan global, la consommation d'énergie et le coût total de possession. L'ordonnanceur cherche à éviter le non-respect des délais des requêtes, à consommer moins d'énergie et à assurer une utilisation élevée des ressources.
 
-% TODO: Strategy: consolidation of applications' functions to minimize remote storage use, dependencies pre-fetching in cache for cold start acceleration
+Nous avons utilisé le générateur de traces d'exécution inclus dans HeROsim pour générer un scénario de 30 minutes de requêtes utilisateur suivant un processus de Poisson à un taux moyen de 83 requêtes par seconde. Cela correspond au taux de communication que la connectivité 4G LTE permettrait dans notre environnement périphérique, compte tenu de la taille des données d'entrée et de sortie de l'application. 
 
-While HeROfake did not consider storage operations, HeROcache implements \textbf{function image retrieval}, \textbf{function image caching} and \textbf{inter-function communications} in the base orchestrator. These operations add up to user request latency by an amount of time computed on the basis of platform and function characterization, see Figure~\ref{figure:herosim-cost}. %: for example, HeROsim estimates function image retrieval time based on the network bandwidth specified by the user in the infrastructure description, the function image size specified by the workload type, and the node-local storage performance specified by the storage type.
+HeROfake exploite déjà l'hétérogénéité matérielle, mais est conçu comme une politique sans stockage, ce qui en fait une solution comparable. Cette comparaison nous a permis de montrer l'importance des coûts de stockage dans le respect de la qualité de service : avec une politique d'orchestration tenant compte des données, HeROcache consolide les applications et parvient à réduire les délais d'initialisation moyens de 17,6 % et les délais de communication de 88,4 %. Cela permet de réduire la consommation d'énergie statique de la plateforme de 80 % tout en maintenant moins de 28 % de violations de la qualité de service.
 
-%Introducing storage operations at individual node level allowed us to evaluate a function image prefetching strategy to accelerate cold starts in future invocations.
-
-In HeROcache, the autoscaler seeks increased function consolidation across applications, reduced overall makespan, energy consumption and Total Cost of Ownership. The scheduler seeks to avoid missed request deadlines, use less power and enforce high resource usage.
-
-% TODO: Workload characterization, synthetic workload trace based on a Poisson process, 4G LTE request rate
-
-% We used the execution trace generator included in HeROsim to generate a 30-minute scenario of user requests following a Poisson process at an average rate of 83 Requests per Second. This corresponds to the rate of communications that 4G LTE connectivity would allow in our edge setting, given the size of the application input and output data. 
-
-% TODO: Results
-
-Evaluation against HeROfake highlighted the relevance of taking into account storage operations, see Figure~\ref{figure:herosim-evaluation}.
-
-% We evaluated HeROcache against various baselines (Knative, BPFF, RP) and also against HeROfake, see Figure~\ref{figure:herosim-evaluation}.
-
-%As HeROfake already leveraged hardware heterogeneity but was designed as a storage-oblivious policy, it made for a comparable solution. 
-%This comparison allowed us to show the relevance of storage costs in QoS compliance  %showed that, with a data-aware orchestration policy, HeROcache enforces applications consolidation and manages to reduce average initialization delays by 17.6\% and communication delays by 88.4\%. This results in reducing the static energy consumption of the platform by 80\% while maintaining under 28\% of QoS violations.\jb{on peut raccourcir je pense}
-
-%HeROcache (implemented on top of HeROsim) has been submitted for artifacts evaluation and received the three IEEE reproducibility badges~\footnote{\href{https://www.niso.org/standards-committees/reproducibility-badging}{https://www.niso.org/standards-committees/reproducibility-badging}}: Open Research Objects (ORO), Reusable/Research Objects Reviewed (ROR), and Results Reproduced (ROR-R).
-
-
-% To address these issues, we proposed:
-% \begin{itemize}
-%     \item HeROfake~\cite{herofake}, a framework for the deployment of short-lived, interactive deepfake detection tasks on a private, heterogeneous serverless cloud. Experimental results showed that while total task execution time in HeROfake is similar to vanilla Knative, we achieve more than 60\% reduction in QoS penalties; tasks are consolidated on less than 40\% of the infrastructure's nodes, with 77\% execution platforms left unused; and dynamic energy consumption is reduced by 35\% as compared to Knative.
-%     \item HeROcache~\cite{herocache}, an allocation and scheduling policy for serverless edge computing that seeks to optimize time-sensitive applications deployment for QoS on energy-constrained devices. HeROcache enforces applications consolidation and manages to reduce average initialization delays by 17.6\% and communication delays by 88.4\%. This results in reducing the static energy consumption of the platform by 80\% while maintaining under 28\% of QoS violations.
-% \end{itemize}
+HeROcache (mis en œuvre au-dessus de HeROsim) a été soumis à l'évaluation des artefacts et a reçu les trois badges de reproductibilité de l'IEEE~\footnote{\href{https://www.niso.org/standards-committees/reproducibility-badging}{https://www.niso.org/standards-committees/reproducibility-badging}} : Open Research Objects (ORO), Reusable/Research Objects Reviewed (ROR), et Results Reproduced (ROR-R).
 
 \section{Travaux connexes}
 \label{section:herosim-sota}
-%\jb{c'est TROOOP long !!!, ce n'est pas les related work qui feront que le papier sera accepté, une colonne c'set amplement suffisant. Il faut renforcer la contrib et le case study absolument !!} \vl{ok, on raccourcira à la fin, ce sera facile. j'ai détaillé chaque contrib et je les ai aussi regroupées par caractéristique. On peut garder uniquement les regroupements et virer les détails individuels.}\jb{ok} \vl{done, j'ai gardé les grandes familles (CloudSim, GridSim), j'ai fait les regroupements qui me semblaient pertinents et j'ai raccourci la section à environ une colonne}
 
 \begin{table*}[t]
     \centering
@@ -391,35 +269,29 @@ Evaluation against HeROfake highlighted the relevance of taking into account sto
     \label{table:herosim-sota}
 \end{table*}
 
-We present an overview of state-of-the-art work and their characteristics in Table~\ref{table:herosim-sota}.
+Nous présentons un aperçu des travaux de l'état de l'art et de leurs caractéristiques dans le Tableau~\ref{table:herosim-sota}.
 
-CloudSim~\cite{calheiros_cloudsim_2011} is the ubiquitous tool for large-scale cloud deployment experiments. It targets the different service models in traditional cloud computing. 
-CloudSim, and its extensions~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, jeonCloudSimExtensionSimulatingDistributed2019} do not consider serverless applications, \textit{i.e.} the composition of functions to achieve complex behavior which introduces specific challenges.% (cold start delays, overhead from inter-function communications, etc.~\cite{wawrzoniakBoxerDataAnalytics2021a}). 
-To address these particular problems, it is necessary to introduce storage management, as well as the handling of function chains as HeROsim does. % allows users to model such applications, and devise orchestration policies that are application-aware and can provide QoS benefits.
+CloudSim~\cite{calheiros_cloudsim_2011} est l'outil omniprésent pour les expériences de déploiement de nuages à grande échelle. Il cible les différents modèles de service traditionnels dans le cloud.
+CloudSim, et ses extensions~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, jeonCloudSimExtensionSimulatingDistributed2019} ne prennent pas en compte les applications serverless, \textit{i. e.} la composition de fonctions pour obtenir un comportement complexe qui introduit des défis spécifiques (délais de démarrage à froid, frais généraux liés aux communications inter-fonctions, etc.~\cite{wawrzoniakBoxerDataAnalytics2021a}). Pour résoudre ces problèmes particuliers, il est nécessaire d'introduire la gestion du stockage, ainsi que le traitement des chaînes de fonctions, comme le fait HeROsim.
 
-% DFaaSCloud~\cite{jeonCloudSimExtensionSimulatingDistributed2019} is another CloudSim-based simulator for distributed serverless computing. This work focuses on the geographical distribution of function instances across a cloud, edge and fog infrastructure. It helps estimating delays induced by function locality. Users define their functions in terms of latency constraints and DFaaSCloud provides a placement policy that minimizes violations and cost. As such, the premise of DFaaSCloud is specific to addressing the problem of geographical placement of tasks in a multi-tier Function as a Service environment, and does not pertain to the general challenges in serverless computing.
+% DFaaSCloud~\cite{jeonCloudSimExtensionSimulatingDistributed2019} est un autre simulateur basé sur CloudSim pour le serverless distribué. Ce travail se concentre sur la distribution géographique des instances de fonction à travers une infrastructure cloud, edge et fog. Il permet d'estimer les retards induits par la localité des fonctions. Les utilisateurs définissent leurs fonctions en termes de contraintes de latence et DFaaSCloud fournit une politique de placement qui minimise les violations et les coûts. En tant que tel, le postulat de DFaaSCloud est spécifique au traitement du problème du placement géographique des tâches dans un environnement Function as a Service à plusieurs niveaux, et ne concerne pas les défis généraux du serverless.
 
-% ElasticSim~\cite{cai_elasticsim_2017} also extends CloudSim to provide dynamic resources allocation for cloud workflows, \textit{i.e.} chains of connected tasks not dissimilar to serverless applications. However, it does not consider the underlying heterogeneity in hardware resources, nor does it allow to enforce per-request QoS objectives. OpenDC 2.0~\cite{mastenbroekOpenDCConvenientModeling2021} also allows the user to model such function chains, and while this tool does allow modeling a heterogeneous datacenter and estimate its energy consumption, it also does not consider the variety of user requirements in terms of latency.
+% ElasticSim~\cite{cai_elasticsim_2017} étend également CloudSim pour fournir une allocation dynamique des ressources pour les flux de travail dans le cloud, \textit{i.e.} des chaînes de tâches connectées qui ne sont pas différentes des applications serverless. Cependant, il ne prend pas en compte l'hétérogénéité sous-jacente des ressources matérielles et ne permet pas non plus d'appliquer des objectifs de qualité de service par requête. OpenDC 2.0~\cite{mastenbroekOpenDCConvenientModeling2021} permet également à l'utilisateur de modéliser de telles chaînes de fonctions, et bien que cet outil permette de modéliser un centre de données hétérogène et d'estimer sa consommation d'énergie, il ne prend pas non plus en compte la variété des exigences des utilisateurs en termes de latence.
 
-GridSim~\cite{buyyaGridSimToolkitModeling2002} has interesting characteristics, from modeling highly heterogeneous infrastructures to enforcing per-request QoS constraints. However, its focus on grid computing makes it unsuitable to explore dynamic resource allocation problems. iFogSim2~\cite{mahmudIFogSim2ExtendedIFogSim2021} also considers static allocations that cannot faithfully characterize the serverless problem space. HeROsim has been designed for the serverless problem space and allows users to trace dynamic allocation and scheduling events at a user request granularity.
+GridSim~\cite{buyyaGridSimToolkitModeling2002} présente des caractéristiques intéressantes, allant de la modélisation d'infrastructures hautement hétérogènes à l'application de contraintes de qualité de service par requête. iFogSim2~\cite{mahmudIFogSim2ExtendedIFogSim2021} considère également des allocations statiques qui ne peuvent pas caractériser fidèlement l'espace de problème serverless. HeROsim a été conçu pour l'espace de problème serverless et permet aux utilisateurs de tracer les événements d'allocation dynamique et d'ordonnanceur à la granularité d'une requête utilisateur.
 
-Multiple contributions~\cite{jeonCloudSimExtensionSimulatingDistributed2019, cai_elasticsim_2017, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012} do not allow one to estimate the energy consumption of the platform. 
-%Energy consumption is a crucial metric when addressing the challenge of scheduling power-hungry computations such as Machine Learning (ML) training, which hold a growing proportion of deployed cloud workloads~\cite{masanet2020recalibrating}. 
-HeROsim estimates both static energy consumption and dynamic energy consumption.
+De nombreuses contributions~\cite{jeonCloudSimExtensionSimulatingDistributed2019, cai_elasticsim_2017, buyyaGridSimToolkitModeling2002, nunez_icancloud_2012} ne permettent pas d'estimer la consommation d'énergie de la plateforme. La consommation d'énergie est une mesure cruciale lorsqu'il s'agit de relever le défi de l'ordonnancement de calculs gourmands en énergie tels que l'apprentissage automatique (ML), qui détiennent une proportion croissante des charges de travail cloud déployées~\cite{masanet2020recalibrating}. 
+HeROsim estime à la fois la consommation d'énergie statique et la consommation d'énergie dynamique.
 
-Furthermore, hardware heterogeneity is a defining characteristic in cloud computing. % Accelerators such as GPUs or TPUs are used by service providers to provide better performance.
-% We argued that such hardware could allow service providers to enforce QoS constraints while reducing energy consumption of a serverless platform~\cite{herofake}.
-Among the cloud simulation tools available, several contributions~\cite{jeonCloudSimExtensionSimulatingDistributed2019, cai_elasticsim_2017, nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021} do not take heterogeneity into account at a fine granularity. HeROsim lets users define highly heterogeneous infrastructures for both compute and storage.
+En outre, l'hétérogénéité du matériel est une caractéristique déterminante du cloud. Les accélérateurs tels que les GPU ou les TPU sont utilisés par les fournisseurs de services pour améliorer les performances. Nous avons soutenu que ce matériel pourrait permettre aux fournisseurs de services d'appliquer les contraintes de qualité de service tout en réduisant la consommation d'énergie d'une plateforme serverless~\cite{herofake}.
+Parmi les outils de simulation de nuage disponibles, plusieurs contributions~\cite{jeonCloudSimExtensionSimulatingDistributed2019, cai_elasticsim_2017, nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021} ne prennent pas en compte l'hétérogénéité à une granularité fine. HeROsim permet aux utilisateurs de définir des infrastructures hautement hétérogènes pour le calcul et le stockage.
 
-Finally, some contributions~\cite{nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021} aim at simulating public cloud infrastructures that focus on the brokerage of virtualized resources that are considered unlimited. Our work~\cite{herofake, herocache} focused on the perspective of service providers optimizing serverless platforms for QoS, hence the private cloud orientation of HeROsim.
+Enfin, certaines contributions~\cite{nunez_icancloud_2012, mahmoudiSimFaaSPerformanceSimulator2021} visent à simuler des infrastructures de cloud public qui se concentrent sur le courtage de ressources virtualisées considérées comme illimitées. Nos travaux~\cite{herofake, herocache} se sont concentrés sur la perspective des fournisseurs de services optimisant les plateformes serverless pour la qualité de service, d'où l'orientation cloud privé de HeROsim.
 
 
 \section{Conclusion et perspectives}
 \label{section:herosim-conclusion}
 
-In this paper, we presented HeROsim, a simulation tool that aims at allowing researchers to model heterogeneous cloud infrastructures, describe workloads at a fine granularity, implement diverse resource management and task scheduling policies, and evaluate their efficiency with regard to metrics such as resource usage, energy consumption, per-request QoS violations, or tail latency. % HeROsim can generate charts that help visualizing these results during the implementation phase, and can be used in publications.
+Dans cet article, nous avons présenté HeROsim, un outil de simulation qui vise à permettre aux chercheurs de modéliser des infrastructures cloud hétérogènes, de décrire les charges de travail à une granularité fine, de mettre en œuvre diverses politiques de gestion des ressources et d'ordonnancement des tâches, et d'évaluer leur efficacité au regard de métriques telles que l'utilisation des ressources, la consommation d'énergie, les violations de la QoS par requête, ou la latence de queue. HeROsim peut générer des graphiques qui aident à visualiser ces résultats pendant la phase de mise en œuvre et peuvent être utilisés dans des publications.
 
-%There is ongoing work on extending HeROsim to propose a web interface to visualize the simulation state in real time. We are also working on a reinforcement learning agent that could be included in a future release.
-% Also, we are working on the ability to run parallel simulations to reduce the simulation time.
-
-%Our next contribution will leverage Q-Learning to explore the design of an autonomous agent which efficiently rightsizes resources allocations on the serverless platform. It will make use of time series prediction to allow timely, proactive autoscaling. This agent will be evaluated in the simulator, showcasing the variety of policies that can be implemented with our tool.
+Des travaux sont en cours pour étendre HeROsim et proposer une interface web permettant de visualiser l'état de la simulation en temps réel. Nous travaillons également sur un agent d'apprentissage par renforcement qui pourrait être inclus dans une prochaine version.
