@@ -68,7 +68,7 @@ Le document est organisé comme suit : dans une première section, nous décrivo
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{5_Chapitre3/figures/placement.png}
-\caption{Plateforme de détection de deepfake serverless, vue d'ensemble du système}
+\caption{Plateforme de détection de deepfake serverless, vue d'ensemble du système.}
 \label{figure:herofake-placement}
 \end{figure*}
 
@@ -92,16 +92,16 @@ Ainsi, la seule caractéristique qui définit un nœud dans notre modèle d'infr
 \subsubsection{Plateformes d'exécution}
 \label{model:platforms}
 
-Une plate-forme d'exécution est une unité de traitement matérielle disponible sur un nœud. Chaque plateforme consomme une quantité d'énergie à l'état "inactif" exprimée en kilowattheures (kWh). Lorsqu'elle commence à exécuter une tâche, elle consomme une énergie supplémentaire caractérisée par les propriétés/le type de la tâche : elle est alors dans un état "actif". Nous distinguons le temps "inactif" et le temps "actif" pour chaque plateforme, afin de mesurer l'utilisation des ressources.
+Une plateforme d'exécution est une unité de traitement matérielle disponible sur un nœud. Chaque plateforme consomme une quantité d'énergie à l'état "inactif" exprimée en kilowattheures (kWh). Lorsqu'elle commence à exécuter une tâche, elle consomme une énergie supplémentaire caractérisée par les propriétés/le type de la tâche : elle est alors dans un état "actif". Nous distinguons le temps "inactif" et le temps "actif" pour chaque plateforme, afin de mesurer l'utilisation des ressources.
 Les plateformes sont caractérisées par un \textit{type de plateforme} qui englobe les paramètres suivants :
 
 \begin{itemize}
     \item \textit{Type de matériel} -- CPU, GPU ou FPGA ;
-    \item \textit{Prix} -- le coût d'acquisition d'une telle plate-forme par le fournisseur de services cloud ;
+    \item \textit{Prix} -- le coût d'acquisition d'une telle plateforme par le fournisseur de services cloud ;
     \item \textit{Énergie au repos} -- la consommation d'énergie de base de la plateforme lorsqu'elle n'exécute aucune tâche.
 \end{itemize}
 
-\textbf{Mise en cache des tâches et modèle de démarrage à froid}. Nous considérons un mécanisme simple de mise en cache des tâches au niveau de la plate-forme, qui s'apparente à un mécanisme de maintien en vie~\cite{7279063}. Dans notre système, si une plate-forme a déjà exécuté une tâche de type $t$ et qu'une nouvelle tâche du même type $t$ est programmée sur cette même plate-forme, le délai de démarrage à froid n'est pas appliqué. Toutefois, si cette même plate-forme devait exécuter une tâche de type différent $tt$, la tâche subira un démarrage à froid avant d'entrer dans sa phase d'exécution. Enfin, si la plate-forme n'a pas été allouée précédemment, la tâche subira également un délai de démarrage à froid.
+\textbf{Mise en cache des tâches et modèle de démarrage à froid}. Nous considérons un mécanisme simple de mise en cache des tâches au niveau de la plateforme, qui s'apparente à un mécanisme de maintien en vie~\cite{7279063}. Dans notre système, si une plateforme a déjà exécuté une tâche de type $t$ et qu'une nouvelle tâche du même type $t$ est programmée sur cette même plateforme, le délai de démarrage à froid n'est pas appliqué. Toutefois, si cette même plateforme devait exécuter une tâche de type différent $tt$, la tâche subira un démarrage à froid avant d'entrer dans sa phase d'exécution. Enfin, si la plateforme n'a pas été allouée précédemment, la tâche subira également un délai de démarrage à froid.
 
 \subsection{Description générale du système}
 
@@ -267,15 +267,15 @@ L'utilisation d'accélérateurs matériels est une possibilité d'améliorer les
     \end{center}
 \end{table}
 
-Les applications sont composées de fonctions. L'exécution d'une fonction est appelée \textit{tâche}. Dans ce travail, il n'y a pas de dépendances entre ces tâches : l'application est composée de fonctions pures et sans état. Les événements qui déclenchent l'exécution d'une tâche arrivent dans le système à un intervalle aléatoire et borné. Nous formulons l'hypothèse qu'une requête aboutit toujours et conduit à l'exécution d'une \textit{task} (une instance de \textit{fonction}). Lorsqu'une tâche a commencé son exécution sur la plate-forme qui lui a été attribuée, elle s'exécute pendant la totalité de son temps d'exécution. Nous ne prenons pas en compte la préemption ou les défaillances dans cette contribution : une tâche termine toujours son exécution avec succès, même si son temps de réponse peut dépasser ses exigences en matière de qualité de service. Nous ne tenons pas compte des interférences possibles entre les charges de travail sur le même nœud~\cite{dartoisInvestigatingMachineLearning2021}. 
+Les applications sont composées de fonctions. L'exécution d'une fonction est appelée \textit{tâche}. Dans ce travail, il n'y a pas de dépendances entre ces tâches : l'application est composée de fonctions pures et sans état. Les événements qui déclenchent l'exécution d'une tâche arrivent dans le système à un intervalle aléatoire et borné. Nous formulons l'hypothèse qu'une requête aboutit toujours et conduit à l'exécution d'une \textit{task} (une instance de \textit{fonction}). Lorsqu'une tâche a commencé son exécution sur la plateforme qui lui a été attribuée, elle s'exécute pendant la totalité de son temps d'exécution. Nous ne prenons pas en compte la préemption ou les défaillances dans cette contribution : une tâche termine toujours son exécution avec succès, même si son temps de réponse peut dépasser ses exigences en matière de qualité de service. Nous ne tenons pas compte des interférences possibles entre les charges de travail sur le même nœud~\cite{dartoisInvestigatingMachineLearning2021}. 
 
 Nous considérons les tâches qui peuvent être exécutées sans distinction sur des plateformes d'exécution hétérogènes. Dans le contexte de notre étude de cas spécifique, la mise en œuvre des différentes fonctions a été effectuée à la main pour chaque plateforme ; cependant, des travaux existent pour permettre une compilation croisée automatique pour les architectures hétérogènes~\cite{hortaXartrekRuntimeExecution2021, 10.1145/3445814.3446699}. Les métadonnées suivantes ont été mesurées pour chaque fonction, sur chaque plateforme d'exécution : 
 
 \begin{itemize}
     \item \textit{Besoins mémoire en pic} -- la quantité de mémoire (en GB) allouée à la tâche ;
-    \item \textit{Durée de démarrage à froid} -- la durée de l'initialisation du bac à sable lors de l'exécution de la tâche sur une plate-forme qui n'a pas la fonction en cache ;
+    \item \textit{Durée de démarrage à froid} -- la durée de l'initialisation du bac à sable lors de l'exécution de la tâche sur une plateforme qui n'a pas la fonction en cache ;
     \item \textit{Temps d'exécution} -- la durée prévue de l'exécution effective de la tâche, à l'exclusion de sa phase d'initialisation ;
-    \item \textit{Consommation d'énergie} -- la différence entre l'énergie inactive et l'énergie active encourue par la plate-forme d'exécution lorsqu'elle exécute la tâche.
+    \item \textit{Consommation d'énergie} -- la différence entre l'énergie inactive et l'énergie active encourue par la plateforme d'exécution lorsqu'elle exécute la tâche.
 \end{itemize}
 
 L'équation~\ref{eq:herofake-HRO-total-time} décompose le temps de réponse attendu pour l'exécution d'une fonction $f$ sur une plateforme $P$ sur un nœud $N$.
@@ -290,12 +290,12 @@ Où :
 \begin{itemize}
     \item ${WT}_{{f}_{N, P}}$ correspond à la durée de la décision d'ordonnancement, y compris le temps passé par la requête en file d'attente ;
     \item ${CST}_{{f}_{N, P}}$ est la durée de l'initialisation de l'invocation de la fonction, y compris son temps potentiel de démarrage à froid ;
-    \item ${ET}_{{f}_{N, P}}$ est le temps d'exécution de la fonction sur la plate-forme.
+    \item ${ET}_{{f}_{N, P}}$ est le temps d'exécution de la fonction sur la plateforme.
 \end{itemize}
 
 Nous proposons différents niveaux de qualité de service en fonction des besoins des utilisateurs en termes de garanties sur le temps d'exécution. Chaque niveau de qualité de service présente un \textit{écart de durée} différent (noté $QD$ dans l'équation~\ref{eq:herofake-task-penalty}) -- un facteur par lequel le pire temps d'exécution d'une fonction est multiplié pour donner une limite supérieure au temps d'exécution de cette fonction pour ce niveau de qualité de service.
 
-Le temps d'exécution prédit d'une fonction est toujours basé sur le pire temps d'exécution (noté $WET_{f}$), c'est-à-dire le temps d'exécution d'une tâche lorsqu'elle est programmée sur la plate-forme d'exécution présentant le niveau de performance le plus faible pour cette fonction :
+Le temps d'exécution prédit d'une fonction est toujours basé sur le pire temps d'exécution (noté $WET_{f}$), c'est-à-dire le temps d'exécution d'une tâche lorsqu'elle est programmée sur la plateforme d'exécution présentant le niveau de performance le plus faible pour cette fonction :
 
 
 \begin{equation}
@@ -303,7 +303,7 @@ Le temps d'exécution prédit d'une fonction est toujours basé sur le pire temp
 \label{eq:herofake-task-wet}
 \end{equation}
 
-Une fois qu'une tâche est programmée sur une plate-forme d'exécution, elle passe par sa durée totale d'exécution décrite dans l'équation \ref{eq:herofake-HRO-total-time}. L'échéance de la tâche est calculée en multipliant le pire temps de réponse de la fonction (tel qu'exprimé dans l'équation~\ref{eq:herofake-task-wet}) par l'écart de durée de la qualité de service associé au niveau de qualité de service de la demande de l'utilisateur. L'équation~\ref{eq:herofake-task-penalty} montre que nous fixons une valeur booléenne $QP_{f_{N, P}}$ pour chaque invocation de fonction si la tâche ne respecte pas son délai. 
+Une fois qu'une tâche est programmée sur une plateforme d'exécution, elle passe par sa durée totale d'exécution décrite dans l'équation \ref{eq:herofake-HRO-total-time}. L'échéance de la tâche est calculée en multipliant le pire temps de réponse de la fonction (tel qu'exprimé dans l'équation~\ref{eq:herofake-task-wet}) par l'écart de durée de la qualité de service associé au niveau de qualité de service de la demande de l'utilisateur. L'équation~\ref{eq:herofake-task-penalty} montre que nous fixons une valeur booléenne $QP_{f_{N, P}}$ pour chaque invocation de fonction si la tâche ne respecte pas son délai. 
 
 
 \begin{equation}
@@ -372,7 +372,7 @@ Nous itérons sur les répliques de la fonction pour récupérer et prédire les
 \begin{itemize}
     \item \textbf{pénalité potentielle} : nous calculons la longueur de la file d'attente de la plateforme et vérifions si l'échéance de la tâche sera dépassée, comme décrit dans l'équation~\ref{eq:herofake-task-penalty} ;
     \item \textbf{consommation d'énergie} : nous récupérons les mesures hors-ligne pour établir la consommation d'énergie dynamique de cette tâche sur la plateforme ;
-    \item \textbf{fusion des tâches} : nous calculons la longueur de la file d'attente des tâches de la plate-forme $Q$ en additionnant les durées totales de toutes les tâches en file d'attente, comme décrit dans les équations~\ref{eq:herofake-HRO-scheduling-platform-queue} (longueur de la file d'attente) et~\ref{eq:herofake-HRO-total-time} (durée totale de la tâche). 
+    \item \textbf{fusion des tâches} : nous calculons la longueur de la file d'attente des tâches de la plateforme $Q$ en additionnant les durées totales de toutes les tâches en file d'attente, comme décrit dans les équations~\ref{eq:herofake-HRO-scheduling-platform-queue} (longueur de la file d'attente) et~\ref{eq:herofake-HRO-total-time} (durée totale de la tâche). 
 \end{itemize}
 
 \begin{equation}
@@ -380,7 +380,7 @@ Nous itérons sur les répliques de la fonction pour récupérer et prédire les
 \label{eq:herofake-HRO-scheduling-platform-queue}
 \end{equation}
 
-Ces valeurs sont normalisées pour s'adapter à une fonction de coût pondérée décrite dans l'équation~\ref{eq:herofake-HRO-scheduling-cost-function}. Nous avons utilisé $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0.5}{6}$ et $k_{TC} = \frac{1.5}{6}$ (comme pour l'autoscaler). L'ordonnanceur minimise ensuite cette fonction de coût pour toutes les répliques $(N, P)$ (c'est-à-dire le nœud et la plate-forme d'exécution).
+Ces valeurs sont normalisées pour s'adapter à une fonction de coût pondérée décrite dans l'équation~\ref{eq:herofake-HRO-scheduling-cost-function}. Nous avons utilisé $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0.5}{6}$ et $k_{TC} = \frac{1.5}{6}$ (comme pour l'autoscaler). L'ordonnanceur minimise ensuite cette fonction de coût pour toutes les répliques $(N, P)$ (c'est-à-dire le nœud et la plateforme d'exécution).
 
 \begin{equation}
 \begin{split}
@@ -397,28 +397,30 @@ Si l'ordonnanceur ne trouve pas de réplique disponible pour exécuter la tâche
 \label{section:herofake-evaluation}
 
 \begin{figure*}[t]
+    \centering
     \subfloat[Task consolidation (based on the unused node count)\label{figure:herofake-evaluation-full-nodes}]{
-        \includegraphics[width=0.3\linewidth]{5_Chapitre3/figures/evaluation/z-nodes-20221212-232143-169224.png}
+        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/z-nodes-20221212-232143-169224.png}
     }\qquad
     \subfloat[QoS violations (based on tasks with missed deadline)\label{figure:herofake-evaluation-full-penalty}]{
-        \includegraphics[width=0.3\linewidth]{5_Chapitre3/figures/evaluation/z-penalty-20221212-232143-169224.png}
+        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/z-penalty-20221212-232143-169224.png}
     }\qquad
     \subfloat[Dynamic energy consumption (in kWh)\label{figure:herofake-evaluation-full-energy}]{
-        \includegraphics[width=0.3\linewidth]{5_Chapitre3/figures/evaluation/z-energy-20221212-232143-169224.png}
+        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/z-energy-20221212-232143-169224.png}
     }
     \caption{Evaluation 1 -- Comparison against baselines}
     \label{figure:herofake-evaluation-hro-full}
 \end{figure*}
 
 \begin{figure*}[t]
+    \centering
     \subfloat[Task consolidation (based on the unused node count)\label{figure:herofake-evaluation-mixed-nodes}]{
-        \includegraphics[width=0.3\linewidth]{5_Chapitre3/figures/evaluation/x-nodes-20221212-185844-053283.png}
+        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/x-nodes-20221212-185844-053283.png}
     }\qquad
     \subfloat[QoS violations (based on tasks with missed deadline)\label{figure:herofake-evaluation-mixed-penalty}]{
-        \includegraphics[width=0.3\linewidth]{5_Chapitre3/figures/evaluation/x-penalty-20221212-185844-053283.png}
+        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/x-penalty-20221212-185844-053283.png}
     }\qquad
     \subfloat[Dynamic energy consumption (in kWh)\label{figure:herofake-evaluation-mixed-energy}]{
-        \includegraphics[width=0.3\linewidth]{5_Chapitre3/figures/evaluation/x-energy-20221212-185844-053283.png}
+        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/x-energy-20221212-185844-053283.png}
     }
     \caption{Evaluation 2 -- Impact of HeROfake components on the overall performance}
     \label{figure:herofake-evaluation-hro-mixed}

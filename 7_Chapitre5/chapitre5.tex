@@ -70,7 +70,7 @@ Cette section présente les choix de conception et les hypothèses formulées po
 \label{figure:herosim-software-architecture}
 \end{figure}
 
-HeROsim utilise la bibliothèque SimPy~\footnote{\href{https://simpy.readthedocs.io}{https://simpy.readthedocs.io}} comme moteur de simulation à événements discrets. Il fournit trois classes de base - \texttt{Orchestrator}, \texttt{Autoscaler} et \texttt{Scheduler} - qui devraient être sous-classées par les utilisateurs désireux d'implémenter leurs propres algorithmes. Comme l'essentiel du comportement de la plate-forme est hérité des classes de base, le coût de mise en œuvre d'une nouvelle politique est minime : le couple le plus simple d'autoscaler et d'ordonnanceur (politique de placement aléatoire) est mis en œuvre en moins de 20 lignes de code.
+HeROsim utilise la bibliothèque SimPy~\footnote{\href{https://simpy.readthedocs.io}{https://simpy.readthedocs.io}} comme moteur de simulation à événements discrets. Il fournit trois classes de base - \texttt{Orchestrator}, \texttt{Autoscaler} et \texttt{Scheduler} - qui devraient être sous-classées par les utilisateurs désireux d'implémenter leurs propres algorithmes. Comme l'essentiel du comportement de la plateforme est hérité des classes de base, le coût de mise en œuvre d'une nouvelle politique est minime : le couple le plus simple d'autoscaler et d'ordonnanceur (politique de placement aléatoire) est mis en œuvre en moins de 20 lignes de code.
 
 \subsection{Données d'entrée}
 
@@ -220,7 +220,7 @@ HeROsim nous a également permis d'évaluer l'impact des différents composants 
 
 \subsection{HeROcache}
 
-Ici, une stratégie d'orchestration consciente des contraintes temporelles et de données a été proposée. Nous avons exploré le déploiement d'un système de détection d'intrusion (IDS) sur une plate-forme serverless. En particulier, nous avons étudié les avantages de l'orchestration consciente des données lors de l'exploitation de matériel hétérogène pour déployer des applications sensibles au temps sur des dispositifs périphériques à ressources limitées, du point de vue du fournisseur de services.
+Ici, une stratégie d'orchestration consciente des contraintes temporelles et de données a été proposée. Nous avons exploré le déploiement d'un système de détection d'intrusion (IDS) sur une plateforme serverless. En particulier, nous avons étudié les avantages de l'orchestration consciente des données lors de l'exploitation de matériel hétérogène pour déployer des applications sensibles au temps sur des dispositifs périphériques à ressources limitées, du point de vue du fournisseur de services.
 
 L'objectif de l'application est de détecter le trafic TCP potentiellement malveillant dans les journaux de réseau soumis par les utilisateurs. Comme cette application IDS est spécifiquement destinée aux missions de drones, son schéma d'accès est étroitement lié aux schémas saisonniers, ce qui en fait une bonne adaptation au paradigme serverless.
 
@@ -230,7 +230,7 @@ Il existe des dépendances de données entre les deux couches de l'application. 
 
 Au niveau de l'orchestrateur, nous avons dû modifier la granularité des requêtes utilisateur : une requête concerne une application, qui peut être composée d'une ou plusieurs fonctions, appelées dans l'ordre défini par le DAG de l'application. Chaque fonction peut prendre des données en entrée et produire des données en sortie. Ces données sont définies par leur taille en octets.
 
-Alors que HeROfake ne prend pas en compte les opérations de stockage, HeROcache met en œuvre la \textbf{récupération des images de fonctions}, \textbf{la mise en cache des images de fonctions} et les \textbf{communications entre fonctions} dans l'orchestrateur de base. Ces opérations augmentent la latence de la requête utilisateur d'une quantité de temps calculée sur la base de la caractérisation de la plate-forme et de la fonction, voir figure~\ref{figure:herosim-cost} : par exemple, HeROsim estime le temps de récupération de l'image de la fonction sur la base de la largeur de bande du réseau spécifiée par l'utilisateur dans la description de l'infrastructure, la taille de l'image de la fonction spécifiée par le type de charge de travail, et la performance du stockage local du nœud spécifiée par le type de stockage.
+Alors que HeROfake ne prend pas en compte les opérations de stockage, HeROcache met en œuvre la \textbf{récupération des images de fonctions}, \textbf{la mise en cache des images de fonctions} et les \textbf{communications entre fonctions} dans l'orchestrateur de base. Ces opérations augmentent la latence de la requête utilisateur d'une quantité de temps calculée sur la base de la caractérisation de la plateforme et de la fonction, voir figure~\ref{figure:herosim-cost} : par exemple, HeROsim estime le temps de récupération de l'image de la fonction sur la base de la largeur de bande du réseau spécifiée par l'utilisateur dans la description de l'infrastructure, la taille de l'image de la fonction spécifiée par le type de charge de travail, et la performance du stockage local du nœud spécifiée par le type de stockage.
 
 L'introduction d'opérations de stockage au niveau du nœud individuel nous a permis d'évaluer une stratégie de préchargement d'images de fonctions afin d'accélérer les démarrages à froid dans les invocations futures.
 
