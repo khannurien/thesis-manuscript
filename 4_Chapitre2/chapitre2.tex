@@ -1,12 +1,379 @@
 \chapter{Serverless, allocation et placement dynamiques dans le cloud : État de l'art}
 
-\section{Serverless}
+TODO: Première mention de "serverless" dans la littérature~\cite{andersonServerlessNetworkFile}
+
+TODO: Autoscaling = problème non résulé~\cite{straesserWhyItNot2022}
+
+\section{Serverless : caractéristiques et écosystème}
 
 Le modèle serverless constitue un changement de paradigme dans le cloud public : par opposition aux modèles traditionnels, les clients serverless ne réservent pas de ressources matérielles. L'exécution de leur code est dirigée par des événements (requêtes HTTP, tâches programmées, etc.) et la facturation s'effectue sur la base de l'usage réel des ressources. En contrepartie, la responsabilité de l'allocation des ressources et du placement des tâches incombe au fournisseur.
 
-\subsection{Allocation des ressources}
+Malgré une tarification attractive avec des plans gratuits étendus dans les offres commerciales, et un panel varié de solutions open source ciblant les principaux orchestrateurs de cloud, le FaaS n'est pas encore devenu le modèle d'abonnement au cloud de référence : certains défis sont encore ouverts et doivent être relevés avant que le serverless ne devienne omniprésent.
 
-\subsection{Placement des requêtes}
+Un véritable défi pour remédier à ces lacunes est d'éviter les solutions "serveurful" au problème de l'allocation dynamique des ressources, c'est-à-dire l'allocation de ressources stables supplémentaires qui ne s'étendent volontairement pas jusqu'à zéro~\cite{hellersteinServerlessComputingOne2019}.
+
+Le serverless est un sujet animé dans le domaine du cloud computing et de nombreux auteurs contribuent à atténuer ces revers : le nombre d'articles publiés autour du serverless a presque doublé entre 2019 et 2020~\cite{hassanSurveyServerlessComputing2021}.
+
+\subsection{Description de l'offre serverless}
+
+Dans cette première sous-section, nous proposons un tour d'horizon des différentes offres serverless chez les fournisseurs de cloud public, ainsi que des solutions open source disponibles pour le cloud privé.
+
+Le tableau~\ref{table:commercial-faas} présente un sommaire des offres commerciales FaaS dans le cloud public, leurs modèles de tarifications ainsi que certaines de leurs caractéristiques. Ce sommaire inclut Alibaba Function Compute~\cite{alibaba-function-compute}, Amazon Web Services Lambda~\cite{aws-lambda}, Microsoft Azure Functions~\cite{azure-functions}, Google Cloud Functions~\cite{google-cloud-functions}, IBM Cloud Functions~\cite{ibm-cloud-functions} et Oracle Cloud Functions~\cite{oracle-cloud-functions}.
+
+Le tableau~\ref{table:foss-faas} présente ensuite quelques solutions majeures disponibles dans la communauté open source, et donne un aperçu de l'état du projet en fonction de son adoption par les utilisateurs et la quantité de contributions, ainsi que les partenaires industriels qui accompagnent le projet. On y trouve Apache OpenWhisk~\cite{openwhisk}, Fission~\cite{fission}, Fn~\cite{fn}, Knative~\cite{knative} et OpenFaaS~\cite{openfaas}.
+
+\subsubsection{Solutions commerciales dans le cloud public}
+
+Pour positionner chacune des offres commerciales, nous avons choisi de les comparer sur la base des critères suivants :
+
+\begin{itemize}
+    \item Modèle de tarification : les modalités selon lesquelles les clients peuvent anticiper le coût de leurs déploiements dans le cadre d'une offre serverless dans le cloud public ;
+    \item Caractéristiques : les limites imposées par le fournisseur de services en matière d'utilisation et de disponibilité des ressources.
+\end{itemize}
+
+TODO: refaire le tableau
+
+% \begin{longtblr}[
+%     caption = {Cloud customers are faced with a diversity of FaaS offerings},
+%     label = {table:commercial-faas},
+%     note{a} = {billed per \num{10000} requests (for USD 0.02)}
+% ]{
+%     rowhead = 3,
+%     colspec = { X[l,1.8] X[2,l]X[2,l] X[l]X[l]X[l]X[1.8,l] },
+%     row{1-2} = { l, font = {\bfseries} },
+%     row{3} = { b, font = \footnotesize%, cmd={\rotatebox{60}}
+%                 },
+%     row{4-Z} = { m, font = \footnotesize, rowsep = 1ex },
+%     column{1} = { font = {\bfseries}}
+% }
+
+% \toprule
+% \SetCell[r=3]{m} Service & \SetCell[c=2]{c} Pricing model && \SetCell[c=4]{c} Properties \\
+% \cmidrule[lr=-0.4]{2-3}
+% \cmidrule[lr=-0.4]{4-7}
+% &
+% free quota per month &
+% pay-as-you-go cost &
+% \\
+% &
+% \# of invocations / compute resources [\unit{\giga\byte\second}]&
+% \num{1}M requests / \qty{1}{\giga\byte\second} compute [USD]&
+% code size &
+% memory &
+% execution time &
+% payload size \\
+% \midrule
+
+
+% Alibaba Function Compute &
+% \num{1000000} / \num{400000} &
+% \num{20}\TblrNote{a} / \num{0.000016384} &
+% \qty{500}{\mega\byte} &
+% \qty{3}{\giga\byte}&
+% \qty{24}{\hour} &
+% \qty{128}{\kilo\byte} (request), \qty{6}{\mega\byte} (response)
+% \\
+
+% AWS Lambda &
+% \num{1000000} / \num{400000} &
+% \num{0.2} / \num{0.0000166667} &
+% \qty{10}{\giga\byte}&
+% \qty{10240}{\mega\byte} &
+% \qty{15}{\minute} &
+% \qty{6}{\mega\byte} (synchronous), \qty{256}{\kilo\byte} (asynchronous) for requests and responses
+% \\
+
+% Azure Functions &
+% \num{1000000} / \num{400000} &
+% \num{0.2} / \num{0.000016} &
+% N/A &
+% \qty{1.5}{\giga\byte} &
+% \qty{10}{\minute}&
+% \qty{100}{\mega\byte} (request)
+% \\
+
+% Google Cloud Functions   &
+% \num{2000000} / \num{400000} &
+% \num{0.4} / \num{0.0000025} &
+% \qty{500}{\mega\byte}&
+% \qty{8}{\giga\byte}&
+% \qty{9}{\minute}&
+% \qty{10}{\mega\byte} for requests and responses
+% \\
+
+% IBM Cloud Functions  &
+% \num{5000000} / \num{400000} &
+% N/A / \num{0.000017} &
+% \qty{48}{\mega\byte} &
+% \qty{2048}{\mega\byte} &
+% \qty{60}{\second} &
+% \qty{5}{\mega\byte} for requests and responses
+% \\
+
+% Oracle Cloud Functions &
+% \num{2000000} / \num{400000} &
+% \num{0.2} / \num{0.00001417} &
+% N/A &
+% \qty{2048}{\mega\byte} &
+% \qty{5}{\minute}&
+% \qty{6}{\mega\byte}
+% \\
+
+% \bottomrule
+% \end{longtblr}
+
+\subsubsection{Solution open source pour le cloud privé}
+
+Comme mesure de l'état d'un projet ainsi que de son adoption, nous choisissons deux indicateurs disponibles publiquement sur les dépôts GitHub~\cite{github} :
+
+\begin{itemize}
+    \item Les "GitHub stars" (ou étoiles) indiquent combien d'utilisateurs de GitHub ont choisi de s'abonner aux mises à jour d'un projet ;
+    \item Nous considérons comme contributeurs les utilisateurs ayant publié dix, ou plus de dix modifications au code source (\textit{git commits}) du projet.
+\end{itemize}
+
+\begin{table}[H]
+\caption{Open source solutions allow cloud providers to devise their own FaaS offering}
+\centering
+\begin{tabularx}{\textwidth} { 
+  | >{\centering\arraybackslash}X 
+  | >{\centering\arraybackslash}X 
+  | >{\centering\arraybackslash}X  | }
+\hline
+                       & \textbf{Project status and adoption} & \textbf{Corporate backer} \\ \hline
+Apache OpenWhisk       & 5.8k GitHub stars, 34 contributors ($\geq$ 10 commits) & IBM (Apache Foundation)             \\ \hline
+Fission                & 7.3k GitHub stars, 10 contributors ($\geq$ 10 commits) & Platform9             \\ \hline
+Fn                     & 5.3k GitHub stars, 21 contributors ($\geq$ 10 commits) & Oracle             \\ \hline
+Knative                & 4.5k GitHub stars, 55 contributors ($\geq$ 10 commits) & Google             \\ \hline
+OpenFaaS               & 22.2k GitHub stars, 13 contributors ($\geq$ 10 commits) & VMware             \\ \hline
+\end{tabularx}
+\label{table:foss-faas}
+\end{table}
+
+\section{Le défi de l'allocation dynamique des ressources}
+
+\subsection{Délais et fréquence du démarrage à froid}
+\label{sota-cold-start}
+
+Comme les conteneurs serverless doivent passer un minimum de temps dans un état d'inactivité, ils sont mis en marche et arrêtés très fréquemment par rapport aux conteneurs PaaS ou aux VM IaaS. Chaque fois qu'une fonction est appelée et doit être mise à l'échelle à partir de zéro, le conteneur ou la machine virtuelle hébergeant le code de la fonction doit passer par sa phase d'initialisation : c'est ce qu'on appelle un "cold start"~\cite{lloydImprovingApplicationMigration2018}, ou "démarrage à froid". Les démarrages à froid peuvent entraîner des pénalités de latence, aggravées par les retards qui font boule de neige lors de la composition des fonctions dans le contexte d'applications complexes~\cite{mohanAgileColdStartsa}.
+
+Les fonctions sont généralement invoquées en rafales - le modèle d'exécution AWS Lambda peut maximiser la concurrence en instanciant une fonction dans des centaines, voire des milliers de bacs à sable répartis sur différents sites géographiques~\cite{aws-lambda-scaling}. Quelques minutes après avoir traité une requête, le sandbox d'une fonction est libéré du nœud d'exécution ; de plus, les futures nouvelles instances ne sont pas garanties d'être créées sur le même nœud. Cela conduit à des situations dans lesquelles l'environnement d'une fonction n'est pas mis en cache sur le nœud. Le code et les bibliothèques associées doivent être récupérés et copiés à nouveau sur le système de fichiers, ce qui entraîne une latence de démarrage à froid.
+
+Une approche "naïve" consisterait à pré-allouer des ressources matérielles afin de maintenir un pool de conteneurs de fonctions prêt à recevoir de nouvelles requêtes. Cette approche n'est pas acceptable car elle s'éloigne de la possibilité d'une mise à l'échelle à zéro.
+
+Vahidinia et al.~\cite{vahidiniaColdStartServerless2020} proposent une étude complète de la position et des stratégies de diverses offres commerciales FaaS concernant le démarrage à froid. Alors que l'informatique sans serveur suggère de faire tourner des instances jetables de fonctions pour traiter chaque requête entrante, les auteurs notent que les acteurs commerciaux tels qu'AWS, Google et Microsoft réutilisent tous dans une certaine mesure les bacs à sable d'exécution, en les maintenant en activité pendant une période de temporisation afin de contourner les coûts de latence induits par les démarrages à froid.
+
+\subsubsection{Réduire les temps d'initialisation}
+
+Différentes approches peuvent être mises en œuvre par les fournisseurs de services en nuage pour réduire le temps d'initialisation des bacs à sable de fonctions. Il s'agit d'un travail crucial car les invocations de fonctions suivent des modèles généralement imprévisibles~\cite{shahradServerlessWildCharacterizing}. Cette section explore les contributions de la littérature qui se concentrent sur la réduction de l'écart de latence entre les modèles serverless et serverful.
+
+\textbf{Approche d'optimisation en bac à sable}
+
+Dans~\cite{mullerLambadaInteractiveData2020}, les auteurs proposent Lambada pour résoudre le problème du démarrage à froid dans le contexte de l'analyse des données distribuées en mettant en lots l'invocation des travailleurs en parallèle. Ils identifient un goulot d'étranglement dans le processus d'invocation de nouveaux travailleurs : dans leur évaluation, ils montrent que l'invocation de 1000 travailleurs AWS Lambda prend entre 3,4 et 4,4 secondes. Dans leur contribution, chaque travailleur est responsable de l'invocation d'une deuxième génération de bacs à sable, qui invoqueront à leur tour une génération suivante de travailleurs jusqu'à ce que le processus de mise à l'échelle soit terminé. Cette technique permet de créer plusieurs milliers de travailleurs en moins de 4 secondes.
+
+Dans~\cite{mancoMyVMLighter2017}, les auteurs proposent LightVM pour mettre le temps de démarrage des VM au même niveau que les conteneurs. Les auteurs montrent que les temps d'instanciation augmentent linéairement avec la taille de l'image : la création d'un environnement sandbox pour l'exécution d'une application est une opération liée aux entrées-sorties. En repensant le plan de contrôle de Xen et en utilisant des VM légères qui incluent un environnement minimal nécessaire à l'exécution de l'application en bac à sable, ils obtiennent des temps de démarrage comparables aux performances de la mise en œuvre de \texttt{fork}/\texttt{exec} dans Linux.
+
+Dans~\cite{akkusSANDHighPerformanceServerless}, les auteurs proposent que des mécanismes d'isolation complets tels que les conteneurs soient nécessaires pour isoler les charges de travail entre les clients, alors qu'à la granularité d'une application unique, les processus suffisent à isoler les fonctions. Dans SAND, ils mettent en œuvre un mécanisme d'isolation au-dessus de Docker qui permet des interactions efficaces en termes de ressources, élastiques et à faible latence entre les fonctions.
+
+Dans~\cite{agacheFirecrackerLightweightVirtualization}, les auteurs présentent Firecracker, qui s'est développé pour devenir la technologie de virtualisation \textit{de facto} pour serverless, utilisée chez AWS Lambda. Ils s'attaquent au compromis isolation versus performances en introduisant des VM légères (ou MicroVM) à la place des conteneurs comme mécanisme de sandboxing pour les charges de travail serverless. Firecracker atteint des temps de démarrage inférieurs à 125 ms en remplaçant QEMU par une implémentation personnalisée d'un moniteur de machine virtuelle qui s'exécute au-dessus de KVM et permet de créer jusqu'à 150 MicroVM par seconde et par hôte avec une surcharge de mémoire de 3\%.
+
+\textbf{Approche "snaptshotting"} \label{sota-snapshotting}
+
+Dans~\cite{duCatalyzerSubmillisecondStartup2020}, les auteurs affirment que la surcharge de démarrage dans les bacs à sable basés sur la virtualisation est due à leur nature agnostique vis-à-vis des applications. En effet, ils montrent que la latence d'initialisation de l'application domine la latence de démarrage totale. Dans Catalyzer, les auteurs montrent que les instances de bac à sable d'une même fonction possèdent des états d'initialisation très similaires, et présentent donc une solution d'instantané qui permet de restaurer une instance de fonction à partir d'une image de point de contrôle, en sautant effectivement la phase d'initialisation de l'application lors d'une mise à l'échelle à partir de zéro. Ils construisent une solution basée sur le gVisor de Google~\cite{gvisor} qui surpasse systématiquement les technologies de pointe telles que Firecracker\cite{agacheFirecrackerLightweightVirtualization}, HyperContainer et Docker d'un ordre de grandeur.
+
+Dans~\cite{ustiugovBenchmarkingAnalysisOptimization2021}, les auteurs présentent vHive, un cadre d'analyse comparative pour l'expérimentation serverless qui leur permet de montrer qu'une latence élevée peut être attribuée à des défauts de page fréquents pendant l'initialisation des bacs à sable, avec des modèles très similaires entre les exécutions d'une même fonction -- 97\% des pages mémoire étant identiques entre les invocations des fonctions étudiées. Les auteurs proposent REAP pour créer des images de la configuration de la mémoire d'un bac à sable qui permettent de prélever des pages du disque vers la mémoire, de remplir rapidement la mémoire d'invité avant l'exécution de la fonction et d'éviter ainsi la majorité des erreurs de page au moment de l'initialisation. Cette technique permet d'accélérer le délai de démarrage à froid de 3,7 fois en moyenne.
+
+Dans~\cite{shillakerFaasmLightweightIsolation2020}, les auteurs proposent Faaslets, un nouveau mécanisme d'isolation basé sur l'isolation des fautes logicielles fournie par WebAssembly. Les faaslets permettent de restaurer l'état d'une fonction à partir d'instantanés déjà initialisés. Ces snapshots sont pré-initialisés à l'avance et peuvent être restaurés en quelques centaines de millisecondes, même d'un hôte à l'autre. Les fasslets tirent parti du modèle de mémoire de WebAssembly : les tableaux d'octets linéaires peuvent être copiés sans une longue phase de (dé)sérialisation.
+
+\textbf{Approche de la mise en cache}
+
+Dans~\cite{oakesSOCKRapidTask}, les auteurs soutiennent que si le serverless permet de réaliser des économies grâce à une élasticité accrue et à la vélocité des développeurs, les longs temps d'initialisation des conteneurs nuisent aux performances de latence des applications déployées. Ils identifient des goulets d'étranglement dans les primitives Linux impliquées dans l'initialisation des conteneurs, les dépendances des paquets étant le principal coupable des opérations d'E/S pendant le sandboxing. Ils proposent SOCK comme un système de conteneurs optimisé pour les tâches serverless qui s'appuie sur OpenLambda et repose sur un système de mise en cache conscient des paquets, et montrent que leur solution offre des accélérations jusqu'à 21 fois par rapport à Docker.
+
+Dans~\cite{fuerstFaasCacheKeepingServerless2021}, l'auteur montre des similitudes conceptuelles entre la mise en cache d'objets et la fonction keep-alive, ce qui leur permet de concevoir des politiques qui réduisent les délais de démarrage à froid. En s'appuyant sur cette analogie, ils proposent une politique de maintien en vie qui est essentiellement une politique de terminaison (ou d'éviction) de fonction. En gardant les fonctions chaudes aussi longtemps que possible (c'est-à-dire aussi longtemps que les ressources du serveur le permettent), FaasCache parvient à doubler le nombre de requêtes pouvant être traitées dans sa mise en œuvre basée sur OpenWhisk.
+\\
+
+La capacité des plateformes serverless à mettre à l'échelle une fonction jusqu'à zéro réplique afin d'éviter de facturer les clients pour les ressources inactives est une différence clé par rapport aux modèles de services cloud traditionnels. La recherche de techniques qui minimisent l'impact d'un démarrage à froid sur la latence de la fonction est un sujet de recherche essentiel, car les temps d'initialisation prohibitifs entravent le potentiel des plateformes FaaS à concurrencer les plateformes PaaS.
+
+\subsection{Hétérogénéité du matériel}
+
+Les clients de l'informatique en nuage sont censés réserver différentes ressources en fonction des besoins de leurs applications, qu'il s'agisse d'une architecture CPU spécifique, d'accélérateurs matériels, d'un stockage ad hoc, etc. Un exemple frappant est celui de l'apprentissage automatique distribué, dans lequel de nombreux GPU sont utilisés pour accélérer l'apprentissage des modèles - en outre, les fournisseurs de cloud commencent à généraliser l'accès au matériel spécialisé tel que les TPU dans les VM.
+
+La sélection manuelle des ressources matérielles (" type d'instance "), attendue des clients dans les offres IaaS comme Amazon EC2, n'a pas de sens dans le paradigme serverless. L'accélération matérielle devrait être décidée par le fournisseur par application ou par requête. À ce jour, cette possibilité n'est pas disponible dans les offres FaaS telles qu'AWS Lambda.
+
+Dans~\cite{Jiang2021TowardsDS}, les auteurs ont entrepris de comparer les configurations IaaS et FaaS pour la formation à l'apprentissage automatique sur les offres Amazon Web Services (resp. EC2 et Lambda). Ils proposent une implémentation de l'apprentissage basée sur le FaaS, LambdaML, et la comparent à des frameworks de l'état de l'art s'exécutant sur des instances EC2. Ils ont mesuré que l'apprentissage serverless peut être rentable tant que le modèle converge suffisamment rapidement pour que les communications inter-fonctions ne dominent pas le temps d'exécution total. Dans le cas contraire, une configuration IaaS utilisant des GPU sera plus performante que n'importe quelle configuration FaaS, offrant de meilleures performances tout en étant plus rentable.
+
+Dans~\cite{bacisBlastFunctionFPGAasaServiceSystem2020}, les auteurs explorent le multitenancy dans les FPGA pour atteindre un taux d'utilisation plus élevé de la carte. Ils proposent BlastFunction, un système évolutif pour le partage de temps FPGA dans un contexte serverless. Leur mise en œuvre repose sur trois éléments de base : une bibliothèque qui permet un accès transparent aux dispositifs partagés à distance, un plan de contrôle distribué qui surveille les FPGA pour réaliser le partage du temps, et un registre central qui gère l'allocation des cartes à chaque nœud de calcul. Cette conception permet d'atteindre des taux d'utilisation plus élevés sur les cartes et donc de traiter un plus grand nombre de requêtes, en particulier en cas de charge élevée, bien qu'au prix d'une augmentation de 36% de la latence en raison de la concurrence supplémentaire.
+
+Dans~\cite{diamantopoulosAccelerationasauServiceCloudnativeMonteCarlo2021}, les auteurs se concentrent sur un cas d'utilisation des services financiers et proposent des FPGA pour réduire le temps de réponse de bout en bout et augmenter l'évolutivité dans une architecture microservices. L'application étudiée est à forte intensité de calcul et présente des caractéristiques de temps réel. Ils proposent CloudiFi, un cadre cloud-native qui expose les accélérateurs matériels en tant que microservices par le biais d'une API HTTP RESTful. CloudiFi permet de décharger les charges de travail sur les accélérateurs matériels au niveau des fonctions. Une évaluation des performances de l'application sous CloudiFi montre des gains de temps de réponse de 485x lors de l'utilisation de FPGA connectés au réseau par rapport à une configuration vanille.
+
+Les CPU ARM et RISC, les GPU et les FPGA sont de plus en plus utilisés dans les centres de données pour répondre à la demande de performance, d'efficacité énergétique et de facteur de forme réduit. Dans~\cite{hortaXartrekRuntimeExecution2021}, les auteurs soutiennent que, puisque ces plateformes d'exécution hétérogènes sont généralement colocalisées avec un processeur hôte général, la possibilité de tirer parti de leurs caractéristiques en migrant les charges de travail pourrait entraîner des gains de performance significatifs. Ils proposent Xar-Trek, un compilateur et un moniteur d'exécution pour permettre la migration de l'exécution à travers les CPU et FPGA hétérogènes-ISA selon une politique d'ordonnanceur. Xar-Trek implique un effort de programmation limité : l'application est écrite une seule fois et compilée pour différentes cibles grâce à la chaîne d'outils Xilinx, sans annotations de synthèse de haut niveau nécessaires pour guider le compilateur. Le système d'exécution de Xar-Trek, un ordonnanceur en ligne dans l'espace utilisateur, est capable de déterminer si une migration est efficace et de procéder à la migration des fonctions sélectionnées qui bénéficient le plus de l'accélération. L'évaluation des charges de travail de vision industrielle et de calcul intensif révèle que tant que les charges de travail sont dominées par des fonctions à forte intensité de calcul, Xar-Trek est toujours plus performant que les configurations vanille, avec des gains de performance compris entre 26 et 32 %.
+
+Même lorsque du matériel hétérogène est installé sur le même nœud, il est généralement interconnecté par des bus PCI-Express gérés par l'unité centrale de l'hôte. Les communications sont réalisées à l'aide d'interfaces de passage de messages qui introduisent des coûts de bande passante et de latence. Dans~\cite{vilanovaSlashingDisaggregationTax2022}, les auteurs présentent FractOS, un système d'exploitation distribué pour les centres de données hétérogènes et désagrégés. FractOS permet de décentraliser l'exécution des applications : au lieu de s'appuyer sur l'unité centrale pour transmettre le contrôle et les données d'une plate-forme d'exécution à l'autre, FractOS fournit aux applications une bibliothèque qui permet des communications directes entre les appareils, grâce à un contrôleur sous-jacent qui capte les appels système et fournit des fonctionnalités directes d'appareil à appareil. Lorsqu'elle a été testée sur une application de vérification des visages qui exploite les GPU pour accélérer les calculs, leur solution a permis d'accélérer le temps d'exécution de 47 % et de diviser le trafic réseau global par 3.
+\\
+
+Avec la progression exponentielle et l'intérêt croissant dans le domaine de l'apprentissage automatique, la demande d'accélérateurs matériels dans le cloud n'a jamais été aussi importante. Les offres commerciales serverless sont à la traîne des IaaS traditionnels à cet égard, car aucune n'offre d'accès aux GPU, TPU ni FPGA. En outre, l'allocation dynamique de ce type de matériel pour accélérer des tâches sélectionnées offre aux fournisseurs la possibilité d'améliorer leur utilisation des ressources et leur consommation d'énergie.
+
+\section{Ordonnancer et placer les requêtes utilisateur}
+
+\subsection{Communication des données} \label{sota-communications}
+
+Dans les offres FaaS, les fonctions ne sont pas adressables : la composition se fait par le stockage des résultats dans un niveau de stockage lent avec état qui n'est généralement pas colocalisé avec le niveau de calcul.
+
+Comme les fonctions d'une même application ne peuvent pas partager la mémoire ou les descripteurs de fichiers pour réaliser l'IPC, elles doivent établir la communication par le biais d'interfaces de passage de messages, ce qui introduit une surcharge lorsque les données doivent circuler à travers l'application.
+
+Ce problème est particulièrement préoccupant lorsque des applications gourmandes en données doivent travailler avec des données froides, c'est-à-dire des données auxquelles on accède peu et qui ne sont donc pas mises en cache, et qui sont stockées sur des supports moins performants tels que des disques durs situés sur des nœuds distants. Dans~\cite{Jiang2021TowardsDS}, les auteurs présentent LambdaML, une plateforme d'analyse comparative qui permet de comparer les performances de l'apprentissage distribué de modèles de machine entre les offres IaaS et FaaS. Ils constatent que l'utilisation de FaaS pour la formation à l'apprentissage machine peut être rentable tant que les modèles présentent des schémas de communication réduits.
+
+Dans~\cite{mullerLambadaInteractiveData2020}, les auteurs montrent que FaaS peut être rentable lors de l'exécution de requêtes interactives sporadiques sur des gigaoctets à un téraoctet de données froides. En fournissant des opérateurs de données serverless avec Lambada, ils réalisent des requêtes interactives sur plus de 1 TB de données stockées sur Amazon S3 en approximativement 15 secondes, ce qui est dans le même parc à balles que les solutions commerciales Query-as-a-Service.
+
+Dans~\cite{Romero2021FaaTAT}, les auteurs soutiennent que les offres serverless manquent d'une couche de mise en cache des données en mémoire et par application qui permettrait une mise à l'échelle automatique et fonctionnerait de manière transparente. Faa\$T peut former une couche de mise en cache distribuée fortement cohérente lorsque plusieurs instances d'une application sont lancées, le dernier nœud de mise en cache disparaissant lorsque l'application est réduite à zéro, ce qui permet de facturer sur la base de l'utilisation effective des ressources. Les expériences montrent que Faa\$T peut améliorer les performances de diverses applications de 57\% en moyenne tout en étant 99\% moins cher que les alternatives basées sur des serveurs.
+
+SAND\cite{akkusSANDHighPerformanceServerless} introduit une hiérarchie dans les bus de communication. Dans SAND, les fonctions d'une application sont toujours déployées sur le même nœud. Un bus local au nœud sert de raccourci pour les communications entre fonctions, ce qui permet une exécution séquentielle rapide. Un bus global, distribué entre les nœuds, assure la fiabilité grâce à la tolérance aux pannes. Dans SAND, le bus local multiplie par trois la vitesse de transmission des messages par rapport au bus global.
+\\
+
+Comme les fonctions serverless sont éphémères par nature, et compte tenu des mécanismes d'isolation déployés par les fournisseurs pour répondre aux objectifs de confidentialité et de sécurité, minimiser le surcoût de la communication inter-fonctions semble être un double problème : d'une part, les plateformes serverless ont besoin à la fois de solutions spécifiques au domaine qui prennent en compte les caractéristiques des données qui sont alimentées et renvoyées par les fonctions ; d'autre part, il y a de la place pour des améliorations générales dans le domaine des caches distribués.
+
+\subsection{État durable et état dynamique} \label{sota-state}
+
+L'"état", ou "état local", fait référence aux données habituellement lues et écrites depuis et vers des variables ou un disque par un processus au cours de son exécution. FaaS n'offre aucune garantie quant à la disponibilité d'un tel stockage entre plusieurs exécutions. C'est pourquoi les fonctions serverless sont dites "sans état" : les données qui doivent être persistées doivent être stockées à l'extérieur, et les fonctions doivent être idempotentes afin d'empêcher la corruption de l'état.
+
+En outre, les offres FaaS présentent des limitations arbitraires, notamment en ce qui concerne le temps d'exécution d'une fonction, la taille de la charge utile et la mémoire allouée (cf. tableau \ref{table:commercial-faas}). Il s'agit d'un problème lors de la conception d'applications "réelles" qui consistent en des tâches de longue durée et/ou qui comprennent des fonctions qui doivent communiquer ou se synchroniser, par exemple pour transmettre des résultats intermédiaires en fonction d'un état transitoire.
+
+Étant donné la nature éphémère des instances de fonction, il faut être conscient de la tolérance aux pannes et de la cohérence des données dans leur application lorsqu'elles sont déployées sur FaaS.
+
+Dans~\cite{wuTransactionalCausalConsistency2020}, les auteurs abordent la latence des E/S dans le contexte de la composition de fonctions serverless, où une application est divisée en plusieurs fonctions qui peuvent s'exécuter simultanément sur différents nœuds tout en accédant au stockage distant. Ils proposent HydroCache, un système qui met en œuvre leur idée de cohérence causale transactionnelle multisite (cohérence causale dans le cadre d'une transaction unique distribuée sur plusieurs nœuds). Ils observent des améliorations allant jusqu'à un ordre de grandeur en termes de performances tout en assurant la cohérence. HydroCache surpasse les solutions de l'état de l'art telles que Anna~\cite{Wu2018AnnaAK} et ElastiCache~\cite{elasticache}.
+
+Dans~\cite{Perron2020StarlingAS}, les auteurs soutiennent que les analyses de bases de données serverless permettraient aux analystes de données d'éviter les coûts initiaux en réalisant l'élasticité. Cependant, comme ces types de charges de travail sont par nature imprévisibles, les fournisseurs de cloud ont tendance à avoir des difficultés à fournir des ressources adéquates, ce qui conduit à des solutions qui sont élastiques mais qui souffrent parfois de minutes de latence pendant les phases de mise à l'échelle. Ils présentent Starling, un moteur d'exécution de requêtes construit sur FaaS : trois niveaux de fonctions (Producers, Combiners et Consumers) peuvent évoluer indépendamment pour traiter des ensembles de données stockés sur un stockage à froid distant. Leur évaluation montre que Starling est rentable sur des volumes de requêtes modérés (moins de 120 requêtes par heure sur un ensemble de données TPC-H de 10 TB), tout en montrant de bons résultats de latence pour des analyses ad-hoc sur des données froides dans Amazon S3 et en étant capable de passer à l'échelle sur une base par requête.
+
+Dans le serverless, la mise à l'échelle à partir de zéro lorsque l'activité revient après une période d'inactivité est généralement pilotée par les événements. Cela pose un problème lorsqu'aucune ressource matérielle n'est immédiatement disponible pour reprendre les charges de travail, ce qui induit une latence élevée. Dans~\cite{poppe2022moneyball}, les auteurs étudient l'auto-scaling proactif pour leur offre de base de données Azure SQL serverless. La contribution se concentre sur la prédiction des modèles de pause et de reprise afin d'éviter le problème de latence lors de la reprise de l'activité, et de minimiser la récupération des ressources en premier lieu lorsque les périodes d'inactivité sont courtes. En utilisant des échantillons de milliers de bases de données de production, ils ont constaté que seulement 23\% des bases de données sont imprévisibles, et ont formé des modèles d'apprentissage automatique sur trois semaines de données historiques pour construire un système de prédiction. L'approche a été utilisée avec succès en production chez Azure, atteignant 80\% de reprises proactives et évitant jusqu'à 50\% de pauses en moins.
+
+Dans~\cite{Sreekanti2020CloudburstSF}, les auteurs s'appuient sur le KVS d'Anna~\cite{Wu2018AnnaAK} pour proposer une plateforme FaaS avec état. Cloudburst réalise un état mutable à faible latence et une communication avec un effort de programmation minimal. En s'appuyant sur les capacités d'Anna, ils fournissent des blocs de construction essentiels pour permettre l'état dans un contexte FaaS : communication directe entre les fonctions, accès à faible latence à l'état mutable partagé avec la cohérence de session distribuée, et la programmabilité pour mettre en œuvre de manière transparente les protocoles de cohérence de Cloudburst. Dans leur évaluation par rapport à des applications réelles, Cloudburst surpasse les solutions commerciales et celles de l'état de l'art d'au moins un ordre de grandeur tout en conservant des capacités d'auto-scaling.
+
+\subsubsection{Magasins de données distribués}
+
+L'invocation événementielle implique que les fonctions d'une application unique ne sont pas toujours exécutées sur le même nœud, de sorte que ces fonctions ne peuvent pas utiliser la mémoire partagée ou les communications interprocessus. En outre, compte tenu de la nature des offres serverless qui permettent une mise à l'échelle à zéro, les fonctions ne sont pas toujours dans un état d'exécution et, en tant que telles, ne sont pas adressables par le réseau. Compte tenu de ces contraintes, les développeurs doivent s'appuyer sur des communications accrues par le biais d'un stockage lent tel que les buckets S3 pour gérer l'état de leurs applications.
+
+La mise à l'échelle d'une base de données à zéro présente des défis difficiles à relever : parvenir à une conception de base de données qui permette le serverless est un effort continu d'ingénierie et de recherche. Microsoft a récemment proposé des capacités de mise à l'échelle automatique dans sa base de données Azure SQL. En 2022, Cloudflare a introduit D1~\cite{cloudflare-d1}, qui est basé sur SQLite.
+
+En effet, les applications serverless sont souvent déployées aux côtés d'un magasin de valeurs clés qui évolue beaucoup plus naturellement qu'une base de données, car les magasins de valeurs clés (KVS) sont essentiellement sans état et peuvent donc être distribués sur les nœuds~\cite{Klimovic2018PocketEE}. Étant donné que les systèmes KVS sont au cœur de l'état sans serveur, la mise en œuvre de KVS cohérents, efficaces et élastiques est un sujet de recherche animé. Cependant, les systèmes de stockage de qualité industrielle n'ont pas été conçus avec les propriétés serverless à l'esprit, ce qui entraîne une élasticité altérée et donc des coûts qui augmentent plus rapidement que linéairement avec la taille de l'infrastructure, ainsi que des performances incohérentes en fonction de l'échelle.
+
+Dans~\cite{Wu2018AnnaAK}, les auteurs ont entrepris de concevoir un KVS pour n'importe quelle échelle : le magasin doit être extrêmement efficace sur un seul nœud et doit être capable d'évoluer de manière élastique vers n'importe quel déploiement dans le cloud. Leurs exigences en matière de conception comprennent le partitionnement de l'espace des clés (en commençant par le niveau multicœur pour garantir les performances) avec une réplication multimaître pour obtenir la concurrence, une exécution sans attente pour minimiser la latence et des modèles de cohérence sans coordination pour éviter les goulets d'étranglement lors des communications entre les cœurs et les nœuds. En utilisant une structure de données de pointe, les treillis, Anna peut fusionner efficacement les états de manière asynchrone (ou sans attente). L'évaluation montre qu'Anna surpasse Cassandra d'un facteur 10 lorsqu'elle est utilisée dans un cadre distribué, sur quatre nœuds à 32 cœurs situés dans des lieux géographiques différents.
+
+Dans~\cite{Klimovic2018PocketEE}, les auteurs soutiennent que les services de stockage existants ont des objectifs orthogonaux ou contradictoires avec ceux d'un KVS serverless : ils sacrifient la performance ou le coût pour la durabilité ou la haute disponibilité des données. En particulier, ils constatent que ces systèmes ne sont intrinsèquement pas adaptés aux données intermédiaires (ou "éphémères") dans le contexte des communications inter-fonctions, car ils nécessitent un agent de longue durée pour assurer la communication entre les tâches. Les auteurs présentent Pocket, un magasin de données distribué conçu pour le partage de données intermédiaires dans le contexte de l'analytique serverless, avec des temps de réponse inférieurs à la seconde, un redimensionnement automatique des ressources et un placement intelligent des données sur plusieurs niveaux de stockage (DRAM, Flash, disque). Pour ce faire, les responsabilités sont réparties entre trois plans qui évoluent indépendamment : un plan de contrôle qui met en œuvre les politiques de placement des données, un plan de métadonnées qui permet de distribuer les données entre les nœuds, et le plan de stockage des données. Lorsqu'il est comparé à Redis pour des opérations MapReduce sur un ensemble de données de 100 Go, Pocket affiche des performances comparables tout en économisant près de 60\% en termes de coûts. Il est également beaucoup plus rapide qu'Amazon S3, avec une accélération de 4,1 fois sur les E/S éphémères.
+
+\subsubsection{Stockage éphémère}
+
+Le stockage dans le nuage est conçu comme un service à plusieurs niveaux : les données sont réparties entre les supports rapides, mais coûteux, et les supports lents, mais bon marché, en fonction de la fréquence d'utilisation, de la taille, de l'âge, etc.
+
+\begin{table}[H]
+    \caption{A simplified overview of media choice in tiered infrastructures}
+    \centering
+    \begin{tabular}{|c|ccc|cc|}
+        \hline
+        Capacity       & \multicolumn{3}{c|}{TB}                                     & \multicolumn{2}{c|}{GB}                     \\ \hline
+        Addressability & \multicolumn{3}{c|}{Block}                                  & \multicolumn{2}{c|}{Byte}                   \\ \hline
+        Consideration  & \multicolumn{3}{c|}{Cost}                                   & \multicolumn{2}{c|}{Data}                   \\ \hline
+        Latency        & \multicolumn{1}{c|}{s}    & \multicolumn{1}{c|}{ms}   & µs  & \multicolumn{1}{c|}{µs}  & ns               \\ \hline
+        Data           & \multicolumn{1}{c|}{Cold} & \multicolumn{1}{c|}{Warm} & Hot & \multicolumn{1}{c|}{Hot}   & Mission critical \\ \hline
+        Medium         & \multicolumn{1}{c|}{Tape} & \multicolumn{1}{c|}{HDD}  & SSD (Flash) & \multicolumn{1}{c|}{NVRAM} & DRAM             \\ \hline
+    \end{tabular}
+    \label{table:tiered-storage}
+\end{table}
+
+Intel Optane sont des modules de mémoire persistante (PM) qui visent un niveau intermédiaire entre les SSD Flash et la DRAM : leur latence et leur bande passante sont légèrement inférieures à celles de la DRAM, mais ils offrent des capacités de mémoire non volatile de niveau SSD à un prix abordable (\cite{boukhobzaEmergingNvm},~\cite{Izraelevitz2019BasicPM},~\cite{boukhobzaFlashMemory}).
+
+Dans~\cite{Chen2020FlatStoreAE}, les auteurs visent à fournir un moteur de stockage clé-valeur qui tirerait parti de la technologie de la mémoire persistante (PM, ou NVM pour mémoire non volatile) pour atteindre des performances supérieures à celles des disques en rotation ou de la mémoire Flash. Ils se concentrent sur les charges de travail à forte intensité d'écriture et de petite taille : en effet, des études antérieures (\cite{atikoglu2012WorkloadAnalysis},~\cite{rajesh2013Memcache}) ont montré que les pools Memcached dans la nature sont principalement utilisés pour stocker des objets de petite taille, par exemple 70\% d'entre eux sont plus petits que 300 octets chez Facebook. De plus, les analyses serverless échangent des données à courte durée de vie et sont donc très gourmandes en écriture, alors que les magasins d'objets ont historiquement été utilisés comme une couche de mise en cache dominée par la lecture. S'appuyant sur ces observations et sur les caractéristiques propres aux dispositifs PM, ils présentent FlatStore, un moteur KVS avec une surcharge d'écriture minimale, une faible latence et une évolutivité multicœur. Comme les mémoires persistantes présentent une adressabilité fine et une faible latence par rapport aux disques durs et aux disques SSD, les auteurs ont conçu FlatStore pour une mise en lots minimale des opérations d'écriture afin d'éviter la contention. Lors de l'évaluation comparative des données de Facebook avec des éléments minuscules (1-13 octets) à grands ($>$ 300 octets), l'évaluation montre que FlatStore est de 2,5 à 6,3 fois plus rapide que les solutions de l'état de l'art.
+\\
+
+Le statefulness est un problème majeur pour les plateformes serverless. Les fournisseurs de services déploient une variété de logiciels BaaS pour combler le fossé entre les modèles de services traditionnels et FaaS et permettre aux développeurs de déployer leurs applications complètes sur leurs offres serverless. Les fonctions serverless présentent un stockage et un calcul intrinsèquement désagrégés, car elles sont déployées à la volée dans plusieurs zones géographiques, sur des ressources matérielles allouées dynamiquement par le fournisseur. Elles ont besoin d'un moyen d'opérer sur les données qui soit suffisamment rapide, qui offre des garanties de cohérence et qui évolue en cohérence avec le modèle de tarification "pay-as-you-go". Il y a de la place pour la recherche dans le domaine des magasins de données distribués et de l'utilisation de la mémoire non volatile émergente pour accélérer le débit.
+
+\section{Des défis transversaux dans le cloud}
+
+\subsection{Isolation et sécurité} \label{sota-isolation}
+
+Pour réaliser la mise en commun des ressources, les fournisseurs de services en nuage s'appuient sur les technologies de virtualisation afin d'isoler les charges de travail des clients. En outre, ils proposent différents modèles de services, allant de IaaS à FaaS, qui nécessitent tous différentes techniques de sandboxing offrant un équilibre différent entre les performances et l'isolation.
+
+Le compromis habituel se produit entre la robustesse de l'isolation basée sur l'hypervision (VM), où chaque bac à sable exécute un système d'exploitation distinct, et les performances de la virtualisation au niveau du système d'exploitation (conteneurs), où les bacs à sable partagent tous le noyau de l'hôte. Idéalement, les fournisseurs de services en nuage ne devraient pas avoir à sacrifier l'une de ces deux caractéristiques essentielles. Des efforts ont été faits pour réduire la surcharge de virtualisation afin de diminuer les temps de démarrage et de réduire l'écart de performance entre ces deux techniques~\cite{mancoMyVMLighter2017}.
+
+\subsubsection{MicroVMs}
+
+Dans~\cite{agacheFirecrackerLightweightVirtualization}, les auteurs identifient de nombreux défis pour concevoir une méthode d'isolation spécifiquement adaptée aux charges de travail serverless dans le contexte d'AWS Lambda -- Firecracker doit fournir une sécurité de niveau VM avec une densité de sandboxing de niveau conteneur sur un seul hôte, avec des performances proches de bare-metal pour toute application compatible avec Linux. L'overhead de Firecracker doit être suffisamment faible pour que la création et l'élimination des sandboxes soient suffisamment rapides pour AWS Lambda ($\leq 150 \, ms$), et le gestionnaire doit permettre de sur-engager les ressources matérielles avec des sandboxes ne consommant que les ressources dont ils ont besoin. Avec Firecracker, les auteurs présentent un nouveau moniteur de machine virtuelle (VMM) basé sur Linux KVM pour exécuter des machines virtuelles minimales (ou MicroVM) qui contiennent un noyau Linux et un espace utilisateur minimaux non modifiés. Grâce à la mise en commun des bacs à sable, Firecracker permet d'obtenir des temps de démarrage rapides et une densité élevée de bacs à sable sur un seul hôte, pour n'importe quelle application Linux donnée. Il est utilisé avec succès en production dans AWS Lambda depuis 2018.
+
+Dans~\cite{Anjali2020BlendingCA}, les auteurs étudient les différences d'utilisation des fonctionnalités du noyau hôte entre les conteneurs Linux (LXC), les MicroVM Firecracker et les conteneurs sécurisés gVisor de Google. Les bacs à sable gVisor sont des conteneurs \texttt{seccomp} : ils sont limités à 4 appels système, à savoir \texttt{exit}, \texttt{sigreturn}, et \texttt{read} et \texttt{write} sur des descripteurs de fichiers déjà ouverts. Les fonctionnalités étendues reposent sur un noyau Go-written user space appelé Sentry qui intercepte et met en œuvre les appels système et gère les descripteurs de fichiers. Cela empêche toute interaction directe entre l'application en bac à sable et le système d'exploitation hôte. Bien qu'elle permette de réaliser une isolation sécurisée, la conception de gVisor est compliquée et ajoute des frais généraux : les auteurs ont constaté que gVisor a la plus grande empreinte en termes d'utilisation du processeur et de la mémoire, avec la bande passante la plus lente pour les opérations sur le réseau.
+
+Dans~\cite{wanningerIsolatingFunctionsHardware2022a}, les auteurs soutiennent que l'écosystème de virtualisation manque d'une solution adaptée à l'isolation à la granularité d'une fonction unique. Ils présentent virtines, un mécanisme léger d'isolation des VM, et Wasp, un hyperviseur de type 2 à bibliothèque minimale qui fonctionne sous GNU/Linux et Windows. Les virtines sont guidées par le programmeur : les annotations aux limites des fonctions permettent au compilateur d'emballer automatiquement des sous-ensembles de l'application dans des VM légères avec un temps d'exécution compatible POSIX. Wasp fonctionne de manière client-serveur : le moteur d'exécution (client) émet des appels à l'hyperviseur (serveur) qui détermine si chaque requête individuelle est autorisée à être traitée conformément à une politique définie par l'administrateur. Lors de leur évaluation avec une application JavaScript, les auteurs ont constaté que cette conception introduit un surcoût limité de 125 µs dans le temps de démarrage par rapport à la ligne de base, tout en réalisant efficacement une isolation finement ajustable pour des fonctions sélectionnées, sans presque aucun effort de la part du programmeur.
+
+\subsubsection{Unikernels}
+
+L'idée derrière les unikernels est de fournir la fonctionnalité du système d'exploitation comme une bibliothèque qui peut être incorporée dans une application sandbox afin d'éviter d'emballer et de démarrer un système d'exploitation complet pour exécuter l'application, et d'éliminer les commutations de contexte coûteuses de l'espace utilisateur à l'espace noyau. Dans~\cite{kuenzerUnikraftFastSpecialized2021a}, les auteurs présentent Unikraft, une initiative de la Fondation Linux. Unikraft vise à rendre le processus de portage aussi indolore que possible pour les développeurs qui souhaitent exécuter leurs applications sur des unikernels. Les images résultantes pour différentes applications (nginx, SQLite, Redis) sont proches de la taille la plus petite possible, c'est-à-dire la taille binaire de l'espace utilisateur Linux, avec une surcharge de mémoire très limitée pendant l'exécution ($<$ 10 MB de RAM) et des temps de démarrage rapides de l'ordre de la milliseconde. Les applications emballées par Unikraft permettent d'améliorer les performances de 1,7 à 2,7 fois par rapport aux machines virtuelles invitées Linux traditionnelles.
+
+Dans~\cite{caddenSEUSSSkipRedundant2020}, les auteurs présentent un mécanisme de mise en cache à haute densité qui exploite les unikernels et l'instantanéité (voir \ref{sota-snapshotting}) pour accélérer les déploiements. Ils soutiennent que les fonctions serverless sont de bons candidats pour la mise en cache : comme elles sont généralement écrites dans des langages de haut niveau qui s'exécutent dans des interpréteurs, leur chemin de démarrage consiste principalement à initialiser cet interpréteur et les dépendances associées, qui peuvent être partagées dans différents bacs à sable. Le mécanisme de snapshotting bénéficie de l'agencement de la mémoire du noyau unique, où toutes les fonctionnalités (du système de fichiers à la pile réseau, en passant par l'application utilisateur) sont combinées dans un seul espace d'adressage plat. Nous mettons en œuvre ce mécanisme dans SEUSS afin de mettre en cache plus de 16 fois plus de bacs à sable unikernel en mémoire que les conteneurs basés sur Linux. En outre, les temps de déploiement passent de centaines de millisecondes à moins de 10 ms, et la gestion par la plateforme des rafales de requêtes s'améliore considérablement dans le cadre de la mise en cache à haute densité, ce qui entraîne une réduction du nombre de requêtes échouées.
+
+Dans~\cite{tanLightweightServerlessComputing2020}, les auteurs présentent Unikernel-as-a-Function (UaaF), un espace d'adressage unique, un OS de bibliothèque visant à déployer des fonctions serverless. UaaF s'appuie sur l'observation que les invocations de fonctions croisées sont lentes dans les déploiements serverless qui s'appuient sur des interfaces de passage de messages basées sur le réseau (voir \ref{sota-communications}) ; en outre, les invités Linux souffrent d'une surcharge d'utilisation de la mémoire dans les bacs à sable et leur latence de démarrage n'est pas satisfaisante (voir \ref{sota-cold-start}). Les auteurs étudient l'utilisation de VMFUNC, une technologie Intel pour les invocations de fonctions entre sandboxes qui ne subissent pas de latence lors de la sortie d'une VM vers l'hyperviseur. Cette technologie permet effectivement l'invocation de fonctions à distance, donnant ainsi des capacités IPC sécurisées et prises en charge par le matériel aux fonctions serverless. Ils proposent également un nouveau modèle de programmation pour les fonctions serverless : \textit{session} et \textit{bibliothèque}, les premières étant des fonctions de "flux de travail" (ou squelette) et les secondes étant du code réel, téléchargé par les clients et éventuellement partagé entre les applications. Dans leur évaluation, les auteurs mettent en œuvre l'UaaF avec trois unikernels (Solo5, MirageOS et IncludeOS) et montrent que la communication inter-fonctions dans l'UaaF est inférieure de trois ordres de grandeur à la CIP native de Linux. Leur modèle de programmation permet de réduire la surcharge de mémoire et les temps d'initialisation à plusieurs millisecondes grâce aux fonctions partagées.
+\\
+
+Les charges de travail FaaS ont une durée de vie beaucoup plus courte que les charges de travail des offres traditionnelles. En tant que tel, s'appuyer sur des techniques de virtualisation qui n'ont pas été construites pour serverless est sous-optimal : les temps d'initialisation peuvent ne pas répondre aux exigences de latence lors de la mise à l'échelle à partir de zéro ; les tailles des bacs à sable peuvent être trop élevées pour être mises en cache dans la mémoire compte tenu de l'augmentation du multitenancy ; l'isolation peut être trop faible pour colocaliser les travaux de différents clients. Cette évaluation a suscité un intérêt pour la recherche autour des unikernels et des MicroVM, tandis que les fournisseurs commerciaux ont développé leurs propres approches, telles que Firecracker pour AWS ou gVisor pour Google Cloud.
+
+\subsection{Modèle de programmation et enfermement propriétaire}
+
+Comme le montre la figure \ref{fig:web-app}, les applications FaaS ont tendance à s'appuyer fortement sur les offres BaaS pour bénéficier des économies de coûts associées à leur capacité à passer à l'échelle zéro. Ce lien introduit un risque d'enfermement dans des solutions spécifiques au fournisseur qui pourraient ne pas être disponibles dans les offres commerciales, ou disponibles sous forme de logiciels open source prêts à l'emploi.
+
+En outre, certains fournisseurs pratiqueront une tarification prohibitive de la bande passante de sortie afin de dissuader leurs clients de transférer leurs données à un concurrent.
+
+Un autre aspect de ce problème est la difficulté de développer, tester et déboguer les applications FaaS localement~\cite{thalheimVMSHHypervisoragnosticGuest2022}. Au minimum, les développeurs devront simuler la passerelle API afin d'exécuter des suites de tests ; si leur application utilise des solutions de stockage ou des bus de communication spécifiques à un fournisseur, les développeurs devront déployer des solutions similaires ou simuler les spécificités de ces blocs de construction BaaS, par exemple leur API et leurs caractéristiques de performance.
+
+Cela représente des efforts d'ingénierie non négligeables et, de fait, le déploiement d'une infrastructure serverless à part entière pour le staging pourrait contrebalancer les avantages en termes de coûts d'exploitation du choix du serverless pour la production. Les ingénieurs débutants~\cite{jeffreyd2022aws} et chevronnés~\cite{mitchell2022serverless} déclarent avoir des difficultés avec l'outillage, les tests, l'écosystème général et la complexité accrue du développement d'applications FaaS.
+
+Dans~\cite{Pons2019OnTF}, les auteurs observent que la désagrégation des ressources de stockage et de calcul dans FaaS limite le développement d'applications qui font un usage intensif de l'état mutable partagé et qui se synchronisent beaucoup entre les itérations. En effet, l'état ne persiste pas entre les invocations d'une même fonction (voir \ref{sota-state}), et le passage de messages pour les communications entre fonctions induit un surcoût élevé (voir \ref{sota-communications}). Ils se concentrent en particulier sur les algorithmes d'apprentissage automatique (\textit{k}-means clustering et régression logistique). Ils présentent Crucial, un framework visant à soutenir le développement d'applications serverless stateful. Crucial fournit aux applications une couche de mémoire partagée qui garantit la durabilité grâce à la réplication, avec de fortes garanties de cohérence. Le modèle de programmation Crucial est basé sur les annotations, ce qui permet aux programmeurs de porter une application multithread sur une plateforme FaaS avec un minimum d'implication. L'évaluation par rapport à un cluster Spark sur un ensemble de données de 100 Go montre que Crucial fonctionnant sur AWS Lambda introduit très peu de frais généraux, ce qui lui permet de surpasser Spark de 18 à 40 % en termes de performances pour un coût similaire.
+
+Dans~\cite{zhangKappaProgrammingFramework2020}, les auteurs reconnaissent que le modèle de programmation serverless est un défi pour les développeurs. Ils ont la responsabilité de partitionner correctement leur code en unités de travail sans état, de gérer les mécanismes de coordination pour réaliser une architecture microservices et de mettre en œuvre des modèles de cohérence pour la conservation de l'état en cas de défaillance. Cette complexité pourrait dissuader les clients de déployer des applications à usage général qui bénéficieraient grandement du niveau de parallélisme offert par les fournisseurs serverless. Ils présentent Kappa, un framework Python pour les applications serverless. Kappa fournit une API familière qui permet de réaliser des points de contrôle (en stockant périodiquement l'état de l'application afin que le programme puisse reprendre en cas de dépassement de temps), la concurrence (en prenant en charge la création de tâches, l'attente sur les futurs et le passage de messages entre fonctions) et la tolérance aux pannes (en garantissant une restauration idempotente de l'état lors de la reprise à partir de points de contrôle). Les applications Kappa peuvent être déployées sur n'importe quelle plateforme serverless, car le framework ne nécessite aucun changement côté serveur. Dans leur évaluation, ils mettent en œuvre cinq applications avec Kappa et les résultats indiquent que le mécanisme de point de contrôle fonctionne bien lorsque les fonctions expirent souvent, avec moins de 9 % d'augmentation du temps de réponse avec une durée d'expiration importante (15 secondes), et un maximum de 3,2 % avec une période d'expiration plus raisonnable de 60 secondes.
+
+Afin de limiter l'augmentation de la latence lors de la mise à l'échelle à partir de zéro, les images de conteneurs ou de VM qui prennent en charge les applications serverless sont généralement rendues aussi maigres et légères que possible. Cela dissuade les développeurs d'inclure des outils de surveillance ou de débogage, ce qui rend très difficile l'inspection d'une fonction serverless au moment de l'exécution. Dans~\cite{thalheimVMSHHypervisoragnosticGuest2022}, les auteurs présentent VMSH, un mécanisme qui permet d'attacher des images invitées arbitraires à des VM légères en cours d'exécution afin de les instrumenter à des fins de développement ou de débogage. L'évaluation effectuée sur KVM - bien que VMSH soit conçu comme une solution indépendante de l'hyperviseur - montre que le chargement latéral de l'invité n'ajoute aucune surcharge à la VM invitée d'origine, ce qui permet de réduire le compromis entre les VM légères et sans fioritures et la fonctionnalité.
+\\
+
+Il existe un compromis clair pour fournir des bacs à sable aussi petits que possible afin de minimiser les coûts de stockage et de mémoire dans les plateformes serverless, tout en fournissant des outils adéquats aux développeurs pour construire, tester, distribuer et déployer leurs fonctions. En outre, le modèle de programmation basé sur des fonctions sans état a mis en lumière un nouveau défi : un outillage côté fournisseur et côté développeur pour le FaaS avec état est nécessaire pour permettre le déploiement serverless des applications existantes et futures qui utilisent des services à longue durée d'exécution et la persistance des données.
+
+\section{Perspectives et orientations futures}
+
+La section précédente a donné un aperçu des contributions liées aux défis techniques de l'informatique serverless. Dans cette section, nous présentons quelques orientations futures pour la recherche dans ce domaine. Nous présentons les problèmes étudiés dans les travaux des communautés du cloud, des systèmes et des bases de données. Nous soutenons que les contributions s'appuyant sur ces perspectives auraient le potentiel de renforcer les plateformes serverless pour une reconnaissance plus large du paradigme serverless.
+
+\subsection{Accords de niveau de service}
+
+En 2011, Buyya et al.~\cite{buyyaSLAorientedResourceProvisioning2011} ont plaidé pour une allocation des ressources orientée SLA dans l'informatique en nuage à l'aube de l'ère des microservices. Ils ont identifié la fiabilité dans l'informatique utilitaire comme un défi majeur pour les prochaines décennies : même avec des ressources réservées dans les modèles de service traditionnels, la complexité croissante des applications des clients a fait du respect des accords de niveau de service (SLA) un problème difficile mais inévitable pour les fournisseurs d'informatique en nuage.
+
+La latence, le débit et la continuité du service sont difficiles à garantir dans l'informatique en nuage lors de l'utilisation de ressources non réservées~\cite{dartoisCuckooOpportunisticMapReduce2019}. En raison de la nature transitoire des sandboxes de fonctions dans l'informatique serverless, les plateformes d'auto-scaling sont confrontées à un problème similaire d'allocation dynamique des ressources. Cependant, être en mesure d'offrir des accords de niveau de service aux clients et de respecter les engagements de qualité de service (QoS) en tant que fournisseur est nécessaire pour l'adoption à grande échelle du modèle de service serverless~\cite{elsakhawyFaaS2FFrameworkDefining2020}.
+
+Dans~\cite{chahalSLAawareWorkloadScheduling2020}, les auteurs soutiennent que les plateformes d'auto-scaling serverless sont mises au défi par les charges de travail en rafale. Dans leur travail, ils soulignent l'importance de la caractérisation de la charge de travail pour adapter la quantité de VM réservées nécessaires pour respecter les accords de niveau de service. Lorsque le nombre de requêtes entrantes fait grimper le niveau de concurrence dans les VM réservées et fait passer la latence des tâches au-delà du seuil acceptable négocié via le SLA, ils s'appuient sur une plateforme serverless pour s'adapter aux tâches supplémentaires et maintenir les performances. Bien que ce cadre ait réussi à maintenir la plupart des temps de réponse sous le seuil cible, les auteurs constatent encore un nombre incompressible de violations causées par des retards de démarrage à froid sur la plateforme serverless.
+
+Dans~\cite{choSLADrivenMLInference}, les auteurs soutiennent que le modèle de tâches dans l'informatique serverless et la vue de l'infrastructure dans les plateformes auto-scaling sont inadéquats pour répondre aux besoins des clients en termes de niveau de service. En effet, les auto-scalers basent leurs décisions d'allocation sur des métriques génériques telles que les requêtes par seconde (QPS) qui ne reflètent pas les caractéristiques spécifiques de l'application et ne prennent pas en compte l'hétérogénéité des ressources matérielles disponibles. Ils proposent un cadre dans lequel les mesures de l'application (telles que le temps d'exécution de la requête) sont transmises à l'auto-scaler afin qu'il alloue les ressources en fonction des objectifs de niveau de service spécifiés par l'utilisateur, tels que le temps de latence cible. Cependant, les temps de réponse observés ne sont pas déterministes en raison des délais de démarrage à froid, et les latences cibles définies par l'utilisateur sont susceptibles d'être violées dans un scénario de mise à l'échelle automatique.
+
+Afin de répondre aux exigences de qualité de service par utilisateur, les plateformes de mise à l'échelle automatique devraient prendre en compte les caractéristiques des ressources matérielles hétérogènes, et les accords de niveau de service devraient être négociés sur la base d'une requête plutôt que sur la base d'une fonction. Nous pensons que des politiques d'auto-scaling basées sur la caractérisation de la charge de travail et de la plateforme pourraient être mises en œuvre pour minimiser l'impact de la latence de démarrage à froid et permettre aux plateformes serverless de respecter les SLA avec des ressources hétérogènes non réservées.
+
+\subsection{Efficacité énergétique}
+
+La consommation d'énergie dans l'informatique en nuage est un défi crucial : en 2010, les centres de données représentaient entre 1,1 et 1,5 % de la consommation mondiale d'électricité~\cite{koomey2011Growth}, et les projections pour 2030 montrent que ces chiffres pourraient passer de 3 à 13 % de la consommation mondiale d'électricité~\cite{andraeGlobalElectricityUsage2015}. Le serverless devenant un modèle de service de plus en plus populaire pour le cloud, et de nombreux auteurs considérant le serverless comme l'avenir du cloud computing, il existe une opportunité pour les fournisseurs de cloud de mettre en œuvre des politiques énergétiques à l'échelle.
+
+Pour être efficace en termes de coût et de consommation d'énergie, une plateforme d'auto-scaling devrait être capable de redimensionner les ressources allouées dans une infrastructure cloud serverless, tout en étant suffisamment réactive pour s'adapter aux changements de charge de travail sans impacter les utilisateurs finaux avec des pics de latence. Cela met en évidence un compromis entre l'énergie et la performance : la sursouscription des ressources peut aider à garantir une faible latence lors de l'invocation des fonctions, mais entraînera une consommation d'énergie plus élevée.
+
+La multilocation a permis de ralentir la croissance du nombre de serveurs dans les centres de données~\cite{masanetRecalibratingGlobalData2020}. Avec les promesses de colocalisation massive de travaux éphémères, le serverless semble être une direction prometteuse pour les infrastructures cloud qui cherchent à réduire leur empreinte énergétique.
+
+La consolidation de la charge de travail est une technique qui consiste à maximiser le nombre de tâches sur le plus petit nombre de nœuds~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}. Cela permet une gestion dynamique de l'énergie : les nœuds qui ne sont pas sollicités peuvent alors être mis hors tension, et les nœuds qui observent une charge modérée peuvent être ralentis, c'est-à-dire via le CPU throttling~\cite{liuHierarchicalFrameworkCloud2017}.
+
+L'un des problèmes fondamentaux du paradigme serverless est l'architecture intrinsèque d'expédition des données \footnote{Déplacer les données de l'endroit où elles sont stockées vers l'endroit où elles doivent être traitées}.~\cite{chikhaouiMultiobjectiveOptimizationData2021a}. Étant donné que les sandboxes de fonctions sont déployées sur des nœuds dans diverses régions géographiques pour réaliser l'équilibrage de charge et la disponibilité, les plateformes serverless expédient jusqu'à des téraoctets de données depuis les nœuds de stockage vers le code dont la taille peut varier de kilooctets à mégaoctets au sein des nœuds de calcul.
+
+Les fonctions de stockage permettent d'exécuter de petites unités de travail directement sur les nœuds de stockage~\cite{zhangNarrowingGapServerless2019}, réalisant 14\% à 78\% d'accélération par rapport au stockage à distance. Les fonctions de stockage ne remettent pas en question la désagrégation physique des ressources de stockage et de calcul qui est essentielle dans l'informatique en nuage, tout en limitant efficacement le mouvement des données entre les nœuds et en réduisant ainsi la consommation d'énergie dans un centre de données.
+
+Le stockage informatique est un moyen de décharger les charges de travail de l'unité centrale vers le contrôleur de stockage~\cite{barbalaceComputationalStorageWhere}. Lorsqu'il s'agit de traiter de grandes quantités de données, ces techniques peuvent contribuer à diminuer les transferts de données, à améliorer les performances et à réduire la consommation d'énergie. Bien que ces technologies ne soient pas encore prêtes pour une utilisation en production, elles offrent des opportunités de recherche intéressantes pour la communauté serverless.
+
+Ces techniques pourraient être mises en œuvre dans les plateformes serverless pour obtenir des gains supplémentaires en matière de consommation d'énergie dans le cloud. Cela implique de prendre en compte la diversité des applications des utilisateurs et l'hétérogénéité des requêtes et des ressources matérielles.
+
+\subsection{Allocation de ressources assistée par l'IA}
+
+Dans le paradigme serverless, il incombe au fournisseur de redresser l'allocation des ressources matérielles afin que les charges de travail de leurs clients soient exécutées à temps. L'allocation dynamique des ressources matérielles appropriées pour les tâches événementielles dans une infrastructure hétérogène est un problème difficile qui peut frapper une barrière de complexité de calcul à l'échelle, avec l'ordonnanceur en ligne produisant des solutions sous-optimales~\cite{lopesTaxonomyJobScheduling2016b}. Les techniques d'intelligence artificielle (IA) peuvent aider à surmonter ce défi.
+
+Certains auteurs s'attendent à ce que l'informatique autonome pilotée par l'IA devienne la norme dans les futurs systèmes~\cite{gillAINextGeneration2022a}. L'idée de l'informatique autonome est de construire des systèmes autogérés et auto-adaptatifs qui résistent à un environnement extrêmement changeant à grande échelle~\cite{puvianiSelfManagementCloudComputing2013}. Ces systèmes peuvent être mis en œuvre à l'aide de l'apprentissage automatique de manière rentable, en utilisant des modèles qui ne nécessitent pas d'intervention humaine importante pour la supervision.
+
+Dans~\cite{schulerAIbasedResourceAllocation2021}, les auteurs montrent que l'apprentissage par renforcement (RL) peut réaliser une mise à l'échelle appropriée sur une base par charge de travail, résultant en une performance améliorée par rapport à la configuration de base. Dans leur contribution, ils proposent un modèle d'apprentissage par renforcement qui détermine et ajuste efficacement le niveau de concurrence optimal pour une charge de travail donnée.
+
+Les plateformes serverless nécessitent une allocation réactive des ressources et une ordonnance des tâches dans le cadre de SLA avec des exigences de qualité de service par requête~\cite{gujaratiSwayamDistributedAutoscaling2017}. Les techniques d'apprentissage automatique peuvent aider à répondre aux exigences de qualité de service dans les paradigmes traditionnels du cloud computing~\cite{soniMachineLearningTechniques2022}, et ont été utilisées pour renforcer la consolidation des machines virtuelles~\cite{shawApplyingReinforcementLearning2022}. La gestion et l'optimisation des ressources à l'aide de l'IA et de la ML pourraient permettre de tirer davantage parti de l'hétérogénéité des ressources matérielles dans une infrastructure en nuage.
 
 \section{Conclusion}
 

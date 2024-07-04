@@ -299,7 +299,9 @@ Pour ce faire, HeROcache suit $CF_{a}^{{f}_{i_{N, P}}}$ le nombre d'images de fo
 \label{eq:herocache-cache-proportion-app}
 \end{equation}
 
-En plus de la minimisation des coûts, afin de réduire les délais de déploiement, l'autoscaler préfigure les images des chaînes de fonctions lors du déploiement d'une nouvelle réplique sur un nœud. Il inspecte les chaînes de fonctions et extrait séquentiellement les images de fonctions manquantes du registre distant vers le stockage local du nœud de manière asynchrone.
+En plus de la minimisation des coûts, afin de réduire les délais de déploiement, l'autoscaler "pré-fetche" les images des chaînes de fonctions lors du déploiement d'une nouvelle réplique sur un nœud. Il inspecte les chaînes de fonctions et extrait séquentiellement les images de fonctions manquantes du registre distant vers le stockage local du nœud de manière asynchrone.
+
+TODO: Prefetch intelligent \cite{leeSPESOptimizingPerformanceResource2024a}
 
 \textbf{Temps total}. La deuxième composante du coût de mise à l'échelle est le \textit{temps total}. La minimisation du temps total devrait empêcher les retards d'initialisation de faire boule de neige dans les chaînes de fonctions, évitant ainsi les violations des accords de niveau de service (SLA).
 

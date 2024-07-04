@@ -1,4 +1,8 @@
-\chapter{HeROsim : Élaborer et évaluer des politiques d'orchestration pour le cloud privé}
+\chapter{HeROsim : Élaborer et évaluer des politiques d'orchestration serverless pour le cloud privé}
+
+TODO: nouvelles références à intégrer~\cite{bambrikSurveyCloudComputing2020, byrneReviewCloudComputing2017}
+
+TODO: màj bibtex (références raccourcies pour IEEE IC)
 
 \section{Introduction}
 \label{section:herosim-introduction}
@@ -202,7 +206,7 @@ HeROsim peut également générer des graphiques supplémentaires qui peuvent ê
 Nous présentons deux études de cas qui ont utilisé HeROsim pour évaluer les politiques d'orchestration.
 Nous avons conçu des stratégies qui reposent sur la caractérisation des plateformes hétérogènes et des charges de travail (voir figure~\ref{figure:herosim-characterization}). Nous avons mesuré plusieurs métriques liées à nos applications sur diverses plateformes matérielles et proposé un modèle de coût qui intègre ces valeurs pour estimer les performances de l'autoscaling et de l'ordonnanceur sous différentes politiques (figure~\ref{figure:herosim-cost}).
 
-\subsection{HeROfake}
+\subsection{Stratégie d'orchestration de fonctions sans état sur ressources hétérogènes}
 
 Dans cette première étude de cas, \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration for deep\textbf{fake} detection~\cite{herofake}, nous avons étudié le déploiement d'une application de détection de deepfake sur une plateforme serverless dans un cloud privé. En particulier, nous nous sommes intéressés à l'exploitation de ressources hétérogènes pour l'orchestration serverless lors de l'optimisation de la plateforme pour la QoS et la consommation d'énergie.
 
@@ -218,7 +222,7 @@ Notre objectif principal était d'étudier la pertinence de la prise en compte d
 
 HeROsim nous a également permis d'évaluer l'impact des différents composants de notre cadre. Les résultats ont montré que, même en allouant uniquement des CPU, l'ordonnanceur des tâches d'inférence avec notre politique consciente de la qualité de service pouvait maintenir les violations des accords de niveau de service en dessous de 50\%. 
 
-\subsection{HeROcache}
+\subsection{Stratégie d'orchestration d'applications avec prise en compte du cache et des communications}
 
 Ici, une stratégie d'orchestration consciente des contraintes temporelles et de données a été proposée. Nous avons exploré le déploiement d'un système de détection d'intrusion (IDS) sur une plateforme serverless. En particulier, nous avons étudié les avantages de l'orchestration consciente des données lors de l'exploitation de matériel hétérogène pour déployer des applications sensibles au temps sur des dispositifs périphériques à ressources limitées, du point de vue du fournisseur de services.
 

@@ -36,6 +36,7 @@
 
 % \usepackage[breaklinks]{hyperref}
 
+% Tableaux
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{tabularx}
@@ -46,6 +47,14 @@
 \newcolumntype{S}{>{\centering\arraybackslash}m{0.1\linewidth}}
 % for vertical centering text in X colum
 \renewcommand\tabularxcolumn[1]{m{#1}}
+
+% Tableaux multi-pages
+% \usepackage{tabularray,adjustbox}
+% \usepackage[allow-quantity-breaks]{siunitx}
+% \UseTblrLibrary{booktabs}
+% % make tabularray use \caption instead of own caption style
+% \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}
+% \DefTblrTemplate{lasthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{lasthead-text} (Suite)}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newboolean{showcomments}

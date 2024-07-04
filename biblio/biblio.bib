@@ -1488,3 +1488,370 @@
   year         = 2022,
   url          = {https://gvisor.dev/}
 }
+
+
+%% Ajouts conso d'énergie (Vincent)
+
+@inproceedings{vasanWorthTheirWatts2010,
+  title = {Worth Their Watts? - An Empirical Study of Datacenter Servers},
+  shorttitle = {Worth Their Watts?},
+  booktitle = {{{HPCA}} - 16 2010 {{The Sixteenth International Symposium}} on {{High-Performance Computer Architecture}}},
+  author = {Vasan, Arunchandar and Sivasubramaniam, Anand and Shimpi, Vikrant and Sivabalan, T. and Subbiah, Rajesh},
+  year = {2010},
+  month = jan,
+  pages = {1--10},
+  publisher = {IEEE},
+  address = {Bangalore},
+  doi = {10.1109/HPCA.2010.5463056},
+  urldate = {2024-07-02},
+  abstract = {The management of power consumption in datacenters has become an important problem. This needs a systematic evaluation of the as-is scenario to identify potential areas for improvement and quantify the impact of any strategy. We present a measurement study of a production datacenter from a joint perspective of power and performance at the individual server level. Our observations help correlate power consumption of production servers with their activity, and identify easily implementable improvements. We find that production servers are underutilized from an activity perspective; are overrated from a power perspective; execute temporally similar workloads over a granularity of weeks; do not idle efficiently; and have power consumptions that are well tracked by their CPU utilizations. Our measurements suggest the following steps for improvement: staggering periodic activities on servers; enabling deeper sleep states; and provisioning based on measurement.},
+  isbn = {978-1-4244-5658-1},
+  langid = {english},
+}
+
+@inproceedings{vermaLargescaleClusterManagement2015a,
+  title = {Large-Scale Cluster Management at {{Google}} with {{Borg}}},
+  booktitle = {Proceedings of the {{Tenth European Conference}} on {{Computer Systems}}},
+  author = {Verma, Abhishek and Pedrosa, Luis and Korupolu, Madhukar and Oppenheimer, David and Tune, Eric and Wilkes, John},
+  year = {2015},
+  month = apr,
+  pages = {1--17},
+  publisher = {ACM},
+  address = {Bordeaux France},
+  doi = {10.1145/2741948.2741964},
+  urldate = {2024-07-02},
+  abstract = {Google's Borg system is a cluster manager that runs hundreds of thousands of jobs, from many thousands of different applications, across a number of clusters each with up to tens of thousands of machines.},
+  isbn = {978-1-4503-3238-5},
+  langid = {english},
+}
+
+@techreport{davisUptimeInstituteGlobal2022,
+  title = {Uptime {{Institute Global Data Center Survey}} 2022},
+  author = {Davis, Jacqueline},
+  year = {2022},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\JPRCLKLS\Davis - 2022 - Uptime Institute Global Data Center Survey 2022.pdf}
+}
+
+
+%% Ajouts modélisation (Vincent)
+
+%%% Contention
+
+@inproceedings{kohAnalysisPerformanceInterference2007,
+  title = {An {{Analysis}} of {{Performance Interference Effects}} in {{Virtual Environments}}},
+  booktitle = {2007 {{IEEE International Symposium}} on {{Performance Analysis}} of {{Systems}} \& {{Software}}},
+  author = {Koh, Younggyun and Knauerhase, Rob and Brett, Paul and Bowman, Mic and Wen, Zhihua and Pu, Calton},
+  year = {2007},
+  month = apr,
+  pages = {200--209},
+  publisher = {IEEE},
+  address = {San Jose, CA, USA},
+  doi = {10.1109/ISPASS.2007.363750},
+  urldate = {2024-07-02},
+  abstract = {Virtualization is an essential technology in modern datacenters. Despite advantages such as security isolation, fault isolation, and environment isolation, current virtualization techniques do not provide effective performance isolation between virtual machines (VMs). Specifically, hidden contention for physical resources impacts performance differently in different workload configurations, causing significant variance in observed system throughput. To this end, characterizing workloads that generate performance interference is important in order to maximize overall utility.},
+  isbn = {978-1-4244-1081-1 978-1-4244-1082-8},
+  langid = {english},
+}
+
+@inproceedings{vanbeekCPUContentionPredictor2019,
+  title = {A {{CPU Contention Predictor}} for {{Business-Critical Workloads}} in {{Cloud Datacenters}}},
+  booktitle = {2019 {{IEEE}} 4th {{International Workshops}} on {{Foundations}} and {{Applications}} of {{Self}}* {{Systems}} ({{FAS}}*{{W}})},
+  author = {Van Beek, Vincent and Oikonomou, Giorgos and Iosup, Alexandru},
+  year = {2019},
+  month = jun,
+  pages = {56--61},
+  publisher = {IEEE},
+  address = {Umea, Sweden},
+  doi = {10.1109/FAS-W.2019.00027},
+  urldate = {2024-07-02},
+  abstract = {Resource contention is one of the major problems in cloud datacenters. Many types of resource contention occur, with important impact on the performance and sometimes even the reliability of applications running in cloud datacenters. Cloud applications run together on the same physical machines with different workloads resulting in non-synchronized accesses to the shared resources. This leads to cases where co-hosted applications are contending for the common resources and not receiving the demanded resource amounts. In this work, we investigate the contention in CPU resources, as CPU is allowed to be over-committed by typical SLAs. We propose a CPU-contention predictor for the demanding business-critical workloads, which require low resource contention to deliver the required performance to customers. Our predictor is based on a set of regression models and metrics which we evaluate extensively. We tune the predictor with data collected from a real-world cloud operation spanning multiple datacenters and servicing businesscritical workloads.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  isbn = {978-1-72812-406-3},
+  langid = {english},
+}
+
+@article{vardasImprovedParallelApplication,
+  title = {Improved {{Parallel Application Performance}} and {{Makespan}} by {{Colocation}} and {{Topology-Aware Process Mapping}}},
+  author = {Vardas, Ioannis and Wien, {\relax TU}},
+  abstract = {In modern, deeply hierarchical HPC systems shared resource congestion can hinder the efficient use of many cores by parallel applications and degrade performance. Such congestion is often caused when parallel processes within an application that execute similar operations share the same resources. Previous research suggests using fewer cores with better process-to-core mapping can improve applications' performance but leaves many cores unused. To utilize these cores, we colocate additional applications and map them using a topology-aware process-tocore, application-agnostic mapping algorithm. We show that these mappings significantly impact memory bandwidth and communication latency. We evaluate our approach using eight parallel applications on an HPC system with 128-core nodes, demonstrating the performance effects of mappings combined with colocation. Our goal is to determine whether colocation with topology-aware mapping is a viable alternative to typical exclusive node allocation. Our results show makespan improvements of 2.4x over exclusive allocation in an HPC system, demonstrating the potential benefits of colocation with optimized mappings.},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\D24YHQLX\Vardas et Wien - Improved Parallel Application Performance and Make.pdf}
+}
+
+@article{jacquetSweetspotVMOversubscribingCPU,
+  title = {{{SweetspotVM}}: {{Oversubscribing CPU}} without {{Sacrificing VM Performance}}},
+  author = {Jacquet, Pierre and Ledoux, Thomas and Rouvoy, Romain},
+  abstract = {The adoption of computing resources oversubscription in cloud environments is conventionally limited to a restricted subset of Virtual Machines (VMs) within the providers' offerings, primarily driven by performance considerations. So far, VMs schedulers mostly implement all-or-nothing oversubscription strategies, wherein all VM resources are either oversubscribed or remain unaltered. While the former strategy offers higher consolidation rates, the latter delivers better performance guarantees.},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\AN3SZWES\Jacquet et al. - SweetspotVM Oversubscribing CPU without Sacrifici.pdf}
+}
+
+%%% Pannes
+
+@incollection{galletModelSpaceCorrelatedFailures2010,
+  title = {A {{Model}} for {{Space-Correlated Failures}} in {{Large-Scale Distributed Systems}}},
+  booktitle = {Euro-{{Par}} 2010 - {{Parallel Processing}}},
+  author = {Gallet, Matthieu and Yigitbasi, Nezih and Javadi, Bahman and Kondo, Derrick and Iosup, Alexandru and Epema, Dick},
+  editor = {D'Ambra, Pasqua and Guarracino, Mario and Talia, Domenico},
+  year = {2010},
+  volume = {6271},
+  pages = {88--100},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-642-15277-1_10},
+  urldate = {2024-07-02},
+  abstract = {Distributed systems such as grids, peer-to-peer systems, and even Internet DNS servers have grown significantly in size and complexity in the last decade. This rapid growth has allowed distributed systems to serve a large and increasing number of users, but has also made resource and system failures inevitable. Moreover, perhaps as a result of system complexity, in distributed systems a single failure can trigger within a short time span several more failures, forming a group of time-correlated failures. To eliminate or alleviate the significant effects of failures on performance and functionality, the techniques for dealing with failures require good failure models. However, not many such models are available, and the available models are valid for few or even a single distributed system. In contrast, in this work we propose a model that considers groups of time-correlated failures and is valid for many types of distributed systems. Our model includes three components, the group size, the group inter-arrival time, and the resource downtime caused by the group. To validate this model, we use failure traces corresponding to fifteen distributed systems. We find that space-correlated failures are dominant in terms of resource downtime in seven of the fifteen studied systems. For each of these seven systems, we provide a set of model parameters that can be used in research studies or for tuning distributed systems. Last, as a result of our work six of the studied traces have been made available through the Failure Trace Archive (http://fta.inria.fr).},
+  isbn = {978-3-642-15276-4 978-3-642-15277-1},
+  langid = {english},
+}
+
+@article{javadiFailureTraceArchive2013,
+  title = {The {{Failure Trace Archive}}: {{Enabling}} the Comparison of Failure Measurements and Models of Distributed Systems},
+  shorttitle = {The {{Failure Trace Archive}}},
+  author = {Javadi, Bahman and Kondo, Derrick and Iosup, Alexandru and Epema, Dick},
+  year = {2013},
+  month = aug,
+  journal = {Journal of Parallel and Distributed Computing},
+  volume = {73},
+  number = {8},
+  pages = {1208--1223},
+  issn = {07437315},
+  doi = {10.1016/j.jpdc.2013.04.002},
+  urldate = {2024-07-02},
+  abstract = {With the increasing presence, scale, and complexity of distributed systems, resource failures are becoming an important and practical topic of computer science research. While numerous failure models and failure-aware algorithms exist, their comparison has been hampered by the lack of public failure data sets and data processing tools. To facilitate the design, validation, and comparison of fault-tolerant models and algorithms, we have created the Failure Trace Archive (FTA)---an online, public repository of failure traces collected from diverse parallel and distributed systems. In this work, we first describe the design of the archive, in particular of the standard FTA data format, and the design of a toolbox that facilitates automated analysis of trace data sets. We also discuss the use of the FTA for various current and future purposes. Second, after applying the toolbox to nine failure traces collected from distributed systems used in various application domains (e.g., HPC, Internet operation, and various online applications), we present a comparative analysis of failures in various distributed systems. Our analysis presents various statistical insights and typical statistical modeling results for the availability of individual resources in various distributed systems. The analysis results underline the need for public availability of trace data from different distributed systems. Last, we show how different interpretations of the meaning of failure data can result in different conclusions for failure modeling and job scheduling in distributed systems. Our results for different interpretations show evidence that there may be a need for further revisiting existing failure-aware algorithms, when applied for general rather than for domain-specific distributed systems. {\copyright} 2013 Elsevier Inc. All rights reserved.},
+  langid = {english},
+}
+
+%% Ajouts caractérisation
+
+%%% Coût société
+
+@article{rickeCountrylevelSocialCost2018,
+  title = {Country-Level Social Cost of Carbon},
+  author = {Ricke, Katharine and Drouet, Laurent and Caldeira, Ken and Tavoni, Massimo},
+  year = {2018},
+  month = oct,
+  journal = {Nature Climate Change},
+  volume = {8},
+  number = {10},
+  pages = {895--900},
+  issn = {1758-678X, 1758-6798},
+  doi = {10.1038/s41558-018-0282-y},
+  urldate = {2024-07-02},
+  langid = {english},
+}
+
+%% Ajouts historique
+
+@article{andersonServerlessNetworkFile,
+  title = {Serverless {{Network File Systems}}},
+  author = {Anderson, E and Dahlin, D and Neefe, Jeanna M and Patterson, A and Roselli, S and Wang, Y},
+  abstract = {In this paper, we propose a new paradigm for network file system design, serverless network ,file systems. While traditional netwc{\textasciitilde}rk file systems rely on a central server machine, a serverless system utilizes workstations cooperating as peers to provide all file system services. Any machine in the system can store, cache, or control any block of' data. Our approach uses this location illdepelldeIICe, in combination with fast local area networks, to proviclc better performance and scalability than traditional file systems. Further, because any machine in the system can assume the responsibilities of a failed component, our serverless clesign also provides high availability via redundant data storage. To demonstrate our approach, we have implemented a prototype serverless network file system called xFS. Preliminary performance measurements suggest that our architecture achieves its goal of scalability. For instance, in a 32-node xI\% system with 32 active clients, each client receives nearly as much read or write throughput as it would see if it were the only active client.},
+  langid = {english},
+}
+
+@article{vaneykSPECRGReferenceArchitecture2019,
+  title = {The {{SPEC-RG Reference Architecture}} for {{FaaS}}: {{From Microservices}} and {{Containers}} to {{Serverless Platforms}}},
+  shorttitle = {The {{SPEC-RG Reference Architecture}} for {{FaaS}}},
+  author = {Van Eyk, Erwin and Grohmann, Johannes and Eismann, Simon and Bauer, Andre and Versluis, Laurens and Toader, Lucian and Schmitt, Norbert and Herbst, Nikolas and Abad, Cristina L. and Iosup, Alexandru},
+  year = {2019},
+  month = nov,
+  journal = {IEEE Internet Computing},
+  volume = {23},
+  number = {6},
+  pages = {7--18},
+  issn = {1089-7801, 1941-0131},
+  doi = {10.1109/MIC.2019.2952061},
+  urldate = {2024-07-04},
+  abstract = {Microservices, containers, and serverless computing belong to a trend toward applications composed of many small, self-contained, and automatically managed components. Core to serverless computing, Function-as-a-Service (FaaS) platforms employ state-of-the-art container technology and microservices-based architectures to enable users to manage complex applications without the need for systems-level expertise. Victim of its own success, and partially due to proprietary technology, currently the community has a limited overview of these platforms. To address this, we propose a reference architecture and ecosystem for FaaS platforms. Based on a year-long survey of real-world platforms conducted within the SPEC-RG Cloud Group, we highlight specific components and identify common operational patterns.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\APCFBJV6\Van Eyk et al. - 2019 - The SPEC-RG Reference Architecture for FaaS From .pdf}
+}
+
+@article{herbstElasticityCloudComputing,
+  title = {Elasticity in {{Cloud Computing}}: {{What It Is}}, and {{What It Is Not}}},
+  author = {Herbst, Nikolas Roman and Kounev, Samuel and Reussner, Ralf},
+  abstract = {Originating from the field of physics and economics, the term elasticity is nowadays heavily used in the context of cloud computing. In this context, elasticity is commonly understood as the ability of a system to automatically provision and deprovision computing resources on demand as workloads change. However, elasticity still lacks a precise definition as well as representative metrics coupled with a benchmarking methodology to enable comparability of systems. Existing definitions of elasticity are largely inconsistent and unspecific, which leads to confusion in the use of the term and its differentiation from related terms such as scalability and efficiency; the proposed measurement methodologies do not provide means to quantify elasticity without mixing it with efficiency or scalability aspects. In this short paper, we propose a precise definition of elasticity and analyze its core properties and requirements explicitly distinguishing from related terms such as scalability and efficiency. Furthermore, we present a set of appropriate elasticity metrics and sketch a new elasticity tailored benchmarking methodology addressing the special requirements on workload design and calibration.},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\7G3UM8YC\Herbst et al. - Elasticity in Cloud Computing What It Is, and Wha.pdf}
+}
+
+@inproceedings{straesserWhyItNot2022,
+  title = {Why {{Is It Not Solved Yet}}?: {{Challenges}} for {{Production-Ready Autoscaling}}},
+  shorttitle = {Why {{Is It Not Solved Yet}}?},
+  booktitle = {Proceedings of the 2022 {{ACM}}/{{SPEC}} on {{International Conference}} on {{Performance Engineering}}},
+  author = {Straesser, Martin and Grohmann, Johannes and Von Kistowski, J{\'o}akim and Eismann, Simon and Bauer, Andr{\'e} and Kounev, Samuel},
+  year = {2022},
+  month = apr,
+  pages = {105--115},
+  publisher = {ACM},
+  address = {Beijing China},
+  doi = {10.1145/3489525.3511680},
+  urldate = {2024-07-04},
+  abstract = {Autoscaling is a task of major importance in the cloud computing domain as it directly affects both operating costs and customer experience. Although there has been active research in this area for over ten years now, there is still a significant gap between the proposed methods in the literature and the deployed autoscalers in practice. Hence, many research autoscalers do not find their way into production deployments. This paper describes six core challenges that arise in production systems that are still not solved by most research autoscalers. We illustrate these problems through experiments in a realistic cloud environment with a real-world multi-service business application and show that commonly used autoscalers have various shortcomings. In addition, we analyze the behavior of overloaded services and show that these can be problematic for existing autoscalers. Generally, we analyze that these challenges are only insufficiently addressed in the literature and conclude that future scaling approaches should focus on the needs of production systems.},
+  isbn = {978-1-4503-9143-6},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\2LVI9DLW\Straesser et al. - 2022 - Why Is It Not Solved Yet Challenges for Producti.pdf}
+}
+
+%% Ajouts ouverture
+
+% Prédiction
+
+@article{bauerTimeSeriesForecasting2020,
+  title = {Time {{Series Forecasting}} for {{Self-Aware Systems}}},
+  author = {Bauer, Andre and Zufle, Marwin and Herbst, Nikolas and Zehe, Albin and Hotho, Andreas and Kounev, Samuel},
+  year = {2020},
+  month = jul,
+  journal = {Proceedings of the IEEE},
+  volume = {108},
+  number = {7},
+  pages = {1068--1093},
+  issn = {0018-9219, 1558-2256},
+  doi = {10.1109/JPROC.2020.2983857},
+  urldate = {2024-07-04},
+  abstract = {Modern distributed systems and Internet-of-Things applications are governed by fast living and changing requirements. Moreover, they have to struggle with huge amounts of data that they create or have to process. To improve the self-awareness of such systems and enable proactive and autonomous decisions, reliable time series forecasting methods are required. However, selecting a suitable forecasting method for a given scenario is a challenging task. According to the ``No-Free-Lunch Theorem,'' there is no general forecasting method that always performs best. Thus, manual feature engineering remains to be a mandatory expert task to avoid trial and error. Furthermore, determining the expected time-to-result of existing forecasting methods is a challenge. In this article, we extensively assess the state-of-the-art in time series forecasting. We compare existing methods and discuss the issues that have to be addressed to enable their use in a self-aware computing context. To address these issues, we present a step-by-step approach to fully automate the feature engineering and forecasting process. Then, following the principles from benchmarking, we establish a level-playing field for evaluating the accuracy and time-to-result of automated forecasting methods for a broad set of application scenarios. We provide results of a benchmarking competition to guide in selecting and appropriately using existing forecasting methods for a given self-aware computing context. Finally, we present a case study in the area of self-aware data-center resource management to exemplify the benefits of fully automated learning and reasoning processes on time series data.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\IPB9ENMJ\Bauer et al. - 2020 - Time Series Forecasting for Self-Aware Systems.pdf}
+}
+
+@misc{eismannSizelessPredictingOptimal2021,
+  title = {Sizeless: {{Predicting}} the Optimal Size of Serverless Functions},
+  shorttitle = {Sizeless},
+  author = {Eismann, Simon and Bui, Long and Grohmann, Johannes and Abad, Cristina L. and Herbst, Nikolas and Kounev, Samuel},
+  year = {2021},
+  month = jun,
+  number = {arXiv:2010.15162},
+  eprint = {2010.15162},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  urldate = {2024-07-04},
+  abstract = {Serverless functions are a cloud computing paradigm where the provider takes care of resource management tasks such as resource provisioning, deployment, and auto-scaling. The only resource management task that developers are still in charge of is selecting how much resources are allocated to each worker instance. However, selecting the optimal size of serverless functions is quite challenging, so developers often neglect it despite its significant cost and performance benefits. Existing approaches aiming to automate serverless functions resource sizing require dedicated performance tests, which are time-consuming to implement and maintain. In this paper, we introduce an approach to predict the optimal resource size of a serverless function using monitoring data from a single resource size. As our approach does not require dedicated performance tests, it enables cloud providers to implement resource sizing on a platform level and automate the last resource management task associated with serverless functions. We evaluate our approach on four different serverless applications on AWS, where it predicts the execution time of the other memory sizes based on monitoring data for a single memory size with an average prediction error of 15.3\%. Based on these predictions, it selects the optimal memory size for 79.0\% of the serverless functions and the second-best memory size for 12.3\% of the serverless functions, which results in an average speedup of 39.7\% while also decreasing average costs by 2.6\%.},
+  archiveprefix = {arxiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Software Engineering,D.2.0,I.6.0},
+  file = {C:\Users\vlannurien\Zotero\storage\LFCDE3GR\Eismann et al. - 2021 - Sizeless Predicting the optimal size of serverles.pdf}
+}
+
+@misc{leeSPESOptimizingPerformanceResource2024a,
+  title = {{{SPES}}: {{Towards Optimizing Performance-Resource Trade-Off}} for {{Serverless Functions}}},
+  shorttitle = {{{SPES}}},
+  author = {Lee, Cheryl and Zhu, Zhouruixin and Yang, Tianyi and Huo, Yintong and Su, Yuxin and He, Pinjia and Lyu, Michael R.},
+  year = {2024},
+  month = mar,
+  number = {arXiv:2403.17574},
+  eprint = {2403.17574},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  urldate = {2024-07-04},
+  abstract = {As an emerging cloud computing deployment paradigm, serverless computing is gaining traction due to its efficiency and ability to harness on-demand cloud resources. However, a significant hurdle remains in the form of the cold start problem, causing latency when launching new function instances from scratch. Existing solutions tend to use oversimplistic strategies for function pre-loading/unloading without full invocation pattern exploitation, rendering unsatisfactory optimization of the trade-off between cold start latency and resource waste. To bridge this gap, we propose SPES, the first differentiated scheduler for runtime cold start mitigation by optimizing serverless function provision. Our insight is that the common architecture of serverless systems prompts the concentration of certain invocation patterns, leading to predictable invocation behaviors. This allows us to categorize functions and pre-load/unload proper function instances with finer-grained strategies based on accurate invocation prediction. Experiments demonstrate the success of SPES in optimizing serverless function provision on both sides: reducing the 75th-percentile cold start rates by 49.77\% and the wasted memory time by 56.43\%, compared to the state-of-the-art. By mitigating the cold start issue, SPES is a promising advancement in facilitating cloud services deployed on serverless architectures.},
+  archiveprefix = {arxiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Software Engineering},
+  file = {C:\Users\vlannurien\Zotero\storage\S78NLBX6\Lee et al. - 2024 - SPES Towards Optimizing Performance-Resource Trad.pdf}
+}
+
+@article{parkGraphNeuralNetworkBased2024,
+  title = {Graph {{Neural Network-Based SLO-Aware Proactive Resource Autoscaling Framework}} for {{Microservices}}},
+  author = {Park, Jinwoo and Choi, Byungkwon and Lee, Chunghan and Han, Dongsu},
+  year = {2024},
+  journal = {IEEE/ACM Transactions on Networking},
+  pages = {1--16},
+  issn = {1063-6692, 1558-2566},
+  doi = {10.1109/TNET.2024.3393427},
+  urldate = {2024-07-04},
+  abstract = {Microservice is an architectural style widely adopted in various latency-sensitive cloud applications. Similar to the monolith, autoscaling has attracted the attention of operators for managing the resource utilization of microservices. However, it is still challenging to optimize resources in terms of latency service-level-objective (SLO) without human intervention. In this paper, we present GRAF, a graph neural networkbased SLO-aware proactive resource autoscaling framework for minimizing total CPU resources while satisfying latency SLO. GRAF leverages front-end workload, distributed tracing data, and machine learning approaches to (a) observe/estimate the impact of traffic change (b) find optimal resource combinations (c) make proactive resource allocation. Experiments using various open-source benchmarks demonstrate that GRAF successfully targets latency SLO while saving up to 19\% of total CPU resources compared to the fine-tuned autoscaler. GRAF also handles a traffic surge with 36\% fewer resources while achieving up to 2.6x faster tail latency convergence compared to the Kubernetes autoscaler. Moreover, we verify the scalability of GRAF on large-scale deployments, where GRAF saves 21.6\% and 25.4\% for CPU resources and memory resources, respectively.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\QLGSGUSZ\Park et al. - 2024 - Graph Neural Network-Based SLO-Aware Proactive Res.pdf}
+}
+
+%% Ajouts limites
+
+% Passage à l'échelle
+
+@inproceedings{straesserPowerApplicationsVision2023,
+  title = {Power to the {{Applications}}: {{The Vision}} of {{Continuous Decentralized Autoscaling}}},
+  shorttitle = {Power to the {{Applications}}},
+  booktitle = {2023 {{IEEE}}/{{ACM}} 23rd {{International Symposium}} on {{Cluster}}, {{Cloud}} and {{Internet Computing Workshops}} ({{CCGridW}})},
+  author = {Straesser, Martin and Gei{\ss}ler, Stefan and Ho{\ss}feld, Tobias and Kounev, Samuel},
+  year = {2023},
+  month = may,
+  pages = {281--283},
+  publisher = {IEEE},
+  address = {Bangalore, India},
+  doi = {10.1109/CCGridW59191.2023.00058},
+  urldate = {2024-07-04},
+  abstract = {Autoscaling has been one of the most active research areas since the beginning of the cloud computing era. Nearly all previously proposed approaches focus on decision-making based on averaged monitoring values of many service instances at fixed points in time. This limits responsiveness and can lead to service level objective (SLO) violations when the load suddenly increases. Our vision of continuous decentralized autoscaling avoids these issues by giving individual service instances the power to make scaling decisions in a distributed fashion. Each instance performs self-monitoring and evaluates its state. The service instance initiates upscaling if it detects an overload or downscaling if its load is below a specified threshold. By randomly determining scaling timing, we achieve quasi-continuous scaling behavior when multiple service instances are deployed. We discuss challenges regarding analytical modeling, simulation, and real-world evaluation of this approach.},
+  copyright = {https://doi.org/10.15223/policy-029},
+  isbn = {9798350302080},
+  langid = {english},
+  file = {C:\Users\vlannurien\Zotero\storage\9B5ZSMLN\Straesser et al. - 2023 - Power to the Applications The Vision of Continuou.pdf}
+}
+
+%% Ajouts sécu (Quentin)
+
+@inproceedings{gruss2016rowhammer,
+  title={{Rowhammer.js}: a remote software-induced fault attack in {JavaScript}},
+  author={Gruss, Daniel and Maurice, Cl{\'e}mentine and Mangard, Stefan},
+  booktitle={Proceedings of the 13th International conference on Detection of Intrusions and Malware, and Vulnerability Assessment (DIMVA'16)},
+  year={2016},
+  pages={300--321},
+  doi={10.1007/978-3-319-40667-1_15},
+  publisher={Springer},
+}
+@inproceedings{lipp2018meltdown,
+  title={{Meltdown}: reading kernel memory from user space},
+  author={Lipp, Moritz and Schwarz, Michael and Gruss, Daniel and Prescher, Thomas and Haas, Werner and Fogh, Anders and Horn, Jann and Mangard, Stefan and Kocher, Paul and Genkin, Daniel and others},
+  booktitle={Proceedings of the 27th {USENIX} Security Symposium (Security'18)},
+  pages={973--990},
+  year={2018},
+  url={https://www.usenix.org/conference/usenixsecurity18/presentation/lipp},
+  publisher={USENIX Association},
+}
+@inproceedings{kocher2019spectre,
+  title={{Spectre} attacks: exploiting speculative execution},
+  author={Kocher, Paul and Horn, Jann and Fogh, Anders and Genkin, Daniel and Gruss, Daniel and Haas, Werner and Hamburg, Mike and Lipp, Moritz and Mangard, Stefan and Prescher, Thomas and others},
+  booktitle={Proceedings of the 40th {IEEE} Symposium on Security and Privacy (S\&P'19)},
+  pages={1--19},
+  year={2019},
+  doi={10.1109/sp.2019.00002},
+  publisher={IEEE},
+}
+
+@inproceedings{pedersen2017trash,
+  title={From trash to treasure: timing-sensitive garbage collection},
+  author={Pedersen, Mathias V and Askarov, Aslan},
+  booktitle={Proceedings of the 38th {IEEE} Symposium on Security and Privacy (S\&P'17)},
+  pages={693--709},
+  year={2017},
+  doi={10.1109/sp.2017.64},
+  publisher={IEEE},
+}
+@inproceedings{wu2018side,
+  title={A side-channel attack on {HotSpot} heap management},
+  author={Wu, Xiaofeng and Suo, Kun and Zhao, Yong and Rao, Jia},
+  booktitle={Proceedings of the 10th USENIX Workshop on Hot Topics in Cloud Computing (HotCloud'18)},
+  year={2018},
+  url={https://www.usenix.org/conference/hotcloud18/presentation/wu},
+  publisher={USENIX Association},
+}
+
+@unpublished{van2020sgaxe,
+  title={{SGAxe}: How {SGX} Fails in Practice},
+  author={van Schaik, Stephan and Kwong, Andrew and Genkin, Daniel and Yarom, Yuval},
+  year={2020},
+  url={https://sgaxe.com/}
+}
+@inproceedings{cui2021smashex,
+  title={{SmashEx}: Smashing {SGX} Enclaves Using Exceptions},
+  author={Cui, Jinhua and Yu, Jason Zhijingcheng and Shinde, Shweta and Saxena, Prateek and Cai, Zhiping},
+  booktitle={Proceedings of the 28th {ACM} {SIGSAC} Conference on Computer and Communications Security (CCS'21)},
+  year={2021},
+  pages={779--793},
+  doi={10.1145/3460120.3484821},
+  publisher={ACM},
+}

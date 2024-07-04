@@ -1,4 +1,4 @@
-\chapter{HeROfake : Orchestration sur ressources hétérogènes pour le cloud privé}
+\chapter{HeROfake : Orchestration serverless sur ressources hétérogènes pour le cloud privé}
 
 \section{Introduction}
 \label{section:herofake-introduction}
@@ -30,7 +30,7 @@ Les services serverless libèrent les locataires d'une réservation complexe des
 
 Dans le modèle FaaS, les fournisseurs ne facturent les clients qu'en fonction de leur utilisation réelle des ressources~\cite{jonasCloudProgrammingSimplified2019}. Ils sont entièrement responsables du déploiement d'une gestion intelligente des ressources et du multiplexage à une granularité plus fine afin d'optimiser les mesures de qualité de service (QoS) telles que le temps de réponse, la consommation d'énergie, etc.
 
-\textbf{Détection de deepfake et serverless}. Le travail présenté dans cet article faisait partie d'un projet (à l'institut de recherche b{textless\textgreater}com \footnote{\href{https://b-com.com/en}{https://b-com.com/en}}) visant à déployer un service de détection de deepfake économe en énergie dans un cloud hétérogène. Les deepfakes sont des images, des vidéos ou des discours synthétiques, créés numériquement pour imiter une personne existante de manière à tromper les spectateurs. La détection de deepfake consiste à entraîner un réseau neuronal convolutif (CNN) pour détecter des modèles d'incohérences introduits dans le processus de création.
+\textbf{Détection de deepfake et serverless}. Le travail présenté dans cet article faisait partie d'un projet (à l'institut de recherche b{\textless\textgreater}com \footnote{\href{https://b-com.com/en}{https://b-com.com/en}}) visant à déployer un service de détection de deepfake économe en énergie dans un cloud hétérogène. Les deepfakes sont des images, des vidéos ou des discours synthétiques, créés numériquement pour imiter une personne existante de manière à tromper les spectateurs. La détection de deepfake consiste à entraîner un réseau neuronal convolutif (CNN) pour détecter des modèles d'incohérences introduits dans le processus de création.
 
 Les fonctions utilisées par notre application deepfake répondent à trois caractéristiques principales pour des charges de travail serverless adaptées~\cite{cncf2018whitepaper} : leur exécution peut être rendue parallèle (plusieurs images indépendantes), elles sont stateless (pure transformation sur les données d'entrée) et event-driven (lancées après l'upload des données).
 
