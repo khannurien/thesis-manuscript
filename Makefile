@@ -2,7 +2,7 @@
 
 TARGET       = main
 SOURCE_FILES = $(TARGET).tex $(wildcard */*.tex)
-BIB_FILES    = $(wildcard biblio/*.bib)
+BIB_FILES    = $(wildcard Bibliographie/*.bib)
 FIGURES      = $(wildcard */figures/*)
 COMPILE_ALL  = ""
 

@@ -219,7 +219,7 @@
 %%%%%%%%%%%%%%%% VARIABLES PAGE DE GARDE %%%%%%%%%%%%%%%%
 
 %%%%% Dossier contenant les info de l'ecole doctorale
-\newcommand*{\direcole}[1]{\gdef\vdirecole{./Couverture-these/ecoles-doctorales/#1}}
+\newcommand*{\direcole}[1]{\gdef\vdirecole{./Couverture/ecoles-doctorales/#1}}
 \direcole{}
 
 %%%%% Nom ecole, une variable par ligne
@@ -313,7 +313,7 @@
       {\ifthenelse{\equal{\vlogoetablissementA}{}\and\equal{\vlogoetablissementB}{UR1-noir}}{
         $\vcenter{\hbox{%
           \includegraphics[keepaspectratio,height=\vhauteurlogoetablissementB,width=7cm
-          ]{./Couverture-these/logos-etablissements/\vlogoetablissementB}%
+          ]{./Couverture/logos-etablissements/\vlogoetablissementB}%
         }}$
       }{%
         $\vcenter{\hbox{%
@@ -324,13 +324,13 @@
         {\if\vlogoetablissementA\empty \else
           $\vcenter{\hbox{%
             \includegraphics[keepaspectratio,height=\vhauteurlogoetablissementA,width=7cm
-            ]{./Couverture-these/logos-etablissements/\vlogoetablissementA}%
+            ]{./Couverture/logos-etablissements/\vlogoetablissementA}%
           }}$
         \fi}%
         \hspace{3mm}
         $\vcenter{\hbox{%
           \includegraphics[keepaspectratio,height=\vhauteurlogoetablissementB,width=7cm
-          ]{./Couverture-these/logos-etablissements/\vlogoetablissementB}%
+          ]{./Couverture/logos-etablissements/\vlogoetablissementB}%
         }}$
       }}%
     }%
@@ -353,7 +353,7 @@
 %        \begin{tikzpicture}
 %            \fill[couleur-ecole-recto] (0,0) rectangle (\paperwidth,4.4);
 %        \end{tikzpicture}
-		\input{./Couverture-these/cover_tikz}
+		\input{./Couverture/cover_tikz}
     \vspace{10cm}
   }}}
   \displayLogos
@@ -435,7 +435,7 @@
 	\put(0,0){%
 	\parbox[t][\paperheight]{\paperwidth}{%
         \vspace{-33.1cm}
-		\input{./Couverture-these/backcover_tikz}
+		\input{./Couverture/backcover_tikz}
 	}}
 }
 \hspace{9mm}

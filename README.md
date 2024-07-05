@@ -13,20 +13,20 @@ La disposition proposée dans ce modèle est donc donnée à titre d'exemple mai
 
 - `main.tex` contient le squelette du document, aucun texte du manuscrit n'est présent dans ce fichier
 - `these-dbl.cls` contient les dépendances, les paramètres de la bibliographie dont le style de citation et les paramètres de mise en page globale du manuscrit et plus particulièrement des deux couvertures
-- `Couverture-these/pagedegarde.tex` contient les variables à remplir par l'auteur pour compléter la page de garde, ces variables sont utilisées par `\maketitle` redéfini dans `these-dbl.cls`
-- `Couverture-these/resume.tex` contient les variables à remplir par l'auteur pour compléter la quatrième de couverture, ces variables sont utilisées par les macros définies dans `these-dbl.cls`
+- `Couverture/pagedegarde.tex` contient les variables à remplir par l'auteur pour compléter la page de garde, ces variables sont utilisées par `\maketitle` redéfini dans `these-dbl.cls`
+- `Couverture/resume.tex` contient les variables à remplir par l'auteur pour compléter la quatrième de couverture, ces variables sont utilisées par les macros définies dans `these-dbl.cls`
 - Le `Makefile` vous aide à compiler le latex et la bibliographie en un pdf (détails plus bas)
 - Les autres dossiers contiennent chacun un chapitre du document
 
 
 ### Remplir la première et quatrième de couverture
 
-Les informations de la page de garde doivent être renseignées dans les variables du fichier `Couverture-these/pagedegarde.tex`.
+Les informations de la page de garde doivent être renseignées dans les variables du fichier `Couverture/pagedegarde.tex`.
 Il suffit de modifier les lignes appelant les commandes `\ecoledoctorale{}` et `\etablissement{}` pour adapter les couvertures à l'école doctorale et à l'établissement, ou les établissements, délivrant le diplôme (par défaut MathSTIC et Université de Rennes 1, respectivement).
-Le fichier `Couverture-these/README.md` liste Les écoles doctorales et établissements supportés ainsi que des liens vers les listes des spécialités et unités de recherche de chaque école doctorale pour aider à compléter la page de garde (commandes `\spec{}` et `\uniterecherche{}`).
+Le fichier `Couverture/README.md` liste Les écoles doctorales et établissements supportés ainsi que des liens vers les listes des spécialités et unités de recherche de chaque école doctorale pour aider à compléter la page de garde (commandes `\spec{}` et `\uniterecherche{}`).
 Modifier la disposition des éléments de la page de garde présente dans `these-dbl.cls` ne devrait  être nécessaire que pour rajouter quelques `\vspace` pour préserver la structure original après avoir renseigné les différents champs (e.g., spécialité, composition du jury).
 
-Les variables relatives à la quatrième de couverture sont à renseigner dans `Couverture-these/resume.tex`.
+Les variables relatives à la quatrième de couverture sont à renseigner dans `Couverture/resume.tex`.
 
 
 ### Dépendances
@@ -114,20 +114,20 @@ The content layout provided in this template is therefore given as an exemple ra
 
 - `main.tex` contains the backbone structure of the document, no content is present in this file
 - `these-dbl.cls` contains the package dependencies, bibliography parameters including citation style and overall layout specifications including both front and back cover layouts
-- `Couverture-these/pagedegarde.tex` contains the variables that must be filled by the author to complete the front cover, these variables are used in `\maketitle` redefined in `these-dbl.cls`
-- `Couverture-these/resume.tex` contains the variables that must be filled by the author to complete the back cover, these variables are used in the macros defined in `these-dbl.cls`
+- `Couverture/pagedegarde.tex` contains the variables that must be filled by the author to complete the front cover, these variables are used in `\maketitle` redefined in `these-dbl.cls`
+- `Couverture/resume.tex` contains the variables that must be filled by the author to complete the back cover, these variables are used in the macros defined in `these-dbl.cls`
 - The `Makefile` helps you compile the latex and bibliography into a pdf (details below)
 - The rest of the directories each contain one chapter of the document
 
 
 #### Fill the front and back cover
 
-The front cover details must be provided by filling the variables in `Couverture-these/pagedegarde.tex`.
+The front cover details must be provided by filling the variables in `Couverture/pagedegarde.tex`.
 The lines calling the `\ecoledoctorale{}` and `\etablissement{}` (i.e., institution) commands must be modified to adapt the covers to the doctoral school and institution(s) delivering the diplome (by default set to MathSTIC and Université de Rennes 1, respectively).
-The file `Couverture-these/README.md` lists the supported doctoral schools and institutions, and contains links pointing to lists of domains and labs/faculties, for each doctoral school, that are needed to fill the front cover (commands `\spec{}` and `\uniterecherche{}`).
+The file `Couverture/README.md` lists the supported doctoral schools and institutions, and contains links pointing to lists of domains and labs/faculties, for each doctoral school, that are needed to fill the front cover (commands `\spec{}` and `\uniterecherche{}`).
 Modifying the front cover layout defined in `these-dbl.cls` should only be necessary to preserve the original layout using a few `\vspace` after filling the front cover (e.g., domain, jury section).
 
-The back cover variables that must be filled are in `Couverture-these/resume.tex`.
+The back cover variables that must be filled are in `Couverture/resume.tex`.
 
 
 #### Dependencies
