@@ -1,9 +1,11 @@
 *.aux
-*.bbl
-*.bcf
+*.bbl*
+*.bcf*
 *.blg
 *.brf
 *.dvi
+*.fdb*
+*.fls
 *.idx
 *.ilg
 *.ind
@@ -11,6 +13,6 @@
 *.out
 *.ps
 *.run.xml
-*.synctex.gz
+*.synctex*
 *.toc
 main.pdf

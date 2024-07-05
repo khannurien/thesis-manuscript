@@ -67,7 +67,7 @@ Le document est organisé comme suit : dans une première section, nous décrivo
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.8\textwidth]{5_Chapitre3/figures/placement.png}
+\includegraphics[width=0.8\textwidth]{4_Chapitre4/figures/placement.png}
 \caption{Plateforme de détection de deepfake serverless, vue d'ensemble du système.}
 \label{figure:herofake-placement}
 \end{figure*}
@@ -169,7 +169,7 @@ Pour les besoins de cette étude, trois modèles populaires ont été formés. L
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{5_Chapitre3/figures/characterization/time_of_inference_1_image.png}
+\includegraphics[width=\columnwidth]{4_Chapitre4/figures/characterization/time_of_inference_1_image.png}
 \caption{Inference time for one image with ResNet50, VGG16 and VGG19.}
 \label{figure:herofake-time-inference}
 \end{figure}
@@ -180,7 +180,7 @@ La carte d'accélération FPGA étant censée être plus efficace qu'un CPU ou u
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{5_Chapitre3/figures/characterization/consumption_per_image.png}
+\includegraphics[width=\columnwidth]{4_Chapitre4/figures/characterization/consumption_per_image.png}
 \caption{Energy consumption of inference per image (mWh).}
 \label{figure:herofake-consumption-per-image}
 \end{figure}
@@ -195,7 +195,7 @@ Cependant, la seule consommation d'énergie instantanée ne reflète pas correct
 
 \begin{figure}[t]
 \centering
-\includegraphics[scale=0.2]{5_Chapitre3/figures/characterization/cost_devices_time.png}
+\includegraphics[scale=0.2]{4_Chapitre4/figures/characterization/cost_devices_time.png}
 \caption{Total cost of inference on selected devices over time.}
 \label{figure:herofake-cost-over-time}
 \end{figure}
@@ -206,7 +206,7 @@ La consommation d'énergie brute du dispositif d'inférence ne reflète pas le c
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{5_Chapitre3/figures/characterization/power_usage.png}
+\includegraphics[width=\columnwidth]{4_Chapitre4/figures/characterization/power_usage.png}
 \caption{Power usage breakdown for FPGA and GPU.}
 \label{figure:herofake-power-usage}
 \end{figure}
@@ -399,13 +399,13 @@ Si l'ordonnanceur ne trouve pas de réplique disponible pour exécuter la tâche
 \begin{figure*}[t]
     \centering
     \subfloat[Task consolidation (based on the unused node count)\label{figure:herofake-evaluation-full-nodes}]{
-        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/z-nodes-20221212-232143-169224.png}
+        \includegraphics[width=0.28\linewidth]{4_Chapitre4/figures/evaluation/z-nodes-20221212-232143-169224.png}
     }\qquad
     \subfloat[QoS violations (based on tasks with missed deadline)\label{figure:herofake-evaluation-full-penalty}]{
-        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/z-penalty-20221212-232143-169224.png}
+        \includegraphics[width=0.28\linewidth]{4_Chapitre4/figures/evaluation/z-penalty-20221212-232143-169224.png}
     }\qquad
     \subfloat[Dynamic energy consumption (in kWh)\label{figure:herofake-evaluation-full-energy}]{
-        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/z-energy-20221212-232143-169224.png}
+        \includegraphics[width=0.28\linewidth]{4_Chapitre4/figures/evaluation/z-energy-20221212-232143-169224.png}
     }
     \caption{Evaluation 1 -- Comparison against baselines}
     \label{figure:herofake-evaluation-hro-full}
@@ -414,13 +414,13 @@ Si l'ordonnanceur ne trouve pas de réplique disponible pour exécuter la tâche
 \begin{figure*}[t]
     \centering
     \subfloat[Task consolidation (based on the unused node count)\label{figure:herofake-evaluation-mixed-nodes}]{
-        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/x-nodes-20221212-185844-053283.png}
+        \includegraphics[width=0.28\linewidth]{4_Chapitre4/figures/evaluation/x-nodes-20221212-185844-053283.png}
     }\qquad
     \subfloat[QoS violations (based on tasks with missed deadline)\label{figure:herofake-evaluation-mixed-penalty}]{
-        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/x-penalty-20221212-185844-053283.png}
+        \includegraphics[width=0.28\linewidth]{4_Chapitre4/figures/evaluation/x-penalty-20221212-185844-053283.png}
     }\qquad
     \subfloat[Dynamic energy consumption (in kWh)\label{figure:herofake-evaluation-mixed-energy}]{
-        \includegraphics[width=0.28\linewidth]{5_Chapitre3/figures/evaluation/x-energy-20221212-185844-053283.png}
+        \includegraphics[width=0.28\linewidth]{4_Chapitre4/figures/evaluation/x-energy-20221212-185844-053283.png}
     }
     \caption{Evaluation 2 -- Impact of HeROfake components on the overall performance}
     \label{figure:herofake-evaluation-hro-mixed}
