@@ -7,15 +7,19 @@
 
 En 1961, John McCarthy donne un discours pour célébrer les cent ans du MIT~\cite{greenberger1962management}. Il imagine alors que le partage du temps de calcul des ordinateurs pourrait permettre de vendre leur puissance d'exécution comme un service, à l'image de l'eau ou de l'électricité. Le matériel serait organisé de manière à rendre possible sa location à des clients qui paieraient ce service en fonction du volume, ou du temps d'utilisation.
 
-Grâce à la démocratisation de l'accès à Internet à haut débit, au milieu des années 2000, l'idée de McCarthy se trouve implémentée dans ce que l'on appelle "cloud computing" : entreprises et particuliers peuvent dorénavant réduire drastiquement les coûts associés à l'achat et à l'entretien du matériel nécessaire au fonctionnement de leurs applications, en déléguant la responsabilité de l'infrastructure à des fournisseurs de services, qui bénéficient d'effets d'économie d'échelle en concentrant ces ressources dans d'immenses centres de données.
+Grâce à la démocratisation de l'accès à Internet à haut débit, au milieu des années 2000, l'idée de McCarthy se trouve implémentée dans ce que l'on appelle "cloud computing"~\cite{hayesCloudComputing2008} : entreprises et particuliers peuvent dorénavant réduire drastiquement les coûts associés à l'achat et à l'entretien du matériel nécessaire au fonctionnement de leurs applications, en déléguant la responsabilité de l'infrastructure à des fournisseurs de services, qui bénéficient d'effets d'économie d'échelle en concentrant ces ressources dans d'immenses centres de données.
 
-Ce modèle est appelé "Infrastructure as a Service" : les clients louent et réservent une sous-partie des ressources du fournisseur (calcul, stockage, réseau) dont ils deviennent responsables du fonctionnement~\cite{mellNISTDefinitionCloud}. De nouvelles tendances apparaissent au fil des années avec pour objectif de diminuer la surface des responsabilités du client. Par exemple, dans le modèle "Platform as a Service", les clients n'ont pas directement accès aux machines qui supportent leurs applications, et effectuent la plupart des tâches de gestion via des interfaces spécialisées.
+Ce modèle est appelé "Infrastructure as a Service" (IaaS) : les clients louent et réservent une sous-partie des ressources du fournisseur (calcul, stockage, réseau) dont ils deviennent responsables du fonctionnement~\cite{mellNISTDefinitionCloud}. De nouvelles tendances apparaissent au fil des années avec pour objectif de diminuer la surface des responsabilités du client. Par exemple, dans le modèle "Platform as a Service" (PaaS), les clients n'ont pas directement accès aux machines qui supportent leurs applications, et effectuent la plupart des tâches de gestion via des interfaces spécialisées. Dans une offre "Software as a Service" (SaaS), le fournisseur de services héberge et administre des applications, pour lesquelles il facture au client le droit d'en être utilisateur.
 
-Dans ces modèles, le client paie pour des ressources qui sont parfois dormantes. En effet, il faut la plupart du temps surprovisionner les ressources réservées, de manière à être capable d'absorber la montée en charge lors de pics d'activité.
+Dans le cadre IaaS, un client devra surprovisionner les ressources réservées, de manière à ce que l'application déployée soit capable d'absorber la montée en charge lors de pics d'activité. Dans le cadre PaaS, lorsque l'application n'est pas utilisée, elle reste toutefois déployée et occupe donc des ressources matérielles. Dans le cadre SaaS, la facture sera forfaitaire, quelle que soit l'utilisation faite de l'application par le client.
+
+Dans ces trois modèles, le client paie pour des ressources qui sont parfois dormantes. En effet, la mesure de l'usage du service s'effectue dans chacun des cas sur la quantité de ressources engagées pour sa mise en œuvre par le fournisseur. 
+
+TODO: ressources dormantes (usage inférieur à 15\%), consommation d'énergie (chiffres tech talk), effet rebond (exemple de Meta), etc.
 
 TODO: nouveau modèle, serverless, quelques caractéristiques principales
 
-TODO: cloud public, FaaS, cloud privé ?
+TODO: cloud public, FaaS, cloud privé, serverless ?
 
 \section{Problématiques de recherche}
 %\addcontentsline{toc}{section}{Problématiques de recherche}
