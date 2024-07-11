@@ -91,7 +91,7 @@
 % This command will generate the front cover
 \frontmatter
 \clearemptydoublepage
-\renewcommand{\contentsname}{Table des Matières}
+\renewcommand{\contentsname}{Table des matières}
 \tableofcontents %sommaire %table of content
 %\shorttableofcontents{Sommaire}{0}
 
@@ -99,6 +99,7 @@
 \input{./1_Introduction/introduction}
 
 \part{Contexte et état de l'art}
+\label{part:one}
 
 \clearemptydoublepage
 \mainmatter
@@ -108,6 +109,7 @@
 \input{./3_Chapitre3/chapitre3}
 
 \part{Contributions}
+\label{part:two}
 
 \clearemptydoublepage
 \input{./4_Chapitre4/chapitre4}
@@ -117,6 +119,9 @@
 
 \clearemptydoublepage
 \input{./6_Chapitre6/chapitre6}
+
+\part{Conclusion et perspectives}
+\label{part:three}
 
 \clearemptydoublepage
 \backmatter

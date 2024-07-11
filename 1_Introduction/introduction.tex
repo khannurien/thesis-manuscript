@@ -1,4 +1,5 @@
 \chapter{Introduction}
+\label{chapter:introduction}
 %\addcontentsline{toc}{chapter}{Introduction}
 %\chaptermark{Introduction}
 
@@ -13,7 +14,7 @@ Ce modèle est appelé \textit{Infrastructure as a Service} (IaaS) : les clients
 
 Dans ces trois modèles traditionnels, le client paie pour des ressources qui sont parfois dormantes. En effet, la mesure de l'usage du service s'effectue dans chacun des cas sur la quantité de ressources engagées pour sa mise en œuvre par le fournisseur. C'est un problème largement documenté dans la littérature, qui considère que le taux d'usage des ressources dans un centre de données cloud peut être inférieur à 15\% en moyenne~\cite{vasanWorthTheirWatts2010, vermaLargescaleClusterManagement2015a}.
 
-Cette valeur faible est expliquée par un ensemble de facteurs. D'abord, une part du matériel disponible dans un centre de données est déployé pour palier les éventuelles pannes -- celles-ci peuvent affecter 3\% des machines chaque semaine~\cite{BareMetal70B}. Ensuite, un centre de données est toujours dimensionné par rapport aux pics d'utilisation, qui peuvent être liés à des événements récurrents comme le Super Bowl aux États-Unis~\cite{wangTouchdownCloudImpact2019}, ou imprévisibles comme la crise sanitaire de 2020~\cite{} : c'est une marge de sécurité, afin d'assurer la continuité du service. Enfin, le cloud est un secteur économique qui connaît une croissance soutenue, autour de 17\% par an~\cite{}, ce qui explique des investissements réguliers dans du nouveau matériel pour tenir compte de la demande future.
+Cette valeur faible est expliquée par un ensemble de facteurs. D'abord, une part du matériel disponible dans un centre de données est déployé pour palier les éventuelles pannes -- celles-ci peuvent affecter 3\% des machines chaque semaine~\cite{BareMetal70B}. Ensuite, un centre de données est toujours dimensionné par rapport aux pics d'utilisation, qui peuvent être liés à des événements récurrents comme le Super Bowl aux États-Unis~\cite{wangTouchdownCloudImpact2019}, ou imprévisibles comme la crise sanitaire de 2020~\cite{alashhabImpactCoronavirusPandemic2021} : c'est une marge de sécurité, afin d'assurer la continuité du service. Enfin, le cloud est un secteur économique qui connaît une croissance soutenue, autour de 17\% par an~\cite{}, ce qui explique des investissements réguliers dans du nouveau matériel pour tenir compte de la demande future.
 
 Malgré tout, lorsque l'on met ce faible usage des ressources en regard de la consommation d'énergie estimée pour ces même centres de données, soit environ 1,5\% de la consommation d'électricité mondiale en 2010~\cite{masanetRecalibratingGlobalData2020}, il semble urgent de s'intéresser à l'optimisation des opérations cloud.
 
@@ -81,7 +82,7 @@ Le cloud est souvent présenté au sein d'un continuum avec la périphérie du r
 \textbf{Problème 3} : Évaluer les politiques d'orchestration dans un environnement cloud privé $\Rightarrow$ données de production (traces d'exécution), analyse (graphe des appels, données intermédiaires) et caractérisation (métriques de performances) $\Rightarrow$ environnement réel ? problématique de mesures complexes dans un environnement réel (interférences...), difficultés pour rejouer des scénarios, ou pour une analyse \textit{what-if} (changer des paramètres d'entrée pour évaluer leur impact) etc. $\Rightarrow$ simulation ? $\Rightarrow$ limites des simulateurs de l'état de l'art...
 
 \boitemagique{Question 3 (\textbf{QR3})}{
-    Du point de vue d'un fournisseur de services pour le cloud privé, comment évaluer l'impact de différentes politiques d'allocation de ressources et d'ordonnancement de tâches pour le modèle serverless ?
+    Du point de vue d'un fournisseur de services pour le cloud privé, comment évaluer l'impact sur la qualité de service de différentes politiques d'allocation de ressources et d'ordonnancement de tâches dans le modèle serverless ?
 }
 
 \section{Contributions}
@@ -118,4 +119,16 @@ Cette contribution a fait l'objet d'une soumission au journal IEEE Internet Comp
 \section{Organisation de la thèse}
 %\addcontentsline{toc}{section}{Organisation du mémoire}
 
-...
+Ce manuscrit est composé de sept chapitres (dont cette introduction), organisés comme suit :
+
+\textbf{Partie~\ref{part:one} : Contexte et état de l'art}
+
+Le chapitre~\ref{chapter:context} décrit l'environnement général des travaux de la thèse, et donne en particulier les caractéristiques du cloud et du modèle serverless. Le chapitre~\ref{chapter:sota} présente des contributions de l'état de l'art dans le domaine de l'orchestration dynamique pour le cloud.
+
+\textbf{Partie~\ref{part:two} : Contributions}
+
+Cette partie présente les trois contributions de la thèse. Le chapitre~\ref{chapter:herofake} décrit notre solution d'allocation et d'ordonnancement dynamiques sous contrainte de qualité de service pour des fonctions simples, ainsi que notre méthodologie de caractérisation des plateformes et des tâches. Le chapitre~\ref{chapter:herocache} présente notre orchestrateur s'appuyant sur un modèle de coût intégrant les problématiques de stockage pour le serverless. Le chapitre~\ref{chapter:herocache} détaille l'environnement de simulation développé dans le cadre de la thèse pour évaluer des politiques d'orchestration serverless pour le cloud privé.
+
+\textbf{Partie~\ref{part:three} : Conclusion et perspectives}
+
+Enfin, le chapitre~\ref{chapter:conclusion} résume les contributions de la thèse et présente les limites identifiées dans les solutions proposées, pour ouvrir la discussion sur des perspectives pour de futurs travaux.
