@@ -1528,11 +1528,91 @@
 @techreport{davisUptimeInstituteGlobal2022,
   title = {Uptime {{Institute Global Data Center Survey}} 2022},
   author = {Davis, Jacqueline},
+  institution = {Uptime Institute},
   year = {2022},
   langid = {english},
   file = {C:\Users\vlannurien\Zotero\storage\JPRCLKLS\Davis - 2022 - Uptime Institute Global Data Center Survey 2022.pdf}
 }
 
+@misc{Electricity2024Analysis2024,
+  title = {Electricity 2024 - {{Analysis}} and Forecast to 2026},
+  author = {{International Energy Agency}},
+  year = {2024},
+  langid = {english},
+}
+
+@misc{commentMetaOperate6002024,
+  title = {Meta to Operate "600,000 {{H100 GPU}} Equivalents of Compute" by Year-End},
+  author = {Moss, Sebastian},
+  year = {2024},
+  month = jan,
+  urldate = {2024-07-10},
+  abstract = {Including 340,000 H100 Nvidia GPUs at its data centers},
+  url = {https://www.datacenterdynamics.com/en/news/meta-to-operate-600000-gpus-by-year-end/},
+  langid = {english},
+}
+
+@misc{DerriereIADeferlante2024,
+  title = {{Derrière l'IA, la déferlante des data centers}},
+  author = {Piquard, Alexandre and Pinaud, Olivier and Pécout, Adrien},
+  year = {2024},
+  month = jun,
+  journal = {Le Monde.fr},
+  urldate = {2024-07-10},
+  abstract = {Pour nourrir les immenses besoins de ChatGPT et autres outils d'intelligence artificielle, le secteur de la tech multiplie les centres de données. Ces usines du numérique sont de plus en plus nombreuses, de plus en plus puissantes et de plus en plus voraces en énergie. Un boom mondial dans lequel la France compte prendre sa part.},
+  url = {https://www.lemonde.fr/economie/article/2024/06/14/derriere-l-ia-la-deferlante-des-data-centers_6239694_3234.html},
+  langid = {french},
+}
+
+@misc{elderNextWaveAI2024,
+  title = {The next Wave of {{AI}} Hype Will Be Geopolitical. {{You}}'re Paying},
+  author = {Elder, Bryce},
+  year = {2024},
+  month = may,
+  urldate = {2024-07-10},
+  abstract = {The wealth of hallucinations},
+  howpublished = {https://www.ft.com/content/a60c3c7b-1c48-485d-adb7-5bc2b7b1b650},
+  langid = {british}
+}
+
+%%% Ajouts modèle économique
+
+@misc{BareMetal70B,
+  title = {From Bare Metal to a {{70B}} Model: Infrastructure Set-up and Scripts},
+  shorttitle = {From Bare Metal to a {{70B}} Model},
+  author = {{The Imbue Team}},
+  urldate = {2024-07-11},
+  abstract = {We would like to thank Voltage Park, Dell, H5, and NVIDIA for their invaluable partnership and help with setting up our cluster. A special{\dots}},
+  howpublished = {https://imbue.com/research/70b-infrastructure/},
+  langid = {american},
+}
+
+@inproceedings{wangTouchdownCloudImpact2019,
+  title = {Touchdown on the {{Cloud}}: {{The Impact}} of the {{Super Bowl}} on {{Cloud}}},
+  shorttitle = {Touchdown on the {{Cloud}}},
+  booktitle = {2019 {{IEEE Fifth International Conference}} on {{Big Data Computing Service}} and {{Applications}} ({{BigDataService}})},
+  author = {Wang, Chen and Kim, Hyong},
+  year = {2019},
+  month = apr,
+  pages = {107--113},
+  publisher = {IEEE},
+  address = {Newark, CA, USA},
+  doi = {10.1109/BigDataService.2019.00021},
+  urldate = {2024-07-11},
+  abstract = {The Super Bowl is the world's biggest televised sporting event. We examine the impact of the increasing online activities during the Super Bowl of year 2015-2017 on various types of Cloud systems, including the Cloud infrastructure service, the Cloud content delivery networks for live streaming, and popular web services such as on-demand video streaming service and social network applications. We probe these systems from agents deployed around the world to compare their load variations and performance changes during and after the game. Through our studies of three consecutive years, we find that Super Bowl events have impacts on the Cloud. However, the current Cloud system is still able to ensure capacity to cope with the challenges brought by traffic changes during such massive events.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  isbn = {978-1-72810-059-3},
+  langid = {english},
+}
+
+@inproceedings{takMoveNotMove,
+  title = {To {{Move}} or {{Not}} to {{Move}}: {{The Economics}} of {{Cloud Computing}}},
+  author = {Tak, Byung Chul and Urgaonkar, Bhuvan and Sivasubramaniam, Anand},
+  booktitle={3rd USENIX Workshop on Hot Topics in Cloud Computing (HotCloud 11)},
+  year={2011},
+  abstract = {Cloud-based hosting promises cost advantages over conventional in-house (on-premise) application deployment. One important question when considering a move to the cloud is whether it makes sense for `my' application to migrate to the cloud. This question is challenging to answer due to following reasons. Although many potential benefits of migrating to the cloud can be enumerated, some benefits may not apply to `my' application. Also, there can be multiple ways in which an application might make use of the facilities offered by cloud providers. Answering these questions requires an in-depth understanding of the cost implications of all the possible choices specific to `my' circumstances. In this study We identify an initial set of key factors affecting the costs of a deployement choice. Using benchmarks representing two different applications (TPC-W and TPC-E) we investigate the evolution of costs for different deployment choices. We show that application characteristics such as workload intensity, growth rate, storage capacity and software licensing costs produce complex combined effect on overall costs. We also discuss issues regarding workload variance and horizontal partitioning.},
+  langid = {english},
+}
 
 %% Ajouts modélisation (Vincent)
 
@@ -1576,7 +1656,6 @@
   author = {Vardas, Ioannis and Wien, {\relax TU}},
   abstract = {In modern, deeply hierarchical HPC systems shared resource congestion can hinder the efficient use of many cores by parallel applications and degrade performance. Such congestion is often caused when parallel processes within an application that execute similar operations share the same resources. Previous research suggests using fewer cores with better process-to-core mapping can improve applications' performance but leaves many cores unused. To utilize these cores, we colocate additional applications and map them using a topology-aware process-tocore, application-agnostic mapping algorithm. We show that these mappings significantly impact memory bandwidth and communication latency. We evaluate our approach using eight parallel applications on an HPC system with 128-core nodes, demonstrating the performance effects of mappings combined with colocation. Our goal is to determine whether colocation with topology-aware mapping is a viable alternative to typical exclusive node allocation. Our results show makespan improvements of 2.4x over exclusive allocation in an HPC system, demonstrating the potential benefits of colocation with optimized mappings.},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\D24YHQLX\Vardas et Wien - Improved Parallel Application Performance and Make.pdf}
 }
 
 @article{jacquetSweetspotVMOversubscribingCPU,
@@ -1624,6 +1703,69 @@
 }
 
 %% Ajouts caractérisation
+
+%%% Wattmètres logiciels
+
+@phdthesis{valeraEnergySavingPerspective,
+  title = {An Energy Saving Perspective for Distributed Environments: {{Deployment}}, Scheduling and Simulation with Multidimensional Entities for {{Software}} and {{Hardware}}},
+  author = {Valera, Hernan Humberto Alvarez},
+  langid = {english},
+}
+
+@article{fieniPowerAPIPythonFramework2024,
+  title = {{{PowerAPI}}: {{A Python}} Framework for Buildingsoftware-Defined Power Meters},
+  shorttitle = {{{PowerAPI}}},
+  author = {Fieni, Guillaume and Acero, Daniel Romero and Rust, Pierre and Rouvoy, Romain},
+  year = {2024},
+  month = jun,
+  journal = {Journal of Open Source Software},
+  volume = {9},
+  number = {98},
+  pages = {6670},
+  issn = {2475-9066},
+  doi = {10.21105/joss.06670},
+  urldate = {2024-07-09},
+  abstract = {Software that we use daily for accessing digital services from connected devices has a negative impact on the environment as it consumes energy. These digital services, hosted by physical machines around the world, also contribute to planetary pollution. Unfortunately, providers of these online services mostly focus on hardware efficiency to reduce the environmental impact without considering the software they host. For this reason, we propose PowerAPI (G. Fieni, Romero, et al., 2024), a software-defined solution that delivers real-time estimations of software power consumption to spot opportunities to reduce it and therefore to limit their impact on the planet beyond hardware improvements.},
+  copyright = {http://creativecommons.org/licenses/by/4.0/},
+  langid = {english},
+}
+
+@inproceedings{jayExperimentalComparisonSoftwarebased2023,
+  title = {An Experimental Comparison of Software-Based Power Meters: Focus on {{CPU}} and {{GPU}}},
+  shorttitle = {An Experimental Comparison of Software-Based Power Meters},
+  booktitle = {2023 {{IEEE}}/{{ACM}} 23rd {{International Symposium}} on {{Cluster}}, {{Cloud}} and {{Internet Computing}} ({{CCGrid}})},
+  author = {Jay, Mathilde and Ostapenco, Vladimir and Lefevre, Laurent and Trystram, Denis and Orgerie, Anne-C{\'e}cile and Fichel, Benjamin},
+  year = {2023},
+  month = may,
+  pages = {106--118},
+  publisher = {IEEE},
+  address = {Bangalore, India},
+  doi = {10.1109/CCGrid57682.2023.00020},
+  urldate = {2024-07-09},
+  abstract = {The global energy demand for digital activities is constantly growing. Computing nodes and cloud services are at the heart of these activities. Understanding their energy consumption is an important step towards reducing it. On one hand, physical power meters are very accurate in measuring energy but they are expensive, difficult to deploy on a large scale, and are not able to provide measurements at the service level. On the other hand, power models and vendor-specific internal interfaces are already available or can be implemented on existing systems. Plenty of tools, called software-based power meters, have been developed around the concepts of power models and internal interfaces, in order to report the power consumption at levels ranging from the whole computing node to applications and services. However, we have found that it can be difficult to choose the right tool for a specific need. In this work, we qualitatively and experimentally compare several software-based power meters able to deal with CPU or GPU-based infrastructures. For this purpose, we evaluate them against high-precision physical power meters while executing various intensive workloads. We extend this empirical study to highlight the strengths and limitations of each software-based power meter.},
+  copyright = {https://doi.org/10.15223/policy-029},
+  isbn = {9798350301199},
+  langid = {english},
+}
+
+%%% Workloads
+
+@inproceedings{tirmaziBorgNextGeneration2020,
+  title = {Borg: The next Generation},
+  shorttitle = {Borg},
+  booktitle = {Proceedings of the {{Fifteenth European Conference}} on {{Computer Systems}}},
+  author = {Tirmazi, Muhammad and Barker, Adam and Deng, Nan and Haque, Md E. and Qin, Zhijing Gene and Hand, Steven and {Harchol-Balter}, Mor and Wilkes, John},
+  year = {2020},
+  month = apr,
+  pages = {1--14},
+  publisher = {ACM},
+  address = {Heraklion Greece},
+  doi = {10.1145/3342195.3387517},
+  urldate = {2024-07-08},
+  abstract = {This paper analyzes a newly-published trace that covers 8 different Borg [35] clusters for the month of May 2019. The trace enables researchers to explore how scheduling works in large-scale production compute clusters. We highlight how Borg has evolved and perform a longitudinal comparison of the newly-published 2019 trace against the 2011 trace, which has been highly cited within the research community.},
+  isbn = {978-1-4503-6882-7},
+  langid = {english},
+}
 
 %%% Coût société
 

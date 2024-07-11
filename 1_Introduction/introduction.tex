@@ -9,60 +9,113 @@ En 1961, John McCarthy donne un discours pour célébrer les cent ans du MIT~\ci
 
 Grâce à la démocratisation de l'accès à Internet à haut débit, au milieu des années 2000, l'idée de McCarthy se trouve implémentée dans ce que l'on appelle "cloud computing"~\cite{hayesCloudComputing2008} : entreprises et particuliers peuvent dorénavant réduire drastiquement les coûts associés à l'achat et à l'entretien du matériel nécessaire au fonctionnement de leurs applications, en déléguant la responsabilité de l'infrastructure à des fournisseurs de services, qui bénéficient d'effets d'économie d'échelle en concentrant ces ressources dans d'immenses centres de données.
 
-Ce modèle est appelé "Infrastructure as a Service" (IaaS) : les clients louent et réservent une sous-partie des ressources du fournisseur (calcul, stockage, réseau) dont ils deviennent responsables du fonctionnement~\cite{mellNISTDefinitionCloud}. De nouvelles tendances apparaissent au fil des années avec pour objectif de diminuer la surface des responsabilités du client. Par exemple, dans le modèle "Platform as a Service" (PaaS), les clients n'ont pas directement accès aux machines qui supportent leurs applications, et effectuent la plupart des tâches de gestion via des interfaces spécialisées. Dans une offre "Software as a Service" (SaaS), le fournisseur de services héberge et administre des applications, pour lesquelles il facture au client le droit d'en être utilisateur.
+Ce modèle est appelé \textit{Infrastructure as a Service} (IaaS) : les clients louent et réservent une sous-partie des ressources du fournisseur (calcul, stockage, réseau) dont ils deviennent responsables du fonctionnement~\cite{mellNISTDefinitionCloud}. Dans ce modèle, le client est intégralement responsable du dimensionnement des ressources dédiées à son application ; il pourra avoir tendance à surestimer ses besoins en ressources, de manière à s'assurer que l'application déployée soit capable d'absorber la montée en charge lors de pics d'activité~\cite{takMoveNotMove}. De nouvelles tendances apparaissent au fil des années avec pour objectif de diminuer la surface des responsabilités du client. Par exemple, dans le modèle \textit{Platform as a Service} (PaaS), les clients n'ont pas directement accès aux machines qui supportent leurs applications, et effectuent la plupart des tâches de gestion via des interfaces spécialisées. Ici, lorsque l'application n'est pas utilisée, elle reste toutefois déployée et occupe donc des ressources matérielles. Enfin, dans une offre \textit{Software as a Service} (SaaS), le fournisseur de services héberge et administre des applications, pour lesquelles il facture au client le droit d'en être utilisateur. Cette facturation est souvent forfaitaire, quelle que soit l'utilisation faite de l'application par le client.
 
-Dans le cadre IaaS, un client devra surprovisionner les ressources réservées, de manière à ce que l'application déployée soit capable d'absorber la montée en charge lors de pics d'activité. Dans le cadre PaaS, lorsque l'application n'est pas utilisée, elle reste toutefois déployée et occupe donc des ressources matérielles. Dans le cadre SaaS, la facture sera forfaitaire, quelle que soit l'utilisation faite de l'application par le client.
+Dans ces trois modèles traditionnels, le client paie pour des ressources qui sont parfois dormantes. En effet, la mesure de l'usage du service s'effectue dans chacun des cas sur la quantité de ressources engagées pour sa mise en œuvre par le fournisseur. C'est un problème largement documenté dans la littérature, qui considère que le taux d'usage des ressources dans un centre de données cloud peut être inférieur à 15\% en moyenne~\cite{vasanWorthTheirWatts2010, vermaLargescaleClusterManagement2015a}.
 
-Dans ces trois modèles, le client paie pour des ressources qui sont parfois dormantes. En effet, la mesure de l'usage du service s'effectue dans chacun des cas sur la quantité de ressources engagées pour sa mise en œuvre par le fournisseur. 
+Cette valeur faible est expliquée par un ensemble de facteurs. D'abord, une part du matériel disponible dans un centre de données est déployé pour palier les éventuelles pannes -- celles-ci peuvent affecter 3\% des machines chaque semaine~\cite{BareMetal70B}. Ensuite, un centre de données est toujours dimensionné par rapport aux pics d'utilisation, qui peuvent être liés à des événements récurrents comme le Super Bowl aux États-Unis~\cite{wangTouchdownCloudImpact2019}, ou imprévisibles comme la crise sanitaire de 2020~\cite{} : c'est une marge de sécurité, afin d'assurer la continuité du service. Enfin, le cloud est un secteur économique qui connaît une croissance soutenue, autour de 17\% par an~\cite{}, ce qui explique des investissements réguliers dans du nouveau matériel pour tenir compte de la demande future.
 
-TODO: ressources dormantes (usage inférieur à 15\%), consommation d'énergie (chiffres tech talk), effet rebond (exemple de Meta), etc.
+Malgré tout, lorsque l'on met ce faible usage des ressources en regard de la consommation d'énergie estimée pour ces même centres de données, soit environ 1,5\% de la consommation d'électricité mondiale en 2010~\cite{masanetRecalibratingGlobalData2020}, il semble urgent de s'intéresser à l'optimisation des opérations cloud.
 
-TODO: nouveau modèle, serverless, quelques caractéristiques principales
+En effet, l'accroissement de l'efficacité des architectures matérielles et logicielles n'a pas permis de contrer un certain effet rebond : si le rapport, pour un serveur typique du cloud, entre énergie consommée et calculs effectués a été divisé par quatre entre 2010 et 2020~\cite{masanetRecalibratingGlobalData2020}, la demande en matériel ne cesse de croître, poussée notamment par les immenses besoins en apprentissage machine~\cite{commentMetaOperate6002024}. Les investissements cumulés des leaders du secteur en serveurs dédiés à l'intelligence artificielle (IA) pourraient quintupler entre 2022 et 2025~\cite{DerriereIADeferlante2024, elderNextWaveAI2024}. L'Agence Internationale de l'Énergie (AIE) estime que la consommation des centres de données pourrait doubler d'ici à 2026~\cite{Electricity2024Analysis2024}.
 
-TODO: cloud public, FaaS, cloud privé, serverless ?
+Une métrique couramment utilisée pour mesurer l'efficacité énergétique d'un centre de données est le PUE (\textit{Power Usage Effectiveness}). Cet indicateur mesure le rapport entre l'énergie totale engagée par le centre de données sur l'énergie engagée pour les opérations (calcul, stockage, etc.), et devrait donc tendre vers $1$ dans un monde idéal. En 2022, le PUE moyen se situe autour de 1,55~\cite{davisUptimeInstituteGlobal2022}, principalement gonflé par les besoins en refroidissement des machines.
+
+Pourtant, un serveur éteint n'a pas besoin d'être refroidi. Comment expliquer alors que les ressources matérielles restent dans un état de stase, augmentant la consommation des centres de données sans générer de revenus ? Ne serait-il pas possible d'envisager un modèle dans lequel les ressources sont allouées au plus proche des besoins, laissant la possibilité aux fournisseurs de services de mettre en œuvre des politiques d'extinction pour les serveurs inutilisés ?
+
+Au cours des années 2010, des acteurs du cloud public proposent de nouvelles déclinaisons de leurs offres commerciales, le modèle \textit{Function as a Service} (FaaS). En particulier, Amazon propose Lambda~\footnote{\href{https://aws.amazon.com/fr/lambda/}{https://aws.amazon.com/fr/lambda/}} en 2014. Avec Lambda, la granularité de réservation des ressources se déplace de la \textit{quantité} vers la \textit{durée} : les clients fournissent à Lambda le code qu'ils souhaitent exécuter sur la plateforme cloud, et les ressources nécessaires à cette exécution sont allouées \textit{lorsque} nécessaire, et \textit{autant} que nécessaire, c'est-à-dire à la hauteur des requêtes utilisateur reçues par l'application. Tant que l'application est inutilisée, les ressources sont libérées. Dès que la charge augmente, les ressources allouées augmentent pour absorber le trafic.
+
+Le déplacement de la responsabilité du dimensionnement des ressources allouées aux applications du client vers le fournisseur de services ouvre de nouvelles possibilités d'optimisation pour ce dernier, en appliquant des stratégies intelligentes de gestion des ressources.
+
+\vl{TODO: Pourquoi optimiser ? maîtrise des coûts + obligations réglementaires}
+
+% Sur les aspects réglementaires, de nouvelles exigences émergent en matière de mesure de la consommation d'énergie et de l'empreinte carbone pour les opérateurs de centres de données~\cite{davisUptimeInstituteGlobal2022}.
+
+Pour optimiser, il faut prendre en compte la diversité des ressources à disposition : le cloud est un environnement hautement hétérogène, dans lequel le matériel présente des niveaux de performances et de coût très divers~\cite{reissHeterogeneityDynamicityClouds}. Par ailleurs, il ne s'agit pas uniquement de proposer les performances les plus hautes de manière indiscriminée. Par exemple, de nombreux utilisateurs de services cloud n'ont pas besoin de garanties fortes en matière de latence~\cite{tirmaziBorgNextGeneration2020}.
+
+Si l'orchestration dynamique apparaît comme étant une solution toute trouvée aux problèmes d'usage des ressources dans le cloud, ce mécanisme amène avec lui un certain nombres de défis à relever~\cite{Lannurien2023}.
+
+\vl{TODO: Transition (annonce des défis ?)}
+
+Ce paradigme se réalise aujourd'hui sous la forme d'un contrat sur le modèle de programmation : les utilisateurs des offres serverless doivent concevoir leurs applications comme un ensemble de fonctions pures -- idempotentes, leur exécution n'entraîne pas d'effets de bord -- ce qui constitue un lourd effort d'ingénierie.
+
+Le fonctionnement de cette architecture logicielle, qui présente des similitudes avec l'architecture en micro-services, repose sur la communication par passage de messages entre fonctions. Les fonctions n'étant pas directement adressables sur le réseau dans les solutions commerciales actuelles, cette communication s'effectue par le biais d'un stockage lent : cela induit un surcoût important sur les performances de l'application lors des phases de composition et de synchronisation, jusqu'à parfois contrebalancer les gains offerts par le parallélisme massif inhérent au paradigme serverless.
+
+Par ailleurs, le passage à l'échelle depuis zéro est associé à un fréquent risque de latence lors du réveil de l'application, puisque le fournisseur de services doit alors dynamiquement allouer des ressources matérielles et instancier l'environnement d'exécution des fonctions pour répondre à l'événement déclencheur. Les fournisseurs de services ont tendance à pré-allouer des ressources de manière à éviter ces démarrages à froid, ce qui contraint leurs gains potentiels en rendant ces ressources indisponibles pour d'autres clients.
+
+Enfin, les accélérateurs matériels sont les grands absents de l'offre serverless commerciale. À l'heure où la demande en GPU et FPGA est croissante pour répondre aux besoins en calcul massivement parallèle, notamment dans le cadre de l'apprentissage machine ou de l'analyse de données "big data", les clients doivent se tourner vers une offre cloud plus conventionnelle s'ils souhaitent bénéficier de plateformes d'exécution hétérogènes.
+
+\vl{TODO: Conclusion/ouverture (résumé des défis et lien avec les problématiques de la section suivante ?)}
 
 \section{Problématiques de recherche}
 %\addcontentsline{toc}{section}{Problématiques de recherche}
 
+Les travaux menés au cours de cette thèse s'inscrivent dans le cadre du modèle de service serverless pour le cloud privé.
+TODO: Nous avons considéré un environnement dans lequel un fournisseur de services dispose de ressources matérielles que des développeurs peuvent exploiter pour déployer leurs applications à destination d'une variété d'utilisateurs.
+TODO: Figure
+TODO: SLA avec le développeur = QoS des requêtes utilisateur
+Nous avons cherché à concevoir une plateforme d'orchestration qui soit en mesure de garantir la qualité de service pour les utilisateurs tout en minimisant les coûts pour le fournisseur de services. Une progression s'est opérée, en partant de l'ordonnancement de tâches simples (sans dépendances et sans état), pour arriver au déploiement d'applications complexes (dépendances temporelles et de données). Il nous a également fallu développer un environnement d'évaluation des différentes politiques que nous avons proposées.
+
+Cette section résume les problèmes que nous avons identifiés et les questions de recherche que nous avons posées dans le but de lever ces verrous.
+
 % \textbf{Problème 1} : Dans le cloud public, les ressources louées aux clients sont vues comme homogènes. Cela limite les gains du fournisseur de services en matière d'usage des ressources et de consommation d'énergie. Dans un contexte de cloud privé, le fournisseur peut ...
 
-\textbf{Problème 1} : Tâches simples, usages variés, pas prédictibles $\Rightarrow$ orchestration dynamique sur ressources finies $\Rightarrow$ problème de performances (QoS) $\Rightarrow$ usage de ressources hétérogènes $\Rightarrow$ coûts d'opportunité $\Rightarrow$ ...
+\textbf{Problème 1} : L'allocation de ressources sur un mode réactif
+
+Tâches simples, usages variés, pas prédictibles $\Rightarrow$ orchestration dynamique sur ressources finies $\Rightarrow$ problème de performances (QoS) $\Rightarrow$ usage de ressources hétérogènes $\Rightarrow$ coûts d'opportunité $\Rightarrow$ ...
 
 \boitemagique{Question 1 (\textbf{QR1})}{
-    Comment dimensionner les allocations de ressources pour une application interactive, et comment ordonnancer efficacement les requêtes utilisateur, lorsque ces derniers ont des besoins hétérogènes en matière de qualité de service ?
+    Comment dimensionner les allocations de ressources hétérogènes pour une application interactive, et comment ordonnancer efficacement les requêtes utilisateur, lorsque ces derniers ont des besoins variés en matière de qualité de service ?
 }
 
 % \textbf{Problème 2} : À l'edge, lorsque les ressources sont fortement contraintes (en capacité, en énergie), ... Ces problèmes s'accumulent dans un effet boule de neige et dégradent drastiquement la qualité de service lorsque l'on déploie des applications à plusieurs étages...
 
 \textbf{Problème 2} : Applications complexes, dépendances temporelles et de données, charge variable $\Rightarrow$ orchestration dynamique sur ressources contraintes en performances et en énergie $\Rightarrow$ problème de contention (stockage) $\Rightarrow$ ...
 
+Le cloud est souvent présenté au sein d'un continuum avec la périphérie du réseau, appelée \textit{edge}...
+
 \boitemagique{Question 2 (\textbf{QR2})}{
-    Comment prendre en compte les délais d'initialisation et de communications lorsque l'on déploie à l'edge des chaînes de fonctions de courte durée, et comment tirer parti de l'hétérogénéité des nœuds à disposition, pour respecter la qualité de service requise par les utilisateurs et contenir la consommation d'énergie de l'infrastructure ?
+    Comment prendre en compte les délais d'initialisation et de communications lorsque l'on déploie des chaînes de fonctions de courte durée, et comment tirer parti de l'hétérogénéité des nœuds à disposition, pour respecter la qualité de service requise par les utilisateurs et contenir la consommation d'énergie de l'infrastructure ?
 }
 
-\textbf{Problème 3} : Évaluer les politiques d'orchestration...
+\textbf{Problème 3} : Évaluer les politiques d'orchestration dans un environnement cloud privé $\Rightarrow$ données de production (traces d'exécution), analyse (graphe des appels, données intermédiaires) et caractérisation (métriques de performances) $\Rightarrow$ environnement réel ? problématique de mesures complexes dans un environnement réel (interférences...), difficultés pour rejouer des scénarios, ou pour une analyse \textit{what-if} (changer des paramètres d'entrée pour évaluer leur impact) etc. $\Rightarrow$ simulation ? $\Rightarrow$ limites des simulateurs de l'état de l'art...
 
 \boitemagique{Question 3 (\textbf{QR3})}{
-    ...
+    Du point de vue d'un fournisseur de services pour le cloud privé, comment évaluer l'impact de différentes politiques d'allocation de ressources et d'ordonnancement de tâches pour le modèle serverless ?
 }
 
 \section{Contributions}
 %\addcontentsline{toc}{section}{Contributions}
 
-\subsection{...}
+\subsection{Caractérisation et orchestration de tâches simples pour la détection de deepfake}
 
-Pour répondre à la \textbf{QR1} (\textit{...}), ...
+La \textbf{QR1} (\textit{...}) a émergé d'une réflexion sur le déploiement d'une application interactive sur des ressources non-réservées au sein de l'IRT b{\textless\textgreater}com. Notre cas d'étude concerne le déploiement d'une application de détection de deepfake -- des images générées dans un but malicieux par une machin, avec l'objectif de tromper la personne qui les visionne. Cette application est réveillée par l'envoi, par un utilisateur, d'une image à classifier. Elle s'appuie sur des algorithmes d'apprentissage machine pour déterminer si l'image est en effet synthétique ou bien légitime.
 
-\subsection{...}
+Pour répondre à la \textbf{QR1}, nous avons proposé une plateforme d'orchestration serverless qui vise à réaliser de manière intelligente l'allocation des ressources et l'ordonnancement des requêtes, dans le but d'optimiser l'orchestration pour la qualité de service tout en minimisant la consommation d'énergie du système. Nous avons mené une campagne de mesures afin de caractériser, d'une part, un ensemble de ressources matérielles hétérogènes (CPU, GPU, FPGA), et d'autre part, un ensemble de fonctions d'inférence utilisées par l'application et basées sur des algorithmes d'apprentissage machine. Cette phase de caractérisation permet d'obtenir des métadonnées sur le niveau de performances et de consommation de ressources pour l'application.
 
-Pour répondre à la \textbf{QR2} (\textit{...}), ...
+TODO: Ces métadonnées sont ensuite utilisées par l'orchestrateur afin d'ajuster ses décisions d'allocation et d'ordonnancement tout au long d'un scénario, rejoué en simulation dans un environnement ad-hoc. Nous avons établi un modèle de coût pour cet orchestrateur, puis conçu une politique visant à minimiser ces fonctions de coût, nourries par les métadonnées issues de la phase de mesures.
 
-\subsection{...}
+Cette contribution a fait l'objet d'une publication dans la conférence CCGrid'23~\cite{herofake}.
 
-Pour répondre à la \textbf{QR3} (\textit{...}), ...
+\subsection{Un modèle de coût pour l'orchestration serverless d'applications complexes}
+
+TODO: La \textbf{QR2} (\textit{...}) a émergé pour deux raisons. D'une part, comme la suite logique des travaux menés sur la première contribution : si notre précédente contribution permet d'orchestrer des fonctions sans état, nous savons que la plupart des applications ont besoin de stocker des données intermédiaires pendant leur exécution. D'autre part, une étude de la littérature en matière d'orchestration serverless nous a permis de remarquer que de nombreuses contributions prenaient souvent comme point de départ une situation très favorable, considérant que les images servant à déployer les fonctions sont toujours disponibles sur les nœuds de calcul, et que les communications entre les fonctions sont transparentes du point de vue des performances.
+
+TODO: Pour répondre à la \textbf{QR2}, nous avons cherché à établir un modèle de coût pour l'allocation de ressources et l'ordonnancement des tâches qui prenne en compte ces deux mécanismes liés au stockage.
+
+Cette contribution a fait l'objet d'une publication dans la conférence CCGrid'24~\cite{herocache}.
+
+\subsection{Simulation à événements discrets pour l'évaluation de politiques d'orchestration}
+
+TODO: Concevoir des stratégies d'allocation et d'ordonnancement pour le cloud demande d'avoir à notre disposition un environnement dans lequel les évaluer. La \textbf{RQ3} (\textit{...}) a été transversale tout au long des travaux de thèse, et nous avons affiné nos réponses au fur et à mesure que de nouveaux défis se sont présentés.
+
+TODO: Pour répondre à la \textbf{QR3}, ...
+
+TODO: Caractéristiques : granularité au niveau événement, modéliser des applications complexes (dépendances) et des environnements hétérogènes (noeuds à différents niveaux de performances, requêtes à différents niveaux de qualité de service), rejouer des scénarios (traces d'exécution) et comparer les résultats de différentes politiques
+
+Cette contribution a fait l'objet d'une soumission au journal IEEE Internet Computing~\cite{herosim} en mai 2024.
 
 \section{Organisation de la thèse}
 %\addcontentsline{toc}{section}{Organisation du mémoire}
 
-\section{Publications}
-%\addcontentsline{toc}{section}{Publications}
+...
