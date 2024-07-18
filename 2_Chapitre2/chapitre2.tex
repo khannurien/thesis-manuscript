@@ -155,6 +155,8 @@ TODO: Caractérisation, grand nombre de tâches à basse priorité~\cite{tirmazi
 
 \subsection{Du monolithe aux micro-services}
 
+TODO: Systèmes distribués
+
 Le cloud computing a vu naître de nouvelles techniques de développement. Le développement "cloud-native" consiste à construire des applications pour le cloud dès le départ, en prenant en compte dès leur conception les besoins futurs de mise à l'échelle~\cite{dragoniMicroservicesHowMake2018, martinfowler2014microservices}.
 
 Une application monolithique est construite comme une unité unique. Il n'y a pas de découplage entre les services qu'elle expose, car ils font tous partie de la même base de code~\cite{villamizarEvaluatingMonolithicMicroservice2015}. Lors de la mise à l'échelle d'un monolithe, l'ajout de ressources supplémentaires (mise à l'échelle verticale) ne résout pas le problème des priorités concurrentes au sein de l'application : lorsque la popularité d'une application monolithique augmente, certaines parties de la base de code seront sollicitées plus que d'autres, mais la pression ne sera pas répartie sur l'ensemble de l'application. D'autre part, l'augmentation du nombre d'instances du monolithe (mise à l'échelle horizontale) peut s'avérer inefficace en termes de coûts, car toutes les parties d'une application ne subissent pas des pics de charge en même temps : dans la figure \ref{fig:scaling-monolith}, une augmentation des requêtes d'authentification implique une mise à l'échelle de l'infrastructure pour l'ensemble de l'application.
