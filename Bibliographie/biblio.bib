@@ -1489,6 +1489,24 @@
   url          = {https://gvisor.dev/}
 }
 
+%% Ajouts définitions
+
+@inproceedings{jansenSPECRGReferenceArchitecture2023,
+  title = {The {{SPEC-RG Reference Architecture}} for {{The Compute Continuum}}},
+  booktitle = {2023 {{IEEE}}/{{ACM}} 23rd {{International Symposium}} on {{Cluster}}, {{Cloud}} and {{Internet Computing}} ({{CCGrid}})},
+  author = {Jansen, Matthijs and {Al-Dulaimy}, Auday and Papadopoulos, Alessandro V. and Trivedi, Animesh and Iosup, Alexandru},
+  year = {2023},
+  month = may,
+  pages = {469--484},
+  publisher = {IEEE},
+  address = {Bangalore, India},
+  doi = {10.1109/CCGrid57682.2023.00051},
+  urldate = {2024-07-18},
+  abstract = {As the next generation of diverse workloads like autonomous driving and augmented/virtual reality evolves, computation is shifting from cloud-based services to the edge, leading to the emergence of a cloud-edge compute continuum. This continuum promises a wide spectrum of deployment opportunities for workloads that can leverage the strengths of cloud (scalable infrastructure, high reliability) and edge (energy efficient, low latencies). Despite its promises, the continuum has only been studied in silos of various computing models, thus lacking strong endto-end theoretical and engineering foundations for computing and resource management across the continuum. Consequently, developers resort to ad hoc approaches to reason about performance and resource utilization of workloads in the continuum. In this work, we conduct a first-of-its-kind systematic study of various computing models, identify salient properties, and make a case to unify them under a compute continuum reference architecture. This architecture provides an end-to-end analysis framework for developers to reason about resource management, workload distribution, and performance analysis. We demonstrate the utility of the reference architecture by analyzing two popular continuum workloads, deep learning and industrial IoT. We have developed an accompanying deployment and benchmarking framework and first-order analytical model for quantitative reasoning of continuum workloads. The framework is open-sourced and available at https://github.com/atlarge-research/continuum.},
+  copyright = {https://doi.org/10.15223/policy-029},
+  isbn = {9798350301199},
+  langid = {english},
+}
 
 %% Ajouts conso d'énergie (Vincent)
 
@@ -1697,7 +1715,6 @@
   author = {Jacquet, Pierre and Ledoux, Thomas and Rouvoy, Romain},
   abstract = {The adoption of computing resources oversubscription in cloud environments is conventionally limited to a restricted subset of Virtual Machines (VMs) within the providers' offerings, primarily driven by performance considerations. So far, VMs schedulers mostly implement all-or-nothing oversubscription strategies, wherein all VM resources are either oversubscribed or remain unaltered. While the former strategy offers higher consolidation rates, the latter delivers better performance guarantees.},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\AN3SZWES\Jacquet et al. - SweetspotVM Oversubscribing CPU without Sacrifici.pdf}
 }
 
 %%% Pannes
