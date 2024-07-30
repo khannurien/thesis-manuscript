@@ -16,12 +16,15 @@
 % Spécifier vos fichiers de bibliographie
 % Specify you bibliography files here
 \addbibresource{./Bibliographie/biblio.bib}
+\addbibresource{./Bibliographie/sources.bib}
 \addbibresource{./Bibliographie/herofake.bib}
 \addbibresource{./Bibliographie/herocache.bib}
 \addbibresource{./Bibliographie/herosim.bib}
 
-% Math
+% Maths
 \usepackage{amsmath,amssymb,amsfonts}
+% Valeurs numériques
+% \usepackage[allow-quantity-breaks]{siunitx}
 % Polices
 \usepackage{pifont}% http://ctan.org/pkg/pifont
 \newcommand{\cmark}{\color{YellowGreen}\ding{51}}%
@@ -41,14 +44,14 @@
 \usepackage{booktabs}
 \newcolumntype{Y}{>{\centering\arraybackslash}X}
 % Centered tabular column with text wrapping (L)
-\newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
+% \newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
+\newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
 \newcolumntype{S}{>{\centering\arraybackslash}m{0.1\linewidth}}
 % for vertical centering text in X colum
 \renewcommand\tabularxcolumn[1]{m{#1}}
 
 % Tableaux multi-pages
 % \usepackage{tabularray,adjustbox}
-% \usepackage[allow-quantity-breaks]{siunitx}
 % \UseTblrLibrary{booktabs}
 % % make tabularray use \caption instead of own caption style
 % \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}

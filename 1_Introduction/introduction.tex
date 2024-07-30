@@ -48,7 +48,7 @@ Les travaux de cette thèse se sont inscrits dans deux projets au sein de l'IRT.
 
 Cette section présente l'architecture générale du système considéré au cours de cette thèse ainsi que les hypothèses que nous avons formulées. Elle résume les problèmes que nous avons identifiés, et pose les questions de recherche que nous avons adressées dans le but de lever ces verrous.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
 	%\includegraphics[width=\textwidth]{1_Introduction/figures/architecture.pdf}
     \includesvg[width=\textwidth]{1_Introduction/figures/architecture.svg}
@@ -69,7 +69,7 @@ La plateforme serverless comporte une brique logicielle centrale appelée orches
     \rule{4cm}{0.4pt}
 \end{center}
 
-\textbf{Problème 1} -- L'allocation de ressources au sein d'une plateforme serverless se fait sur un mode réactif, c'est-à-dire en réponse à une variation du trafic. Lorsque de nouvelles instances des fonctions doivent être déployées, cela provoque une latence additionnelle qui peut dégrader la qualité de service pour les utilisateurs. Le problème est particulièrement saillant dans l'environnement hautement hétérogène qu'est celui du cloud : les ressources matérielles ont différents niveaux de performances et de coût ; les applications interactives (c'est-à-dire dirigée par les évènements, par opposition à une application par lots) présentent des motifs d'usage difficilement prédictibles ; et les utilisateurs ont des besoins irréguliers et variés en qualité de service.
+\textbf{Problème 1} -- L'allocation de ressources au sein d'une plateforme serverless se fait sur un mode réactif, c'est-à-dire en réponse à une variation du trafic. Lorsque de nouvelles instances des fonctions doivent être déployées, cela provoque une latence additionnelle qui peut dégrader la qualité de service pour les utilisateurs. Le problème est particulièrement saillant dans l'environnement hautement hétérogène qu'est celui du cloud : les ressources matérielles ont différents niveaux de performances et de coût ; les applications interactives (c'est-à-dire dirigées par les évènements, par opposition à une application par lots) présentent des motifs d'usage difficilement prédictibles ; et les utilisateurs ont des besoins irréguliers et variés en qualité de service.
 
 \boitemagique{Question 1 (\textbf{QR1})}{
     Comment dimensionner les allocations dynamiques de ressources hétérogènes pour une application simple, constituée de fonctions sans dépendances, et comment ordonnancer efficacement les requêtes utilisateur, lorsque ces derniers ont des besoins variés en matière de qualité de service ?
@@ -107,7 +107,7 @@ La \textbf{QR1} (\textit{dimensionnement et ordonnancement sur ressources hété
 
 \sloppy Pour répondre à la \textbf{QR1}, nous avons proposé HeROfake (pour \textit{\textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration for deep\textbf{fake} detection}, voir chapitre~\ref{chapter:herofake}), une plateforme d'orchestration serverless qui vise à réaliser de manière intelligente l'allocation des ressources et l'ordonnancement des requêtes, dans le but d'optimiser l'orchestration pour la qualité de service tout en minimisant la consommation d'énergie du système. Nous avons mené une campagne de mesures afin de caractériser l'exécution d'un ensemble de fonctions d'inférence, utilisées par l'application et basées sur des réseaux de neurones, sur un ensemble de ressources matérielles hétérogènes (CPU, GPU, FPGA). Cette phase de caractérisation permet d'obtenir des métadonnées sur le niveau de performances et de consommation de ressources pour l'application.
 
-Ces métadonnées sont ensuite utilisées par l'orchestrateur lors d'une phase en ligne, afin d'ajuster ses décisions d'allocation et d'ordonnancement tout au long d'un scénario, rejoué en simulation dans un environnement ad-hoc. Nous avons établi un modèle de coût pour cet orchestrateur, puis conçu une politique d'optimisation multiobjectif visant à minimiser ces fonctions de coût, nourries par les métadonnées issues de la phase de mesures.
+Ces métadonnées sont ensuite utilisées par l'orchestrateur lors d'une phase en ligne, afin d'ajuster ses décisions d'allocation et d'ordonnancement tout au long d'un scénario, rejoué en simulation dans un environnement \textit{ad hoc}. Nous avons établi un modèle de coût pour cet orchestrateur, puis conçu une politique d'optimisation multiobjectif visant à minimiser ces fonctions de coût, nourries par les métadonnées issues de la phase de mesures.
 
 Cette contribution a fait l'objet d'une publication dans la conférence \textbf{IEEE/ACM 23rd International Symposium on Cluster, Cloud and Internet Computing} (CCGrid, 2023)~\cite{herofake}.
 
