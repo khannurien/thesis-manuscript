@@ -258,30 +258,31 @@ L'utilisation d'accélérateurs matériels est une possibilité pour améliorer 
 \begin{table}[!ht]
     \caption{Dictionnaire des notations}
     \begin{center}
-    \begin{tabular}{|c|L|}
-    \hline
-    \textbf{Notation} & \textbf{Description} \\ \hline
-    $f_{N, P}$ & Une fonction $f$ déployée pour exécution sur une plateforme $P$ disponible sur un nœud $N$ \\ \hline
-    $QP$ & Pénalité sur qualité de service \\ \hline
-    $QD$ & Facteur de ralentissement par niveau de qualité de service \\ \hline
-    $WET$ & Pire temps d'exécution \\ \hline
-    $TT$ & Temps total pour une tâche \\ \hline
-    $WT$ & Temps d'attente \\ \hline
-    $CST$ & Temps de démarrage à froid \\ \hline
-    $ET$ & Temps d'exécution nominal d'une fonction \\ \hline
-    $EC$ & Consommation d'énergie \\ \hline
-    $HP$ & Prix du matériel \\ \hline
-    $TC$ & Consolidation des tâches \\ \hline
-    $Q$ & File d'attente des requêtes dans une réplique \\ \hline
-    $replicaCount_{f}$ & Taille du pool de répliques dans le système pour une fonction $f$ \\ \hline
-    $concurrency_{f}$ & Nombre moyen de requêtes en attente pour une fonction $f$ \\ \hline
-    $threshold$ & Seuil de concurrence pour les répliques d'une fonction sous Knative \\ \hline
-    $replicaCount_{f, h}$ & Taille du pool de répliques dans le système pour une fonction $f$ sur un type de matériel $h$ \\ \hline
-    $concurrency_{f, h}$ & Nombre moyen de requêtes en attente pour une fonction $f$ sur un type de matériel $h$ \\ \hline
-    $x_{f, h}$ & Seuil de concurrence pour les répliques d'une fonction $f$ sur un type de matériel $h$ \\ \hline
-    $scaleCost_{{f}_{N, P}}$ & Coût de la création d'une nouvelle réplique pour une fonction $f$ sur une plateforme $P$ disponible sur un nœud $N$ \\ \hline
-    $schedCost_{{f}_{N, P}}$ & Coût de l'ordonnancement d'une tâche pour une fonction $f$ sur une plateforme $P$ disponible sur un nœud $N$ \\ \hline
-    \end{tabular}
+    \scalebox{0.85}{
+        \begin{tabularx}{\linewidth}{|c|Y|}
+            \hline \textbf{Notation} & \textbf{Description} \\ \hline
+            $f_{N, P}$ & Une fonction $f$ déployée pour exécution sur une plateforme $P$ disponible sur un nœud $N$ \\ \hline
+            $QP$ & Pénalité sur qualité de service \\ \hline
+            $QD$ & Facteur de ralentissement par niveau de qualité de service \\ \hline
+            $WET$ & Pire temps d'exécution \\ \hline
+            $TT$ & Temps total pour une tâche \\ \hline
+            $WT$ & Temps d'attente \\ \hline
+            $CST$ & Temps de démarrage à froid \\ \hline
+            $ET$ & Temps d'exécution nominal d'une fonction \\ \hline
+            $EC$ & Consommation d'énergie \\ \hline
+            $HP$ & Prix du matériel \\ \hline
+            $TC$ & Consolidation des tâches \\ \hline
+            $Q$ & File d'attente des requêtes dans une réplique \\ \hline
+            $replicaCount_{f}$ & Taille du pool de répliques dans le système pour une fonction $f$ \\ \hline
+            $concurrency_{f}$ & Nombre moyen de requêtes en attente pour une fonction $f$ \\ \hline
+            $threshold$ & Seuil de concurrence pour les répliques d'une fonction sous Knative \\ \hline
+            $replicaCount_{f, h}$ & Taille du pool de répliques dans le système pour une fonction $f$ sur un type de matériel $h$ \\ \hline
+            $concurrency_{f, h}$ & Nombre moyen de requêtes en attente pour une fonction $f$ sur un type de matériel $h$ \\ \hline
+            $x_{f, h}$ & Seuil de concurrence pour les répliques d'une fonction $f$ sur un type de matériel $h$ \\ \hline
+            $scaleCost_{{f}_{N, P}}$ & Coût de la création d'une nouvelle réplique pour une fonction $f$ sur une plateforme $P$ disponible sur un nœud $N$ \\ \hline
+            $schedCost_{{f}_{N, P}}$ & Coût de l'ordonnancement d'une tâche pour une fonction $f$ sur une plateforme $P$ disponible sur un nœud $N$ \\ \hline
+        \end{tabularx}
+    }
     \label{table:herofake-notation}
     \end{center}
 \end{table}
@@ -323,8 +324,17 @@ Le temps d'exécution prédit pour fonction est toujours basé sur le pire temps
 
 Une fois qu'une tâche est programmée sur une plateforme d'exécution, elle passe par sa durée totale d'exécution décrite dans l'équation~\ref{eq:herofake-HRO-total-time}. L'échéance de la tâche est calculée en multipliant le pire temps de réponse de la fonction (tel qu'exprimé dans l'équation~\ref{eq:herofake-task-wet}) par le facteur de ralentissement associé au niveau de qualité de service de la requête de l'utilisateur. L'équation~\ref{eq:herofake-task-penalty} montre que nous fixons une valeur booléenne $QP_{f_{N, P}}$ pour chaque invocation de fonction si la tâche dépasse son échéance : on dit alors que la tâche est en \textit{pénalité}.
 
+% \begin{equation}
+%     QP_{f_{N, P}} = TT_{f_{N, P}} \cdot QD_{f_{N, P}} > WET_{f}
+% \label{eq:herofake-task-penalty}
+% \end{equation}
+
 \begin{equation}
-    QP_{f_{N, P}} = TT_{f_{N, P}} \cdot QD_{f_{N, P}} > WET_{f}
+    QP_{f_{N, P}} =
+    \begin{cases}
+    1 & \text{if} \quad TT_{f_{N, P}} \cdot QD_{f_{N, P}} > WET_{f} \\
+    0 & \text{if} \quad TT_{f_{N, P}} \cdot QD_{f_{N, P}} \leq WET_{f}
+    \end{cases}
 \label{eq:herofake-task-penalty}
 \end{equation}
 
@@ -510,7 +520,7 @@ Certaines de ces contributions ont tenté d'atteindre les SLA avec des ressource
 
 En outre, certains auteurs se concentrent sur des infrastructures homogènes \cite{gujaratiSwayamDistributedAutoscaling2017, sureshENSUREEfficientScheduling2020, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, yangINFlessNativeServerless2022}. Ces études pourraient difficilement s'adapter au contexte du cloud privé que nous visons, où les ressources sont généralement éphémères et hétérogènes. En outre, certaines de ces contributions proposent des modèles de tâches qui ne couvrent pas la possibilité d'accords de niveau de service définis par l'utilisateur et à la granularité d'une requête~\cite{sureshENSUREEfficientScheduling2020, lingPigeonDynamicEfficient2019}. Enfin, certaines de ces contributions sont axées sur les performances plutôt que sur les coûts, ce qui est crucial dans notre contexte de cloud privé~\cite{gujaratiSwayamDistributedAutoscaling2017, lingPigeonDynamicEfficient2019, singhviAtollScalableLowLatency2021, choSLADrivenMLInference}.
 
-Bien que la consommation d'énergie soit l'un des éléments les plus importants du coût total d'exploitation (OPEX, pour \textit{Operational Expenditure}) dans un centre de données -- dépassant parfois le coût d'achat du matériel~\cite{7279063}, à notre connaissance, aucune de ces contributions ne couvre l'impact de l'allocation et du placement dynamiques sur la consommation d'énergie, ni ne considère la consommation d'énergie comme une métrique de qualité de service. Il s'agit d'une limitation sérieuse, car l'optimisation de la consolidation des tâches ouvre la voie à des politiques de ralentissement et de mise hors tension qui peuvent avoir un impact positif majeur sur l'efficacité énergétique d'un centre de données~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}.
+Bien que la consommation d'énergie soit l'un des éléments les plus importants du coût total d'exploitation (\textit{OPEX}, pour \textit{Operational Expenditure}) dans un centre de données -- dépassant parfois le coût d'achat du matériel~\cite{7279063}, à notre connaissance, aucune de ces contributions ne couvre l'impact de l'allocation et du placement dynamiques sur la consommation d'énergie, ni ne considère la consommation d'énergie comme une métrique de qualité de service. Il s'agit d'une limitation sérieuse, car l'optimisation de la consolidation des tâches ouvre la voie à des politiques de ralentissement et de mise hors tension qui peuvent avoir un impact positif majeur sur l'efficacité énergétique d'un centre de données~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}.
 
 \section{Conclusion et perspectives}
 \label{section:herofake-conclusion}

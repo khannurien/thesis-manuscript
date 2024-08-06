@@ -21,22 +21,41 @@
 \addbibresource{./Bibliographie/herocache.bib}
 \addbibresource{./Bibliographie/herosim.bib}
 
+% Glossaires
+% https://tex.stackexchange.com/a/387041
+% https://tex.stackexchange.com/a/598936
+% https://tex.stackexchange.com/a/303285
+\usepackage[nonumberlist,toc=false]{glossaries-extra}
+% Catégories
+\newglossary*{cloud}{Cloud}
+\newglossary*{institutions}{Institutions}
+\newglossary*{metriques}{Métriques}
+% Niveau de pagination
+\setglossarysection{section}
+\makeglossaries
+% Définitions
+\loadglsentries{0c_Glossaire/glossaire}
+
 % Maths
 \usepackage{amsmath,amssymb,amsfonts}
 % Valeurs numériques
 % \usepackage[allow-quantity-breaks]{siunitx}
+
 % Polices
 \usepackage{pifont}% http://ctan.org/pkg/pifont
 \newcommand{\cmark}{\color{YellowGreen}\ding{51}}%
 \newcommand{\xmark}{\color{BrickRed}\ding{55}}%
+
 % Figures
 \usepackage{float}
 \usepackage[caption=false]{subfig}
 \usepackage[inkscapelatex=false]{svg}
+
 % Marqueurs
 \usepackage{circledsteps}
 \pgfkeys{/csteps/inner color=white}
 \pgfkeys{/csteps/fill color=black}
+
 % Tableaux
 \usepackage{array}
 \usepackage{multirow}
@@ -90,11 +109,18 @@
 \frontmatter
 \clearemptydoublepage
 \renewcommand{\contentsname}{Table des matières}
-\tableofcontents %sommaire %table of content
+{ \hypersetup{hidelinks} \tableofcontents } % pas de couleurs
 %\shorttableofcontents{Sommaire}{0}
 
 \clearemptydoublepage
 \input{./0b_Publications/publications}
+
+\clearemptydoublepage
+\phantomsection
+\chapter*{Glossaire}
+\addcontentsline{toc}{chapter}{Glossaire}
+\chaptermark{Glossaire}
+\printglossaries
 
 \clearemptydoublepage
 \input{./1_Introduction/introduction}
