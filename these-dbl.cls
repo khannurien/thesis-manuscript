@@ -56,7 +56,7 @@
 
 % Une couleur pour les liens des références
 \definecolor{refC}{rgb}{0,0,0.75}
-\RequirePackage{hyperref} %Utiliser pour une bibliographie interactive + sommaire et TOC interactifs (pour une sortie PDF, par exemple).
+\RequirePackage[pdfusetitle]{hyperref} %Utiliser pour une bibliographie interactive + sommaire et TOC interactifs (pour une sortie PDF, par exemple).
 \hypersetup{colorlinks=true, citecolor=purple, filecolor=black, linkcolor=blue, urlcolor=blue}
 
 \RequirePackage{eso-pic} % For \AddToShipoutPicture used for cover backgrounds
@@ -572,3 +572,65 @@
 \end{minipage}
 \end{center}
 }
+
+% Glossaires
+% https://tex.stackexchange.com/a/387041
+% https://tex.stackexchange.com/a/598936
+% https://tex.stackexchange.com/a/303285
+\usepackage[nonumberlist,toc=false]{glossaries-extra}
+% Pagination level
+\setglossarysection{section}
+
+% Maths
+\usepackage{amsmath,amssymb,amsfonts}
+% Valeurs numériques
+% \usepackage[allow-quantity-breaks]{siunitx}
+
+% Polices
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\color{YellowGreen}\ding{51}}%
+\newcommand{\xmark}{\color{BrickRed}\ding{55}}%
+
+% Figures
+\usepackage{float}
+\usepackage[caption=false]{subfig}
+\usepackage[inkscapelatex=false]{svg}
+
+% Marqueurs
+\usepackage{circledsteps}
+\pgfkeys{/csteps/inner color=white}
+\pgfkeys{/csteps/fill color=black}
+
+% Tableaux
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+% Centered tabular column with text wrapping (L)
+% \newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
+\newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
+\newcolumntype{S}{>{\centering\arraybackslash}m{0.2\linewidth}}
+% for vertical centering text in X colum
+\renewcommand\tabularxcolumn[1]{m{#1}}
+
+% Tableaux multi-pages
+% \usepackage{tabularray,adjustbox}
+% \UseTblrLibrary{booktabs}
+% % make tabularray use \caption instead of own caption style
+% \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}
+% \DefTblrTemplate{lasthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{lasthead-text} (Suite)}}
+
+% Commentaires dans le PDF
+\newboolean{showcomments}
+\setboolean{showcomments}{true}
+% Affichage
+\ifthenelse{\boolean{showcomments}}
+{ \newcommand{\mynote}[3]{
+    \fbox{\bfseries\sffamily\scriptsize#1}
+    {\small$\blacktriangleright$\textsf{\emph{\color{#3}{#2}}}$\blacktriangleleft$}}}
+{ \newcommand{\mynote}[3]{}}
+\newcommand{\shrink}[1]{}
+% Participants
+\newcommand{\jb}[1]{\mynote{Jalil}{#1}{blue}}
+\newcommand{\vl}[1]{\mynote{Vincent}{#1}{red}}

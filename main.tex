@@ -1,116 +1,48 @@
-% Ce fichier main.tex est le fichier principal \`{a} partir duquel tout est g\'{e}n\'{e}r\'{e}
-% This file is the main file where the final document is generated
+% This file is the main file from which the final document is generated
 \documentclass{these-dbl}
 
-% Remplir les metadonnees du pdf
 % Fill the pdf metadata
 \hypersetup{
-%    pdfauthor   = {XYZ},
-%    pdftitle    = {Th\`{e}se de doctorat de XYZ},
-%    pdfsubject  = {Th\`{e}se de doctorat de XYZ},
-%    pdfkeywords = {mots-cl\'{e}s},
+   pdfsubject  = {Ordonnancement sur ressources hétérogènes pour le cloud},
+   pdfkeywords = {serverless, orchestration, ordonnancement, hétérogénéité matérielle, optimisation, énergie},
 }
 
 \geometry{vmargin=4.0cm}
 
-% Spécifier vos fichiers de bibliographie
-% Specify you bibliography files here
+% Bibliography
 \addbibresource{./Bibliographie/biblio.bib}
 \addbibresource{./Bibliographie/sources.bib}
 \addbibresource{./Bibliographie/herofake.bib}
 \addbibresource{./Bibliographie/herocache.bib}
 \addbibresource{./Bibliographie/herosim.bib}
 
-% Glossaires
-% https://tex.stackexchange.com/a/387041
-% https://tex.stackexchange.com/a/598936
-% https://tex.stackexchange.com/a/303285
-\usepackage[nonumberlist,toc=false]{glossaries-extra}
-% Catégories
+% Glossaries
 \newglossary*{cloud}{Cloud}
+\newglossary*{divers}{Divers}
 \newglossary*{institutions}{Institutions}
 \newglossary*{metriques}{Métriques}
-% Niveau de pagination
-\setglossarysection{section}
+\newglossary*{plateformes}{Plateformes}
 \makeglossaries
-% Définitions
+% Definitions
 \loadglsentries{0c_Glossaire/glossaire}
-
-% Maths
-\usepackage{amsmath,amssymb,amsfonts}
-% Valeurs numériques
-% \usepackage[allow-quantity-breaks]{siunitx}
-
-% Polices
-\usepackage{pifont}% http://ctan.org/pkg/pifont
-\newcommand{\cmark}{\color{YellowGreen}\ding{51}}%
-\newcommand{\xmark}{\color{BrickRed}\ding{55}}%
-
-% Figures
-\usepackage{float}
-\usepackage[caption=false]{subfig}
-\usepackage[inkscapelatex=false]{svg}
-
-% Marqueurs
-\usepackage{circledsteps}
-\pgfkeys{/csteps/inner color=white}
-\pgfkeys{/csteps/fill color=black}
-
-% Tableaux
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{tabularx}
-\usepackage{booktabs}
-\newcolumntype{Y}{>{\centering\arraybackslash}X}
-% Centered tabular column with text wrapping (L)
-% \newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
-\newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
-\newcolumntype{S}{>{\centering\arraybackslash}m{0.1\linewidth}}
-% for vertical centering text in X colum
-\renewcommand\tabularxcolumn[1]{m{#1}}
-
-% Tableaux multi-pages
-% \usepackage{tabularray,adjustbox}
-% \UseTblrLibrary{booktabs}
-% % make tabularray use \caption instead of own caption style
-% \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}
-% \DefTblrTemplate{lasthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{lasthead-text} (Suite)}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newboolean{showcomments}
-\setboolean{showcomments}{true}
-\ifthenelse{\boolean{showcomments}}
-{ \newcommand{\mynote}[3]{
-    \fbox{\bfseries\sffamily\scriptsize#1}
-    {\small$\blacktriangleright$\textsf{\emph{\color{#3}{#2}}}$\blacktriangleleft$}}}
-{ \newcommand{\mynote}[3]{}}
-\newcommand{\shrink}[1]{}
-\newcommand{\jb}[1]{\mynote{Jalil}{#1}{blue}}
-\newcommand{\vl}[1]{\mynote{Vincent}{#1}{red}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
-% Page de garde avec commande \maketitle
 % Front cover calling \maketitle
 \input{./Couverture/pagedegarde}
 
-% Sélectionner la langue du contenu suivant cette ligne
 % Select the content language following this line
 \selectlanguage{french}
 
-% Inclusion du chapitre remerciement
 % Input acknowledgement chapter
 \clearemptydoublepage
 \input{./0a_Remerciements/remerciements}
 
-% Ne pas oublier cette commande qui g\'{e}n\`{e}re la page de couverture avant
 % This command will generate the front cover
 \frontmatter
 \clearemptydoublepage
 \renewcommand{\contentsname}{Table des matières}
-{ \hypersetup{hidelinks} \tableofcontents } % pas de couleurs
-%\shorttableofcontents{Sommaire}{0}
+{ \hypersetup{hidelinks} \tableofcontents } % No links color in ToC
 
 \clearemptydoublepage
 \input{./0b_Publications/publications}
@@ -154,14 +86,12 @@
 \backmatter
 \input{./7_Conclusion/conclusion}
 
-% Chapitre pour la bibliographie
 % Bibliography chapter
 \clearemptydoublepage
 \phantomsection % To have a correct link in the table of contents
 \addcontentsline{toc}{chapter}{Bibliographie}
 
-% nocite: Pour citer la totalit\'{e} des r\'{e}f\'{e}rences contenues dans le fichier biblio
-% nocite: In order to cite all the references included biblio
+% nocite: include uncited references in bibliography
 \nocite{*}
 \printbibliography
 % \newpage
@@ -169,7 +99,6 @@
 % \printbibliography[heading=secondary,keyword=secondary]
 
 \clearemptydoublepage
-% Pour avoir la quatrième de couverture sur une page paire
 % To have the back cover on an even page
 \cleartoevenpage[\thispagestyle{empty}]
 \input{./Couverture/resume}
