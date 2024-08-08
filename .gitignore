@@ -8,6 +8,10 @@
 *.fls
 *.*-glo
 *.glo
+*.*-glg
+*.glg
+*.*-gls
+*.gls
 *.idx
 *.ilg
 *.ind
