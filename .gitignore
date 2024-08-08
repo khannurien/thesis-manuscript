@@ -6,9 +6,12 @@
 *.dvi
 *.fdb*
 *.fls
+*.*-glo
+*.glo
 *.idx
 *.ilg
 *.ind
+*.ist
 *.log
 *.out
 *.ps

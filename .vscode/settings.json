@@ -1,0 +1,9 @@
+{
+    "editor.folding": false,
+    "editor.fontFamily": "Source Code Pro, Consolas, 'Courier New', monospace",
+    "editor.fontSize": 13,
+    "editor.glyphMargin": false,
+    "editor.hideCursorInOverviewRuler": true,
+    "editor.minimap.enabled": false,
+    "workbench.sideBar.location": "left",
+}
