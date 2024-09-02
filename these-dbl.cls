@@ -114,12 +114,11 @@
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage{booktabs}
-\newcolumntype{Y}{>{\centering\arraybackslash}X}
-% Centered tabular column with text wrapping (L)
-% \newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
+% Various tabular columns with text wrapping
 \newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
 \newcolumntype{Y}{>{\centering\arraybackslash}m{0.2\linewidth}}
-% for vertical centering text in X colum
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+% Vertical centering of text in X columns
 \renewcommand\tabularxcolumn[1]{m{#1}}
 
 % Blocs de code
