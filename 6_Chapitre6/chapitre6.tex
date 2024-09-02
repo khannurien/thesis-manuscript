@@ -306,7 +306,6 @@ L'introduction d'opérations de stockage à la granularité d'un nœud nous a pe
 
 Dans HeROcache, l'autoscaler cherche à accroître la consolidation des fonctions entre les applications, à réduire la durée de réalisation globale (ou \textit{makespan}), la consommation d'énergie et le coût total de possession. L'ordonnanceur cherche à éviter la violation des échéances des requêtes, à consommer moins d'énergie et à assurer une utilisation élevée des ressources mobilisées.
 
-Nous avons utilisé le générateur de traces d'exécution inclus dans HeROsim pour générer un scénario de 30 minutes de requêtes utilisateur, distribuées suivant un processus de Poisson à un taux moyen de 83 requêtes par seconde. Cela correspond à la vitesse de communication que la connectivité 4G LTE permettrait dans notre environnement edge, compte tenu de la taille des données d'entrée et de sortie de l'application.
 
 HeROfake est conçue comme une politique sans conscience du stockage, mais exploite déjà l'hétérogénéité matérielle, ce qui en fait une solution comparable. Cette comparaison nous a permis de montrer l'importance de la prise en compte des coûts de stockage dans la capacité de la plateforme à respecter les exigences de qualité de service : en prenant compte de ces coûts, HeROcache consolide les applications et parvient à réduire les délais d'initialisation moyens de 17,6\% et les délais de communication de 88,4\%. Cela permet de réduire la consommation d'énergie statique de la plateforme de 80\% tout en maintenant moins de 28\% de violations de qualité de service.
 
