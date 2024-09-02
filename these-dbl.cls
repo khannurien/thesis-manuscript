@@ -31,6 +31,10 @@
 
 % \RequirePackage[utf8]{inputenc}
 \RequirePackage[english,french]{babel} % Last language is the default, use \selectlanguage{english} to switch
+\RequirePackage{csquotes} % Assurer les guillemets français
+\frenchspacing
+\FrenchFootnotes
+
 \RequirePackage{ifpdf}
 \RequirePackage[dvipsnames]{xcolor} % pour les couleurs
 \RequirePackage{textcomp}
@@ -67,9 +71,6 @@
 \onehalfspacing %Interligne 1,5
 
 \RequirePackage{ifthen} % Entrer valeurs bool\'{e}ennes et autres options
-\RequirePackage{csquotes} % Assurer les guillemets français
-\frenchspacing
-\FrenchFootnotes
 
 % Define commands to set fonts throughout the document
 \newcommand*{\selectfontfrontcover}{\fontfamily{phv}\selectfont}  % Font style used in front cover 
@@ -91,7 +92,7 @@
 % Maths
 \usepackage{amsmath,amssymb,amsfonts}
 % Valeurs numériques
-% \usepackage[allow-quantity-breaks]{siunitx}
+\usepackage[allow-quantity-breaks]{siunitx}
 
 % Polices
 % \usepackage{pifont}
@@ -117,7 +118,7 @@
 % Centered tabular column with text wrapping (L)
 % \newcolumntype{L}{>{\centering\arraybackslash}m{0.6\linewidth}}
 \newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
-\newcolumntype{S}{>{\centering\arraybackslash}m{0.2\linewidth}}
+\newcolumntype{Y}{>{\centering\arraybackslash}m{0.2\linewidth}}
 % for vertical centering text in X colum
 \renewcommand\tabularxcolumn[1]{m{#1}}
 
@@ -125,11 +126,11 @@
 \usepackage{minted}
 
 % Tableaux multi-pages
-% \usepackage{tabularray,adjustbox}
-% \UseTblrLibrary{booktabs}
-% % make tabularray use \caption instead of own caption style
-% \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}
-% \DefTblrTemplate{lasthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{lasthead-text} (Suite)}}
+\usepackage{tabularray,adjustbox}
+\UseTblrLibrary{booktabs}
+% make tabularray use \caption instead of own caption style
+\makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}
+\DefTblrTemplate{lasthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{lasthead-text} (Suite)}}
 
 % Commentaires dans le PDF
 \newboolean{showcomments}

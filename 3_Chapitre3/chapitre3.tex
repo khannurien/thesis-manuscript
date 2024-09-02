@@ -38,94 +38,93 @@ Pour positionner chacune des offres commerciales, nous avons choisi de les compa
 
 TODO: refaire le tableau
 
-% \begin{longtblr}[
-%     caption = {Cloud customers are faced with a diversity of FaaS offerings},
-%     label = {table:commercial-faas},
-%     note{a} = {billed per \num{10000} requests (for USD 0.02)}
-% ]{
-%     rowhead = 3,
-%     colspec = { X[l,1.8] X[2,l]X[2,l] X[l]X[l]X[l]X[1.8,l] },
-%     row{1-2} = { l, font = {\bfseries} },
-%     row{3} = { b, font = \footnotesize%, cmd={\rotatebox{60}}
-%                 },
-%     row{4-Z} = { m, font = \footnotesize, rowsep = 1ex },
-%     column{1} = { font = {\bfseries}}
-% }
+\begin{longtblr}[
+    caption = {Cloud customers are faced with a diversity of FaaS offerings},
+    label = {table:commercial-faas},
+    note{a} = {billed per \num{10000} requests (for USD 0.02)}
+]{
+    rowhead = 3,
+    colspec = { X[l,1.8] X[2,l]X[2,l] X[l]X[l]X[l]X[1.8,l] },
+    row{1-2} = { l, font = {\bfseries} },
+    row{3} = { b, font = \footnotesize%, cmd={\rotatebox{60}}
+                },
+    row{4-Z} = { m, font = \footnotesize, rowsep = 1ex },
+    column{1} = { font = {\bfseries}}
+}
+    \toprule
+    \SetCell[r=3]{m} Service & \SetCell[c=2]{c} Pricing model && \SetCell[c=4]{c} Properties \\
+    \cmidrule[lr=-0.4]{2-3}
+    \cmidrule[lr=-0.4]{4-7}
+    &
+    free quota per month &
+    pay-as-you-go cost &
+    \\
+    &
+    \# of invocations / compute resources [\unit{\giga\byte\second}]&
+    \num{1}M requests / \qty{1}{\giga\byte\second} compute [USD]&
+    code size &
+    memory &
+    execution time &
+    payload size \\
+    \midrule
 
-% \toprule
-% \SetCell[r=3]{m} Service & \SetCell[c=2]{c} Pricing model && \SetCell[c=4]{c} Properties \\
-% \cmidrule[lr=-0.4]{2-3}
-% \cmidrule[lr=-0.4]{4-7}
-% &
-% free quota per month &
-% pay-as-you-go cost &
-% \\
-% &
-% \# of invocations / compute resources [\unit{\giga\byte\second}]&
-% \num{1}M requests / \qty{1}{\giga\byte\second} compute [USD]&
-% code size &
-% memory &
-% execution time &
-% payload size \\
-% \midrule
 
+    Alibaba Function Compute &
+    \num{1000000} / \num{400000} &
+    \num{20}\TblrNote{a} / \num{0.000016384} &
+    \qty{500}{\mega\byte} &
+    \qty{3}{\giga\byte}&
+    \qty{24}{\hour} &
+    \qty{128}{\kilo\byte} (request), \qty{6}{\mega\byte} (response)
+    \\
 
-% Alibaba Function Compute &
-% \num{1000000} / \num{400000} &
-% \num{20}\TblrNote{a} / \num{0.000016384} &
-% \qty{500}{\mega\byte} &
-% \qty{3}{\giga\byte}&
-% \qty{24}{\hour} &
-% \qty{128}{\kilo\byte} (request), \qty{6}{\mega\byte} (response)
-% \\
+    AWS Lambda &
+    \num{1000000} / \num{400000} &
+    \num{0.2} / \num{0.0000166667} &
+    \qty{10}{\giga\byte}&
+    \qty{10240}{\mega\byte} &
+    \qty{15}{\minute} &
+    \qty{6}{\mega\byte} (synchronous), \qty{256}{\kilo\byte} (asynchronous) for requests and responses
+    \\
 
-% AWS Lambda &
-% \num{1000000} / \num{400000} &
-% \num{0.2} / \num{0.0000166667} &
-% \qty{10}{\giga\byte}&
-% \qty{10240}{\mega\byte} &
-% \qty{15}{\minute} &
-% \qty{6}{\mega\byte} (synchronous), \qty{256}{\kilo\byte} (asynchronous) for requests and responses
-% \\
+    Azure Functions &
+    \num{1000000} / \num{400000} &
+    \num{0.2} / \num{0.000016} &
+    N/A &
+    \qty{1.5}{\giga\byte} &
+    \qty{10}{\minute}&
+    \qty{100}{\mega\byte} (request)
+    \\
 
-% Azure Functions &
-% \num{1000000} / \num{400000} &
-% \num{0.2} / \num{0.000016} &
-% N/A &
-% \qty{1.5}{\giga\byte} &
-% \qty{10}{\minute}&
-% \qty{100}{\mega\byte} (request)
-% \\
+    Google Cloud Functions   &
+    \num{2000000} / \num{400000} &
+    \num{0.4} / \num{0.0000025} &
+    \qty{500}{\mega\byte}&
+    \qty{8}{\giga\byte}&
+    \qty{9}{\minute}&
+    \qty{10}{\mega\byte} for requests and responses
+    \\
 
-% Google Cloud Functions   &
-% \num{2000000} / \num{400000} &
-% \num{0.4} / \num{0.0000025} &
-% \qty{500}{\mega\byte}&
-% \qty{8}{\giga\byte}&
-% \qty{9}{\minute}&
-% \qty{10}{\mega\byte} for requests and responses
-% \\
+    IBM Cloud Functions  &
+    \num{5000000} / \num{400000} &
+    N/A / \num{0.000017} &
+    \qty{48}{\mega\byte} &
+    \qty{2048}{\mega\byte} &
+    \qty{60}{\second} &
+    \qty{5}{\mega\byte} for requests and responses
+    \\
 
-% IBM Cloud Functions  &
-% \num{5000000} / \num{400000} &
-% N/A / \num{0.000017} &
-% \qty{48}{\mega\byte} &
-% \qty{2048}{\mega\byte} &
-% \qty{60}{\second} &
-% \qty{5}{\mega\byte} for requests and responses
-% \\
+    Oracle Cloud Functions &
+    \num{2000000} / \num{400000} &
+    \num{0.2} / \num{0.00001417} &
+    N/A &
+    \qty{2048}{\mega\byte} &
+    \qty{5}{\minute}&
+    \qty{6}{\mega\byte}
+    \\
 
-% Oracle Cloud Functions &
-% \num{2000000} / \num{400000} &
-% \num{0.2} / \num{0.00001417} &
-% N/A &
-% \qty{2048}{\mega\byte} &
-% \qty{5}{\minute}&
-% \qty{6}{\mega\byte}
-% \\
-
-% \bottomrule
-% \end{longtblr}
+    \bottomrule
+\end{longtblr}
 
 \subsubsection{Solution open source pour le cloud privé}
 

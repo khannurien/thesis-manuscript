@@ -1,3 +1,4 @@
+_minted-main
 *.aux
 *.bbl*
 *.bcf*
@@ -17,6 +18,7 @@
 *.ind
 *.ist
 *.log
+*.mw
 *.out
 *.ps
 *.run.xml
