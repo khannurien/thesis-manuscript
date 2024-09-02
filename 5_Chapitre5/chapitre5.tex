@@ -145,7 +145,7 @@ Lorsque l'application termine son exécution, elle retourne à l'utilisateur un 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\columnwidth]{5_Chapitre5/figures/ids-application.png}
-    \caption{Architecture de l'application d'IDS. Elle peut exploiter différentes fonctions de prétraitement, et différentes fonctions d'inférence pour fournir une classification du trafic \gls{TCP} à l'utilisateur.}
+    \caption{Architecture de l'application d'IDS considérée. Elle peut exploiter différentes fonctions de prétraitement, et différentes fonctions d'inférence pour fournir une classification du trafic \gls{TCP} à l'utilisateur.}
     \label{figure:herocache-ids-application}
 \end{figure}
 
@@ -442,22 +442,22 @@ Cette section présente notre méthodologie d'évaluation et les résultats obte
 
 \begin{figure*}[t]
     \center
-    \subfloat[Consolidation\label{figure:herocache-evaluation-full-unused-nodes}]{
+    \subfloat[{\footnotesize Consolidation}\label{figure:herocache-evaluation-full-unused-nodes}]{
         \includegraphics[width=0.155\linewidth]{5_Chapitre5/figures/eval/2-unused-nodes.png}
     }
-    \subfloat[\gls{QoS}\label{figure:herocache-evaluation-full-penalty}]{
+    \subfloat[{\footnotesize \gls{QoS}}\label{figure:herocache-evaluation-full-penalty}]{
         \includegraphics[width=0.155\linewidth]{5_Chapitre5/figures/eval/3-penalty-proportions.png}
     }
-    \subfloat[Énergie\label{figure:herocache-evaluation-full-energy-consumption}]{
+    \subfloat[{\footnotesize Énergie}\label{figure:herocache-evaluation-full-energy-consumption}]{
         \includegraphics[width=0.155\linewidth]{5_Chapitre5/figures/eval/6-energy-consumption.png}
     }
-    \subfloat[Consolidation\label{figure:herocache-evaluation-components-unused-nodes}]{
+    \subfloat[{\footnotesize Consolidation}\label{figure:herocache-evaluation-components-unused-nodes}]{
         \includegraphics[width=0.155\linewidth]{5_Chapitre5/figures/eval-components/2-unused-nodes.png}
     }
-    \subfloat[\gls{QoS}\label{figure:herocache-evaluation-components-penalty}]{
+    \subfloat[{\footnotesize \gls{QoS}}\label{figure:herocache-evaluation-components-penalty}]{
         \includegraphics[width=0.155\linewidth]{5_Chapitre5/figures/eval-components/3-penalty-proportions.png}
     }
-    \subfloat[Énergie\label{figure:herocache-evaluation-components-energy-consumption}]{
+    \subfloat[{\footnotesize Énergie}\label{figure:herocache-evaluation-components-energy-consumption}]{
         \includegraphics[width=0.155\linewidth]{5_Chapitre5/figures/eval-components/6-energy-consumption.png}
     }
     \caption{Évaluation -- Comparaison aux politiques de référence (a-c) et impact des composants individuels (d-f)}
@@ -550,4 +550,8 @@ Dans \cite{fuerstIluvatarFastControl2023}, les auteurs ont étudié les différe
 \section{Conclusion et perspectives}
 \label{section:herocache-conclusion}
 
-Dans ce chapitre, nous avons présenté une politique d'allocation et d'ordonnancement pour le serverless à l'edge. Cette politique cherche à optimiser le déploiement d'applications sensibles au temps pour la qualité de service sur des dispositifs à énergie limitée. En tirant parti de la caractérisation de la charge de travail, de l'hétérogénéité du matériel et des dispositifs de stockage locaux sur les nœuds edge, HeROcache consolide les applications et parvient à réduire les délais d'initialisation moyens de 17,6\% et les délais de communication de 88,4\%. Cela permet de réduire la consommation d'énergie statique de la plateforme de 80\% tout en maintenant moins de 28\% de violations de la qualité de service. Nous prévoyons de généraliser l'approche HeROcache pour des études de cas incluant plusieurs types d'applications sur des infrastructures plus importantes, à l'edge ou dans le cloud. Dans ce cas, des stratégies d'apprentissage automatique ou des métaheuristiques pourraient être utilisées à des fins de passage à l'échelle.
+Dans ce chapitre, nous avons présenté une politique d'allocation et d'ordonnancement pour le serverless à l'edge. Cette politique cherche à optimiser le déploiement d'applications sensibles au temps pour la qualité de service sur des dispositifs à énergie limitée.
+
+En tirant parti de la caractérisation de la charge de travail, de l'hétérogénéité du matériel et des dispositifs de stockage locaux sur les nœuds edge, HeROcache consolide les applications et parvient à réduire les délais d'initialisation moyens de 17,6\% et les délais de communication de 88,4\%. Cela permet de réduire la consommation d'énergie statique de la plateforme de 80\% tout en maintenant moins de 28\% de violations de la qualité de service.
+
+Nous prévoyons de généraliser l'approche HeROcache pour des études de cas incluant plusieurs types d'applications sur des infrastructures plus importantes, à l'edge ou dans le cloud. Dans ce cas, des stratégies d'apprentissage automatique ou des métaheuristiques pourraient être utilisées à des fins de passage à l'échelle.

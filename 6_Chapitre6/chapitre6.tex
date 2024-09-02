@@ -13,7 +13,7 @@
 % Le modèle de service serverless permet une élasticité rapide et un service mesuré à la granularité la plus fine dans le cloud. Il libère le potentiel d'optimisation fine de l'utilisation des ressources. Dans un tel modèle, les développeurs conçoivent leurs applications comme une composition de fonctions sans état dont l'exécution est dirigée par des événements~\cite{SchleierSmith2021WhatSC}. 
 % Les clients sont facturés en fonction de leur utilisation réelle des ressources, et les fournisseurs sont chargés de déployer une gestion intelligente des ressources afin d'optimiser les mesures de qualité de service (QoS) telles que le temps de réponse, la consommation d'énergie et l'utilisation des ressources.
 
-Les deux chapitres précédents ont abordé un ensemble de défis qui doivent être relevés par les fournisseurs de services qui souhaitent déployer des applications sur une plateforme serverless optimisée pour la qualité de service (\gls{QoS}, pour \textit{Quality of Service}) et économie en énergie. Le chapitre~\ref{chapter:herofake} traite en particulier de la surcharge de latence causée par l'allocation dynamique du matériel pour les nouvelles instances de fonction, appelée délai de démarrage à froid. Un autre problème récurrent, adressé dans le chapitre~\ref{chapter:herocache}, est celui de la prise en compte de la localité des données~\cite{yuFollowingDataNot} par la plateforme pour éviter une dégradation considérable des performances, en particulier dans le cas d'applications conçues comme des chaînes de fonctions qui communiquent entre elles.
+Les deux chapitres précédents ont abordé un ensemble de défis qui doivent être relevés par les fournisseurs de services qui souhaitent déployer des applications sur une plateforme serverless optimisée pour la qualité de service (\gls{QoS}, pour \textit{Quality of Service}) et économie en énergie. Le chapitre~\ref{chapter:herofake} traite en particulier de la surcharge de latence causée par l'allocation dynamique du matériel pour les nouvelles instances de fonction, appelée délai de démarrage à froid~\cite{vahidiniaColdStartServerless2020}. Un autre problème récurrent, adressé dans le chapitre~\ref{chapter:herocache}, est celui de la prise en compte de la localité des données~\cite{yuFollowingDataNot} par la plateforme pour éviter une dégradation considérable des performances, en particulier dans le cas d'applications conçues comme des chaînes de fonctions qui communiquent entre elles.
 
 Pour surmonter de tels défis, nous avons conçu des politiques d'orchestration qui guident les décisions d'allocation de ressources et d'ordonnancement de requêtes, dans le but de minimiser les coûts, selon des objectifs d'optimisation définis par le fournisseur de services. Il est nécessaire d'évaluer la pertinence de ces politiques dans divers cas d'utilisation ; différentes mesures peuvent être utiles pour cette évaluation, par exemple la durée totale de complétion pour un scénario donné, le temps de réponse des fonctions, la consommation d'énergie dynamique et statique dans la plateforme, etc.
 
@@ -75,7 +75,7 @@ Ce chapitre est organisé comme suit : la section~\ref{section:herosim-overview}
 
 \begin{figure*}[!ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{6_Chapitre6/figures/platform-complete.pdf}
+    \includegraphics[width=0.9\textwidth]{6_Chapitre6/figures/platform-complete.png}
     \caption{Vue de haut niveau d'une plateforme serverless, telle que modélisée dans HeROsim. L'autoscaler alloue des ressources matérielles pour les répliques de fonctions ; tandis que l'ordonnanceur place les requêtes utilisateur en file d'attente sur ces répliques.}
 \label{figure:herosim-platform}
 \end{figure*}
@@ -106,6 +106,65 @@ Cette section présente les choix de conception et les hypothèses formulées po
 
 HeROsim utilise la bibliothèque SimPy~\footnote{\href{https://simpy.readthedocs.io}{https://simpy.readthedocs.io}} comme moteur de simulation à événements discrets. Notre simulateur fournit trois classes de base, comme montré dans la figure~\ref{figure:herosim-software-architecture} -- \texttt{Orchestrator}, \texttt{Autoscaler} et \texttt{Scheduler} -- destinées à être sous-classées par les utilisateurs désireux d'implémenter leurs propres algorithmes. Comme l'essentiel du comportement de la plateforme est hérité des classes de base, le coût de mise en œuvre d'une nouvelle politique est minime : le couple le plus simple d'autoscaler et d'ordonnanceur (pour une politique de placement aléatoire) est mis en œuvre en moins de 20 lignes de code.
 
+% \begin{minted}[linenos,breaklines]{python}
+% class RandomAutoscaler(BaseAutoscaler):
+%   def create_first_replica(
+%     self, system_state: SystemState, task_type: TaskType
+%   ) -> Generator:
+%     # Create a new function instance on any available hardware platform
+%     # Return None if no replica can be created
+%     stop = yield self.env.process(
+%         self.scale_up(1, system_state, task_type["name"], "any")
+%     )
+
+%     return stop
+
+%   def create_replica(
+%     self, couples_suitable: Set[Tuple[Node, Platform]], task_type: TaskType
+%   ) -> Tuple[Node, Platform]:
+%     # Select random platform on random node
+%     found = random.randint(0, len(couples_suitable) - 1)
+%     random_couple = list(couples_suitable)[found]
+
+%     return random_couple
+
+%   def remove_replica(
+%     self,
+%     couples_suitable: Set[Tuple[Node, Platform]],
+%     task_type: TaskType,
+%     state: SystemState,
+%   ) -> Generator:
+%     # Array is shuffled in place...
+%     random.shuffle(list(couples_suitable))
+
+%     # Mark replica for removal if its task queue is empty
+%     # Return None if no replica can be removed
+%     removed_couple = next(
+%         (
+%             replica
+%             for replica in couples_suitable
+%             if not replica[1].queue.items and not replica[1].current_task
+%         ),
+%         None,
+%     )
+
+%     return removed_couple
+% \end{minted}
+
+% \begin{minted}[linenos,breaklines]{python}
+% class RandomScheduler(BaseScheduler):
+%   def placement(
+%     self, system_state: SystemState, task: Task
+%   ) -> Tuple[Node, Platform]:
+%     replicas: Set[Tuple[Node, Platform]] = system_state.replicas[task.type["name"]]
+
+%     # Select random platform
+%     found = random.randint(0, len(replicas) - 1)
+%     random_couple = list(replicas)[found]
+
+%     return random_couple
+% \end{minted}
+
 \subsection{Données d'entrée}
 
 HeROsim expose une interface déclarative permettant aux utilisateurs de définir leur infrastructure cloud, leurs charges de travail et leurs contraintes de qualité de service. Le simulateur reproduit un scénario d'allocation et d'ordonnancement selon différentes politiques d'orchestration. Une exécution du simulateur nécessite les entrées suivantes, sous la forme de fichiers \gls{JSON} (pour \textit{JavaScript Object Notation}, un format textuel structuré), pour définir un tel scénario :
@@ -123,15 +182,15 @@ Les données de nos études précédentes~\cite{herofake, herocache} sont mises 
 L'utilisateur peut choisir les politiques d'orchestration souhaitées et exécuter le programme principal. Le simulateur :
 
 \begin{itemize}
-    \item Initialise l'infrastructure comme décrit : le scénario commence avec tous les nœuds inactifs, en attente de nouvelles requêtes ;
-    \item Initialise l'orchestrateur avec l'autoscaler et l'ordonnanceur choisis ;
-    \item Suit les temps d'arrivée des événements à partir de la trace d'exécution et transmet les requêtes utilisateur à l'orchestrateur ;
-    \item Laisse l'ordonnanceur essayer de placer ces requêtes sur des répliques de fonctions ;
-    \item Laisse l'autoscaler allouer et désallouer les ressources matérielles qui hébergent ces répliques pour traiter les requêtes utilisateur ;
-    \item Fait avancer l'horloge au fur et à mesure du traitement des requêtes utilisateur.
+    \item initialise l'infrastructure comme décrit : le scénario commence avec tous les nœuds inactifs, en attente de nouvelles requêtes ;
+    \item initialise l'orchestrateur avec l'autoscaler et l'ordonnanceur choisis ;
+    \item suit les temps d'arrivée des événements à partir de la trace d'exécution et transmet les requêtes utilisateur à l'orchestrateur ;
+    \item charge l'ordonnanceur de placer ces requêtes sur des répliques de fonctions ;
+    \item charge l'autoscaler d'allouer et désallouer les ressources matérielles qui hébergent ces répliques pour traiter les requêtes utilisateur ;
+    \item fait avancer l'horloge au fur et à mesure du traitement des requêtes utilisateur.
 \end{itemize}
 
-% Le simulateur connaît le temps de réponse des fonctions sur la base des métadonnées d'entrée, mesurées au préalable. Ces métadonnées concernent le matériel et les charges de travail spécifiques que l'utilisateur souhaite ordonnancer. Elles peuvent être obtenues de différentes manières ; la figure~\ref{figure:herosim-characterization} donne un aperçu de la méthodologie que nous avons utilisée pour caractériser les différentes charges de travail et plates-formes d'exécution tout au long de nos expériences ; voir~\cite{herofake, herocache} pour plus de détails.
+% Le simulateur connaît le temps de réponse des fonctions sur la base des métadonnées d'entrée, mesurées au préalable. Ces métadonnées concernent le matériel et les charges de travail spécifiques que l'utilisateur souhaite ordonnancer. Elles peuvent être obtenues de différentes manières ; la figure~\ref{figure:herosim-characterization} donne un aperçu de la méthodologie que nous avons utilisée pour caractériser les différentes charges de travail et plateformes d'exécution tout au long de nos expériences ; voir~\cite{herofake, herocache} pour plus de détails.
 
 \begin{figure}[!ht]
     \centering
@@ -179,7 +238,7 @@ La classe de base \textbf{\texttt{Scheduler}} met en œuvre la sélection des t�
 
 Les requêtes utilisateur arrivent dans une file d'attente au niveau de l'ordonnanceur. Les utilisateurs peuvent mettre en œuvre leur propre politique de priorité pour la sélection des tâches ou choisir une politique déjà disponible dans le simulateur, \textit{e.g.} \textit{First In, First Out} (\gls{FIFO}) ou \textit{Earliest Deadline First} (\gls{EDF})~\cite{herofake}.
 
-L'ordonnanceur de HeROsim a été conçu sans tenir compte des défaillances ou des migrations de tâches : le comportement par défaut considère des tâches qui s'exécutent toujours avec succès jusqu'à leur terme. Cependant, les tâches seront marquées comme "en pénalité" si l'ordonnanceur manque leur échéance. Les utilisateurs peuvent utiliser cette valeur booléenne pour évaluer la qualité de leurs politiques en ce qui concerne la latence des requêtes : elle indique la proportion de requêtes qui sont traitées en temps voulu.
+L'ordonnanceur de HeROsim a été conçu sans tenir compte des défaillances ou des migrations de tâches : le comportement par défaut considère des tâches qui s'exécutent toujours avec succès jusqu'à leur terme. Cependant, les tâches seront marquées comme "en pénalité" si l'ordonnanceur manque leur échéance. Cette valeur booléenne permet d'évaluer la qualité de politiques d'orchestration en matière de respect des exigences de qualité de service : elle indique la proportion de requêtes qui ne sont traitées en temps voulu.
 
 S'il n'y a pas de réplique disponible au moment de l'ordonnancement d'une requête utilisateur, l'ordonnanceur fera un appel à l'autoscaler pour forcer la création d'une première réplique pour la fonction. Dans l'intervalle, la requête est remise dans la file d'attente et reportée. Les tâches reportées sont signalées comme telles, de sorte que, par exemple, elles puissent avoir une priorité plus élevée si toutefois l'utilisateur souhaite appliquer une telle politique~\cite{herocache}.
 
@@ -197,7 +256,7 @@ HeROsim est livré avec les politiques d'ordonnancement suivantes implémentées
 
 HeROsim s'appuie sur des journaux d'évènements pour fournir un aperçu du déroulement de la simulation, ce qui aide l'utilisateur à déboguer ses politiques. À la fin de la simulation, des fichiers de résultats sont enregistrés sur le disque. Ces fichiers contiennent un résumé des résultats de la simulation, y compris les performances de la politique au regard des métriques d'évaluation (qualité de service, consommation d'énergie, etc.). Ces résultats sont représentés sur différents graphiques qui peuvent être utilisés dans des publications ultérieures (voir chapitres~\ref{chapter:herofake} et~\ref{chapter:herocache}).
 
-HeROsim peut également générer des graphiques supplémentaires qui peuvent être utiles lors du débogage du comportement d'une politique d'orchestration. Les utilisateurs peuvent visualiser la proportion de démarrages à froid et d'accès au cache parmi les invocations de fonctions. HeROsim peut tracer la latence par quantiles pour les requêtes des utilisateurs, aidant ainsi l'utilisateur à dimensionner son infrastructure. Le générateur de traces d'exécution trace les temps d'arrivée des requêtes sur un graphique afin de fournir des indications visuelles sur les caractéristiques de la charge de travail.
+HeROsim peut également générer des graphiques supplémentaires, utiles pour tracer le comportement de la plateforme lors de l'élaboration d'une politique d'orchestration. On peut ainsi visualiser la proportion de démarrages à froid et d'accès au cache parmi les invocations de fonctions. HeROsim peut également tracer la latence par quantiles pour les requêtes des utilisateurs, ce qui peut aider à identifier un éventuel problème de dimensionnement d'une infrastructure cloud. Le générateur de traces d'exécution trace les temps d'arrivée des requêtes utilisateur, ce qui permet de visualiser sur un graphique les caractéristiques de la charge de travail.
 
 \begin{figure}[!ht]
     \centering
@@ -233,15 +292,15 @@ HeROsim nous a également permis d'évaluer l'impact des différents composants 
 
 Dans une seconde étude, nous avons conçu un orchestrateur pour les applications serverless, composées de plusieurs fonctions interdépendantes. Nous avons proposé HeROcache (pour \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration with a \textbf{cache} strategy~\cite{herocache}), une stratégie d'orchestration consciente des contraintes temporelles et de données. Nous avons exploré le déploiement d'un système de détection d'intrusion (\gls{IDS}, pour \textit{Intrusion Detection System}) sur une plateforme serverless. En particulier, nous avons étudié les avantages de l'orchestration consciente des données lors de l'exploitation de matériel hétérogène pour déployer des applications sensibles au temps sur des dispositifs \textit{edge} à ressources limitées, du point de vue du fournisseur de services.
 
-L'objectif de l'application est de détecter le trafic réseau potentiellement malveillant dans des journaux soumis par les utilisateurs. Comme cette application d'\gls{IDS} est spécifiquement destinée aux missions de drones, la fréquence des requêtes utilisateur présente une saisonnalité, ce qui en fait un bon cas d'étude pour le paradigme serverless : les ressources matérielles pourront être libérées lorsque l'application n'est pas utilisée.
-
+L'objectif de l'application est de détecter le trafic réseau potentiellement malveillant dans des journaux soumis par les utilisateurs.
+% Comme cette application d'\gls{IDS} est spécifiquement destinée aux missions de drones, la fréquence des requêtes utilisateur présente une saisonnalité, ce qui en fait un bon cas d'étude pour le paradigme serverless : les ressources matérielles pourront être libérées lorsque l'application n'est pas utilisée.
 L'application se compose de deux couches pour traiter les requêtes utilisateur : deux fonctions de prétraitement, qui opèrent sur les journaux de trafic réseau pour exclure les évènements que l'on sait légitimes, et quatre fonctions d'inférence, basées sur des réseaux de neurones entraînés à détecter des motifs typiques d'activité malveillante dans le reste des journaux. Ces fonctions ont été mises en œuvre sur différentes architectures matérielles (\gls{CPU}, \gls{FPGA}, \gls{GPU}).
 
 Il existe des dépendances de données entre les deux couches de l'application. Nous les avons modélisées sous forme de graphes acycliques dirigés (\gls{DAG}) d'appels de fonctions. Nous avons utilisé le module Python \texttt{TopologicalSorter} du module \texttt{graphlib} pour lire et écrire la représentation \gls{JSON} des graphes et pour les parcourir pendant l'exécution.
 
 Au niveau de l'orchestrateur, nous avons dû modifier la granularité des requêtes utilisateur : dans HeROcache, une requête concerne une application, qui peut être composée d'une ou plusieurs fonctions, appelées dans l'ordre défini par le \gls{DAG} de l'application. Chaque fonction peut prendre des données en entrée et produire des données en sortie. Ces données sont définies par leur taille en octets.
 
-Alors que HeROfake ne prend pas en compte les coûts associés opérations de stockage, HeROcache considère la \textbf{récupération des images de fonctions}, la \textbf{mise en cache des images de fonctions} et les \textbf{communications entre fonctions} dans les décisions de l'autoscaler et de l'ordonnanceur. Nous avons étendu HeROsim avec ces concepts pendant la conception de HeROcache. Ces opérations augmentent la latence de la requête utilisateur d'une quantité de temps calculée sur la base des métadonnées de caractérisation de la plateforme et de la fonction, comme montré dans la figure~\ref{figure:herosim-cost} : par exemple, HeROsim estime le temps de récupération de l'image de la fonction sur la base du débit du lien réseau spécifié par l'utilisateur dans la description de l'infrastructure, la taille de l'image de la fonction spécifiée par le type de charge de travail, et la performance du stockage local au nœud spécifiée par le type de stockage.
+Alors que HeROfake ne prend pas en compte les coûts associés opérations de stockage, HeROcache considère la \textbf{récupération des images de fonctions}, la \textbf{mise en cache des images de fonctions} et les \textbf{communications entre fonctions} dans les décisions de l'autoscaler et de l'ordonnanceur. Nous avons étendu HeROsim avec ces concepts pendant la conception de HeROcache. Ces opérations impactent la latence des requêtes utilisateur. Des mesures hors-ligne pour caractériser les fonctions permettent à HeROsim, comme montré dans la figure~\ref{figure:herosim-cost} d'estimer le temps de récupération de l'image de la fonction sur la base du débit du lien réseau spécifié par l'utilisateur dans la description de l'infrastructure, la taille de l'image de la fonction spécifiée par le type de charge de travail, et la performance du stockage local au nœud spécifiée par le type de stockage.
 
 L'introduction d'opérations de stockage à la granularité d'un nœud nous a permis d'évaluer une stratégie de préchargement des images de fonctions au sein d'une application, qui peut accélérer les démarrages à froid pour des invocations futures.
 
@@ -262,9 +321,9 @@ CloudSim~\cite{calheiros_cloudsim_2011} est l'outil de référence pour les exp�
 CloudSim et ses extensions~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, jeonCloudSimExtensionSimulatingDistributed2019} ne prennent pas en compte les applications serverless, \textit{i.e.} la composition de fonctions pour décrire un comportement complexe qui introduit des défis spécifiques (délais de démarrage à froid, coûts liés aux communications inter-fonctions, etc.~\cite{wawrzoniakBoxerDataAnalytics2021a}).
 Pour adresser ces défis en simulation, il est nécessaire d'introduire la gestion du stockage, ainsi que le traitement des chaînes de fonctions, comme le fait HeROsim.
 
-% DFaaSCloud~\cite{jeonCloudSimExtensionSimulatingDistributed2019} est un autre simulateur basé sur CloudSim pour le serverless distribué. Ce travail se concentre sur la distribution géographique des instances de fonction à travers une infrastructure cloud, edge et fog. Il permet d'estimer les retards induits par la localité des fonctions. Les utilisateurs définissent leurs fonctions en termes de contraintes de latence et DFaaSCloud fournit une politique de placement qui minimise les violations et les coûts. En tant que tel, le postulat de DFaaSCloud est spécifique au traitement du problème du placement géographique des tâches dans un environnement Function as a Service à plusieurs niveaux, et ne concerne pas les défis généraux du serverless.
+DFaaSCloud~\cite{jeonCloudSimExtensionSimulatingDistributed2019} est un autre simulateur basé sur CloudSim pour le serverless distribué. Ce travail se concentre sur la distribution géographique des instances de fonction à travers une infrastructure cloud, edge et fog. Il permet d'estimer les retards induits par la localité des fonctions. Les utilisateurs définissent la qualité de service pour leurs fonctions en termes de contraintes de latence et DFaaSCloud fournit une politique de placement qui minimise les violations et les coûts. Nous n'avons pas abordé la dimension géographique du problème de placement dans les travaux de cette thèse.
 
-% ElasticSim~\cite{cai_elasticsim_2017} étend également CloudSim pour fournir une allocation dynamique des ressources pour les flux de travail dans le cloud, \textit{i.e.} des chaînes de tâches connectées qui ne sont pas différentes des applications serverless. Cependant, il ne prend pas en compte l'hétérogénéité sous-jacente des ressources matérielles et ne permet pas non plus d'appliquer des objectifs de qualité de service par requête. OpenDC 2.0~\cite{mastenbroekOpenDCConvenientModeling2021} permet également à l'utilisateur de modéliser de telles chaînes de fonctions, et bien que cet outil permette de modéliser un centre de données hétérogène et d'estimer sa consommation d'énergie, il ne prend pas non plus en compte la variété des exigences des utilisateurs en termes de latence.
+ElasticSim~\cite{cai_elasticsim_2017} étend également CloudSim pour fournir une allocation dynamique des ressources pour \textit{workflows} dans le cloud, \textit{i.e.} des chaînes de tâches interdépendantes, qui présentent des similitudes avec les applications serverless. Cependant, il ne prend pas en compte l'hétérogénéité des ressources matérielles et ne permet pas non plus d'appliquer des objectifs de qualité de service par requête. OpenDC 2.0~\cite{mastenbroekOpenDCConvenientModeling2021} est un outil généraliste et très complet qui autorise également l'utilisateur à modéliser de telles chaînes de fonctions. Bien que cet outil permette de représenter un centre de données hétérogène et d'estimer sa consommation d'énergie, il ne prend pas non plus en compte la variété des exigences des utilisateurs en termes de latence.
 
 GridSim~\cite{buyyaGridSimToolkitModeling2002} présente des caractéristiques intéressantes, allant de la modélisation d'infrastructures hautement hétérogènes à la prise en charge de contraintes de qualité de service par requête. Cependant, il se concentre sur des infrastructures dites "en grille", que l'on trouve généralement dans le monde du calcul haute performance (\gls{HPC}, pour \textit{High Performance Computing}), et ne permet pas d'explorer des problèmes liés à l'allocation dynamique de ressources. iFogSim2~\cite{mahmudIFogSim2ExtendedIFogSim2021} considère également des allocations statiques qui ne peuvent pas caractériser fidèlement l'espace de problème serverless.
 HeROsim a été conçu pour le serverless et permet aux utilisateurs de tracer les événements d'allocation et d'ordonnancement à la granularité d'une requête utilisateur.
