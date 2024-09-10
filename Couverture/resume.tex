@@ -9,29 +9,21 @@
 
 % Switch font style to back cover style
 \selectfontbackcover{ % Font style change is limited to this page using braces, just in case
+    \titleFR{Ordonnancement sur ressources hétérogènes pour le cloud}
+    \keywordsFR{cloud, serverless, orchestration, hétérogénéité, optimisation, simulation}
+    \abstractFR{
+        Le modèle serverless constitue un changement de paradigme dans le cloud : par opposition aux modèles traditionnels, les clients serverless ne réservent pas de ressources matérielles. L'exécution de leurs applications est dirigée par les requêtes utilisateur, et la facturation s'effectue sur la base de l'usage réel des ressources. En contrepartie, la responsabilité de l'allocation des ressources et du placement des tâches incombe au fournisseur. Ce mécanisme d'orchestration, dynamique et en ligne, peut induire un surcoût important en latence et dégrader la qualité de service pour les utilisateurs.
+        Nous nous sommes intéressés à la capacité pour le fournisseur à respecter des engagements de niveau de service étant donnée une infrastructure dotée de matériel hétérogène (CPU, GPU, FPGA, DLA).
+        Nous avons traité deux cas d'usage : le déploiement serverless d'une application de détection de deepfake, basée sur des fonctions sans état, et celui d'une application de détection d'intrusions, reposant sur des chaînes de fonctions communiquant des résultats intermédiaires.
+        Nous avons proposé une politique d’orchestration qui optimise le déploiement d'applications simples, composées d'une unique fonction, en minimisant les pénalités sur qualité de service. Nous avons également modélisé des applications complexes, en prenant en compte les dépendances temporelles et de données entre fonctions qui les composent, pour chercher à réduire la consommation énergétique et la désagrégation des tâches sur les nœuds de calcul du fournisseur lors de leur déploiement.
+        Enfin, nous avons développé un simulateur permettant de représenter de tels environnements, et d'évaluer et de comparer différentes stratégies d'orchestration pour le cloud.
+    }
 
-\titleFR{titre (en fran\c cais)..............}
-
-\keywordsFR{de 3 \`{a} 6 mots clefs}
-
-\abstractFR{Eius populus ab incunabulis primis ad usque pueritiae tempus extremum, quod annis circumcluditur fere trecentis, circummurana pertulit bella, deinde aetatem ingressus adultam post multiplices bellorum aerumnas Alpes transcendit et fretum, in iuvenem erectus et virum ex omni plaga quam orbis ambit inmensus, reportavit laureas et triumphos, iamque vergens in senium et nomine solo aliquotiens vincens ad tranquilliora vitae discessit.
-Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla.
-Thalassius vero ea tempestate praefectus praetorio praesens ipse quoque adrogantis ingenii, considerans incitationem eius ad multorum augeri discrimina, non maturitate vel consiliis mitigabat, ut aliquotiens celsae potestates iras principum molliverunt, sed adversando iurgandoque cum parum congrueret, eum ad rabiem potius evibrabat, Augustum actus eius exaggerando creberrime
-docens, idque, incertum qua mente, ne lateret adfectans. quibus mox Caesar acrius efferatus, velut contumaciae quoddam vexillum altius erigens, sine respectu salutis alienae vel suae ad vertenda opposita instar rapidi fluminis irrevocabili impetu ferebatur.
-Hae duae provinciae bello quondam piratico catervis mixtae praedonum.}
-
-
-
-\titleEN{titre (en anglais)..............}
-
-\keywordsEN{de 3 \`{a} 6 mots clefs}
-
-\abstractEN{Eius populus ab incunabulis primis ad usque pueritiae tempus extremum, quod annis circumcluditur fere trecentis, circummurana pertulit bella, deinde aetatem ingressus adultam post multiplices bellorum aerumnas Alpes transcendit et fretum, in iuvenem erectus et virum ex omni plaga quam orbis ambit inmensus, reportavit laureas et triumphos, iamque vergens in senium et nomine solo aliquotiens vincens ad tranquilliora vitae discessit.
-Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla.
-Thalassius vero ea tempestate praefectus praetorio praesens ipse quoque adrogantis ingenii, considerans incitationem eius ad multorum augeri discrimina, non maturitate vel consiliis mitigabat, ut aliquotiens celsae potestates iras principum molliverunt, sed adversando iurgandoque cum parum congrueret, eum ad rabiem potius evibrabat, Augustum actus eius exaggerando creberrime
-docens, idque, incertum qua mente, ne lateret adfectans. quibus mox Caesar acrius efferatus, velut contumaciae quoddam vexillum altius erigens, sine respectu salutis alienae vel suae ad vertenda opposita instar rapidi fluminis irrevocabili impetu ferebatur.
-Hae duae provinciae bello quondam piratico catervis mixtae praedonum.}
-
+    \titleEN{Scheduling on heterogeneous resources in the cloud}
+    \keywordsEN{cloud, serverless, orchestration, heterogeneity, optimization, simulation}
+    \abstractEN{
+        TODO
+    }
 }
 
 % Rétablit les marges d'origines

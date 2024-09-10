@@ -31,9 +31,6 @@
 
 % \RequirePackage[utf8]{inputenc}
 \RequirePackage[english,french]{babel} % Last language is the default, use \selectlanguage{english} to switch
-\RequirePackage{csquotes} % Assurer les guillemets français
-\frenchspacing
-\FrenchFootnotes
 
 \RequirePackage{ifpdf}
 \RequirePackage[dvipsnames]{xcolor} % pour les couleurs
@@ -144,6 +141,11 @@
 % Participants
 \newcommand{\jb}[1]{\mynote{Jalil}{#1}{blue}}
 \newcommand{\vl}[1]{\mynote{Vincent}{#1}{red}}
+
+% Typographie
+\RequirePackage{csquotes} % Assurer les guillemets français
+\frenchspacing
+\FrenchFootnotes
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -520,7 +522,7 @@
 
 \newcommand{\keywordsFR}[1]{%
 \vspace{-0.2cm}
-\noindent{\smallTwelve \textbf{Mot cl\'{e}s : }#1}
+\noindent{\smallTwelve \textbf{Mots-cl\'{e}s : }#1}
 }
 
 \newcommand{\abstractFR}[1]{%

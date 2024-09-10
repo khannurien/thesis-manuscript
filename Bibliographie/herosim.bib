@@ -22,32 +22,6 @@ pages = {1489--1504},
 publisher = {USENIX Association},
 month = apr
 }
-@inproceedings{wawrzoniakBoxerDataAnalytics2021a,
-  title        = {{Boxer: {{Data Analytics}} on {{Network-enabled Serverless Platforms}}}},
-  shorttitle   = {Boxer},
-  author       = {Wawrzoniak, Mike and M{\"u}ller, Ingo and Fraga Barcelos Paulus Bruno, Rodrigo and Alonso, Gustavo},
-  year         = 2021,
-  month        = jan,
-  booktitle    = {{CIDR 2021}},
-  publisher    = {www.cidrdb.org},
-  doi          = {10.3929/ETHZ-B-000456492},
-  copyright    = {Creative Commons Attribution 3.0 Unported, info:eu-repo/semantics/openAccess},
-  langid       = {english}
-}
-@inproceedings{reissHeterogeneityDynamicityClouds,
-  author    = {Reiss, Charles and Tumanov, Alexey and Ganger, Gregory R. and Katz, Randy H. and Kozuch, Michael A.},
-  title     = {{Heterogeneity and Dynamicity of Clouds at Scale: {G}oogle Trace Analysis}},
-  year      = {2012},
-  isbn      = {9781450317610},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  doi       = {10.1145/2391229.2391236},
-  booktitle = {{SoCC'12}},
-  articleno = {7},
-  numpages  = {13},
-  location  = {San Jose, California},
-  series    = {SoCC '12}
-}
 @article{masanet2020recalibrating,
   title={{Recalibrating global data center energy-use estimates}},
   author={Masanet, Eric and Shehabi, Arman and Lei, Nuoa and Smith, Sarah and Koomey, Jonathan},
@@ -58,7 +32,49 @@ month = apr
   year={2020},
   publisher={American Association for the Advancement of Science}
 }
+@INPROCEEDINGS{dartois18,
+  author={Dartois, Jean-Emile and Knefati, Anas and Boukhobza, Jalil and Barais, Olivier},
+  booktitle={{CloudCom'18}}, 
+  title={{Using Quantile Regression for Reclaiming Unused Cloud Resources While Achieving SLA}}, 
+  year={2018},
+  volume={},
+  number={},
+  pages={89-98},
+  keywords={Data centers;Random access memory;Companies;Estimation;Cloud computing;Measurement;Quality of service;Machine learning resource usage prediction performance model},
+  doi={10.1109/CloudCom2018.2018.00030}}
 
+% Ajouts simulation (survey)
+
+@article{bambrikSurveyCloudComputing2020,
+  title = {A {{Survey}} on {{Cloud Computing Simulation}} and {{Modeling}}},
+  author = {Bambrik, Ilyas},
+  year = {2020},
+  month = sep,
+  journal = {SN Computer Science},
+  volume = {1},
+  number = {5},
+  pages = {249},
+  issn = {2662-995X, 2661-8907},
+  doi = {10.1007/s42979-020-00273-1},
+  urldate = {2024-07-02},
+  abstract = {Cloud Computing (CC) has attracted a massive amount of research and investment in the previous decade. The economical model proposed by this technology is a viable solution for consumers as well as being a profitable one for the provider. However, deploying real world cloud experiments to test new policies/algorithms is time consuming and very expensive, especially for large scenarios. As a result, the research community has opted to test their contributions is CC simulators. Although the models proposed by these simulators are not exhaustive, each one is made to address a specific process. Alternatively, others tools are made to provide a platform and the necessary building blocks to model any desired sub-component (application/ network model, energy consumption, scheduling and Virtual Machine provisioning). In this paper, a detailed survey about the existing CC simulators is made discussing features, software architecture as well as the ingenuity behind these frameworks.},
+  langid = {english},
+}
+@inproceedings{byrneReviewCloudComputing2017,
+  title = {A {{Review}} of {{Cloud Computing Simulation Platforms}} and {{Related Environments}}:},
+  shorttitle = {A {{Review}} of {{Cloud Computing Simulation Platforms}} and {{Related Environments}}},
+  booktitle = {Proceedings of the 7th {{International Conference}} on {{Cloud Computing}} and {{Services Science}}},
+  author = {Byrne, James and Svorobej, Sergej and Giannoutakis, Konstantinos M. and Tzovaras, Dimitrios and Byrne, P. J. and {\"O}stberg, Per-Olov and Gourinovitch, Anna and Lynn, Theo},
+  year = {2017},
+  pages = {679--691},
+  publisher = {{SCITEPRESS - Science and Technology Publications}},
+  address = {Porto, Portugal},
+  doi = {10.5220/0006373006790691},
+  urldate = {2024-07-02},
+  abstract = {Cloud Computing, Cloud Simulation Tools, Data Centre, Fog Computing.},
+  isbn = {978-989-758-243-1},
+  langid = {english},
+}
 
 % SotA %
 @inproceedings{wickremasinghe_cloudanalyst_2010,
@@ -255,64 +271,11 @@ month = apr
   langid       = {english}
 }
 % Own work %
-@inbook{Lannurien2023,
-  title        = {{Serverless Cloud Computing: State of the Art and Challenges}},
-  author       = {Lannurien, Vincent and D'Orazio, Laurent and Barais, Olivier and Boukhobza, Jalil},
-  year         = 2023,
-  booktitle    = {Serverless Computing: Principles and Paradigms},
-  publisher    = {Springer International Publishing},
-  address      = {Cham},
-  pages        = {275--316},
-  doi          = {10.1007/978-3-031-26633-1_11},
-  isbn         = {978-3-031-26633-1},
-  editor       = {Krishnamurthi, Rajalakshmi and Kumar, Adarsh and Gill, Sukhpal Singh and Buyya, Rajkumar},
-  abstract     = {The serverless model represents a paradigm shift in the cloud: as opposed to traditional cloud computing service models, serverless customers do not reserve hardware resources. The execution of their code is event-driven (HTTP requests, cron jobs, etc.) and billing is based on actual resource usage. In return, the responsibility of resource allocation and task placement lies on the provider. While serverless in the wild is mainly advertised as a public cloud offering, solutions are actively developed and backed by solid actors in the industry to allow the development of private cloud serverless platforms. The first generation of serverless offers, ``Function as a Service'' (FaaS), has severe shortcomings that can offset the potential benefits for both customers and providers---in terms of spendings and reliability on the customer side, and in terms of resources multiplexing on the provider side. Circumventing these flaws would allow considerable savings in money and energy for both providers and tenants. This chapter aims at establishing a comprehensive tour of these limitations, and presenting state-of-the-art studies to mitigate weaknesses that are currently holding serverless back from becoming the de facto cloud computing model. The main challenges related to the deployment of such a cloud platform are discussed and some perspectives for future directions in research are given.}
-}
-@inproceedings{herofake,
-  title        = {{HeROfake: Heterogeneous Resources Orchestration in a Serverless Cloud – An Application to Deepfake Detection}},
-  author       = {Lannurien, Vincent and D'Orazio, Laurent and Barais, Olivier and Bernard, Esther and Weppe, Olivier and Beaulieu, Laurent and Kacete, Amine and Paquelet, Stéphane and Boukhobza, Jalil},
-  year         = 2023,
-  booktitle    = {{CCGrid'23}},
-  volume       = {},
-  number       = {},
-  pages        = {154--165},
-  doi          = {10.1109/CCGrid57682.2023.00024},
-  keywords     = {Measurement;Cloud computing;Energy consumption;Deepfakes;Computational modeling;Hardware;Complexity theory;deepfake;serverless;allocation;scheduling;SLA;energy consumption;heterogeneous resources;workload characterization;GPU;FPGA}
-}
 @inproceedings{herocache,
   title        = {{HeROcache: Storage-Aware Scheduling in Heterogeneous Serverless Edge -- The Case of IDS}},
   author       = {Lannurien, Vincent and Slimani, Camélia and D'Orazio, Laurent and Barais, Olivier and Paquelet, Stéphane and Boukhobza, Jalil},
   year         = 2024,
   booktitle    = {{CCGrid'24}}
-}
-% Papers %
-@article{SchleierSmith2021WhatSC,
-  title        = {{What Serverless Computing is and Should Become: The next Phase of Cloud Computing}},
-  author       = {Schleier-Smith, Johann and Sreekanti, Vikram and Khandelwal, Anurag and Carreira, Joao and Yadwadkar, Neeraja J. and Popa, Raluca Ada and Gonzalez, Joseph E. and Stoica, Ion and Patterson, David A.},
-  year         = 2021,
-  month        = apr,
-  journal      = {Commun. ACM},
-  publisher    = {Association for Computing Machinery},
-  address      = {New York, NY, USA},
-  volume       = 64,
-  number       = 5,
-  pages        = {76–84},
-  doi          = {10.1145/3406011},
-  issn         = {0001-0782},
-  issue_date   = {May 2021},
-  numpages     = 9
-}
-@article{jonasCloudProgrammingSimplified2019,
-  title        = {{Cloud Programming Simplified: A Berkeley View on Serverless Computing}},
-  author       = {Eric Jonas and Johann Schleier{-}Smith and Vikram Sreekanti and Chia{-}che Tsai and Anurag Khandelwal and Qifan Pu and Vaishaal Shankar and Jo{\~{a}}o Carreira and Karl Krauth and Neeraja Jayant Yadwadkar and Joseph E. Gonzalez and Raluca Ada Popa and Ion Stoica and David A. Patterson},
-  year         = 2019,
-  journal      = {CoRR},
-  volume       = {abs/1902.03383},
-  eprinttype   = {arXiv},
-  eprint       = {1902.03383},
-  timestamp    = {Mon, 31 Jan 2022 16:34:15 +0100},
-  biburl       = {https://dblp.org/rec/journals/corr/abs-1902-03383.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 % URLs %
 @misc{herosim,
@@ -328,68 +291,8 @@ month = apr
   hal_id       = {hal-04468894},
   hal_version  = {v1}
 }
-@online{openwhisk,
-  title        = {{OpenWhisk}},
-  author       = {Apache},
-  year         = 2022,
-}
-@online{knative,
-  title        = {{Knative}},
-  author       = {Cloud Native Computing Foundation},
-  year         = 2022,
-}
-@online{simpy,
-  title        = {{SimPy}},
-  author       = {Team {SimPy}},
-  year         = 2022,
-}
 @online{wsl,
   title        = {{WSL2}},
   author       = {Microsoft},
   year         = 2024,
-}
-@INPROCEEDINGS{dartois18,
-  author={Dartois, Jean-Emile and Knefati, Anas and Boukhobza, Jalil and Barais, Olivier},
-  booktitle={{CloudCom'18}}, 
-  title={{Using Quantile Regression for Reclaiming Unused Cloud Resources While Achieving SLA}}, 
-  year={2018},
-  volume={},
-  number={},
-  pages={89-98},
-  keywords={Data centers;Random access memory;Companies;Estimation;Cloud computing;Measurement;Quality of service;Machine learning resource usage prediction performance model},
-  doi={10.1109/CloudCom2018.2018.00030}}
-
-
-% Ajouts simulation (survey)
-
-@article{bambrikSurveyCloudComputing2020,
-  title = {A {{Survey}} on {{Cloud Computing Simulation}} and {{Modeling}}},
-  author = {Bambrik, Ilyas},
-  year = {2020},
-  month = sep,
-  journal = {SN Computer Science},
-  volume = {1},
-  number = {5},
-  pages = {249},
-  issn = {2662-995X, 2661-8907},
-  doi = {10.1007/s42979-020-00273-1},
-  urldate = {2024-07-02},
-  abstract = {Cloud Computing (CC) has attracted a massive amount of research and investment in the previous decade. The economical model proposed by this technology is a viable solution for consumers as well as being a profitable one for the provider. However, deploying real world cloud experiments to test new policies/algorithms is time consuming and very expensive, especially for large scenarios. As a result, the research community has opted to test their contributions is CC simulators. Although the models proposed by these simulators are not exhaustive, each one is made to address a specific process. Alternatively, others tools are made to provide a platform and the necessary building blocks to model any desired sub-component (application/ network model, energy consumption, scheduling and Virtual Machine provisioning). In this paper, a detailed survey about the existing CC simulators is made discussing features, software architecture as well as the ingenuity behind these frameworks.},
-  langid = {english},
-}
-
-@inproceedings{byrneReviewCloudComputing2017,
-  title = {A {{Review}} of {{Cloud Computing Simulation Platforms}} and {{Related Environments}}:},
-  shorttitle = {A {{Review}} of {{Cloud Computing Simulation Platforms}} and {{Related Environments}}},
-  booktitle = {Proceedings of the 7th {{International Conference}} on {{Cloud Computing}} and {{Services Science}}},
-  author = {Byrne, James and Svorobej, Sergej and Giannoutakis, Konstantinos M. and Tzovaras, Dimitrios and Byrne, P. J. and {\"O}stberg, Per-Olov and Gourinovitch, Anna and Lynn, Theo},
-  year = {2017},
-  pages = {679--691},
-  publisher = {{SCITEPRESS - Science and Technology Publications}},
-  address = {Porto, Portugal},
-  doi = {10.5220/0006373006790691},
-  urldate = {2024-07-02},
-  abstract = {Cloud Computing, Cloud Simulation Tools, Data Centre, Fog Computing.},
-  isbn = {978-989-758-243-1},
-  langid = {english},
 }

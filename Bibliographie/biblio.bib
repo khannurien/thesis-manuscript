@@ -1518,7 +1518,41 @@
   langid = {english},
 }
 
+@article{jafarnejadghomiLoadbalancingAlgorithmsCloud2017,
+  title = {Load-Balancing Algorithms in Cloud Computing: {{A}} Survey},
+  shorttitle = {Load-Balancing Algorithms in Cloud Computing},
+  author = {Jafarnejad Ghomi, Einollah and Masoud Rahmani, Amir and Nasih Qader, Nooruldeen},
+  year = {2017},
+  month = jun,
+  journal = {Journal of Network and Computer Applications},
+  volume = {88},
+  pages = {50--71},
+  issn = {10848045},
+  doi = {10.1016/j.jnca.2017.04.007},
+  url = {https://doi.org/10.1016/j.jnca.2017.04.007},
+  urldate = {2024-09-09},
+  abstract = {Cloud computing is a modern paradigm to provide services through the Internet. Load balancing is a key aspect of cloud computing and avoids the situation in which some nodes become overloaded while the others are idle or have little work to do. Load balancing can improve the Quality of Service (QoS) metrics, including response time, cost, throughput, performance and resource utilization.},
+  langid = {english},
+}
+
 %% Ajouts conso d'énergie (Vincent)
+
+@article{leeEnergyEfficientUtilization2012,
+  title = {Energy Efficient Utilization of Resources in Cloud Computing Systems},
+  author = {Lee, Young Choon and Zomaya, Albert Y.},
+  year = {2012},
+  month = may,
+  journal = {The Journal of Supercomputing},
+  volume = {60},
+  number = {2},
+  pages = {268--280},
+  issn = {0920-8542, 1573-0484},
+  doi = {10.1007/s11227-010-0421-3},
+  urldate = {2024-09-05},
+  abstract = {The energy consumption of under-utilized resources, particularly in a cloud environment, accounts for a substantial amount of the actual energy use. Inherently, a resource allocation strategy that takes into account resource utilization would lead to a better energy efficiency; this, in clouds, extends further with virtualization technologies in that tasks can be easily consolidated. Task consolidation is an effective method to increase resource utilization and in turn reduces energy consumption. Recent studies identified that server energy consumption scales linearly with (processor) resource utilization. This encouraging fact further highlights the significant contribution of task consolidation to the reduction in energy consumption. However, task consolidation can also lead to the freeing up of resources that can sit idling yet still drawing power. There have been some notable efforts to reduce idle power draw, typically by putting computer resources into some form of sleep/power-saving mode. In this paper, we present two energy-conscious task consolidation heuristics, which aim to maximize resource utilization and explicitly take into account both active and idle energy consumption. Our heuristics assign each task to the resource on which the energy consumption for executing the task is explicitly or implicitly minimized without the performance degradation of that task. Based on our experimental results, our heuristics demonstrate their promising energy-saving capability.},
+  copyright = {http://www.springer.com/tdm},
+  langid = {english},
+}
 
 @inproceedings{vasanWorthTheirWatts2010,
   title = {Worth Their Watts? - An Empirical Study of Datacenter Servers},
@@ -1765,6 +1799,60 @@
 
 %% Ajouts caractérisation
 
+%%% Oversubscription / overcommitment
+
+@inproceedings{bashirTakeItLimit2021,
+  title = {Take It to the Limit: Peak Prediction-Driven Resource Overcommitment in Datacenters},
+  shorttitle = {Take It to the Limit},
+  booktitle = {Proceedings of the {{Sixteenth European Conference}} on {{Computer Systems}}},
+  author = {Bashir, Noman and Deng, Nan and Rzadca, Krzysztof and Irwin, David and Kodak, Sree and Jnagal, Rohit},
+  year = {2021},
+  month = apr,
+  pages = {556--573},
+  publisher = {ACM},
+  address = {Online Event United Kingdom},
+  doi = {10.1145/3447786.3456259},
+  urldate = {2024-09-05},
+  abstract = {To increase utilization, datacenter schedulers often overcommit resources where the sum of resources allocated to the tasks on a machine exceeds its physical capacity. Setting the right level of overcommitment is a challenging problem: low overcommitment leads to wasted resources, while high overcommitment leads to task performance degradation. In this paper, we take a first principles approach to designing and evaluating overcommit policies by asking a basic question: assuming complete knowledge of each task's future resource usage, what is the safest overcommit policy that yields the highest utilization? We call this policy the peak oracle. We then devise practical overcommit policies that mimic this peak oracle by predicting future machine resource usage. We simulate our overcommit policies using the recentlyreleased Google cluster trace, and show that they result in higher utilization and less overcommit errors than policies based on per-task allocations. We also deploy these policies to machines inside Google's datacenters serving its internal production workload. We show that our overcommit policies increase these machines' usable CPU capacity by 10-16\% compared to no overcommitment.},
+  isbn = {978-1-4503-8334-9},
+  langid = {english},
+}
+
+@inproceedings{cortezResourceCentralUnderstanding2017a,
+  title = {Resource {{Central}}: {{Understanding}} and {{Predicting Workloads}} for {{Improved Resource Management}} in {{Large Cloud Platforms}}},
+  shorttitle = {Resource {{Central}}},
+  booktitle = {Proceedings of the 26th {{Symposium}} on {{Operating Systems Principles}}},
+  author = {Cortez, Eli and Bonde, Anand and Muzio, Alexandre and Russinovich, Mark and Fontoura, Marcus and Bianchini, Ricardo},
+  year = {2017},
+  month = oct,
+  pages = {153--167},
+  publisher = {ACM},
+  address = {Shanghai China},
+  doi = {10.1145/3132747.3132772},
+  urldate = {2024-09-05},
+  abstract = {Cloud research to date has lacked data on the characteristics of the production virtual machine (VM) workloads of large cloud providers. A thorough understanding of these characteristics can inform the providers' resource management systems, e.g. VM scheduler, power manager, server health manager. In this paper, we first introduce an extensive characterization of Microsoft Azure's VM workload, including distributions of the VMs' lifetime, deployment size, and resource consumption. We then show that certain VM behaviors are fairly consistent over multiple lifetimes, i.e. history is an accurate predictor of future behavior. Based on this observation, we next introduce Resource Central (RC), a system that collects VM telemetry, learns these behaviors offline, and provides predictions online to various resource managers via a general client-side library. As an example of RC's online use, we modify Azure's VM scheduler to leverage predictions in oversubscribing servers (with oversubscribable VM types), while retaining high VM performance. Using real VM traces, we then show that the prediction-informed schedules increase utilization and prevent physical resource exhaustion. We conclude that providers can exploit their workloads' characteristics and machine learning to improve resource management substantially.},
+  isbn = {978-1-4503-5085-3},
+  langid = {english},
+}
+
+%%% Overbooking
+
+@inproceedings{tomasImprovingCloudInfrastructure2013,
+  title = {Improving Cloud Infrastructure Utilization through Overbooking},
+  booktitle = {Proceedings of the 2013 {{ACM Cloud}} and {{Autonomic Computing Conference}}},
+  author = {Tom{\'a}s, Luis and Tordsson, Johan},
+  year = {2013},
+  month = aug,
+  pages = {1--10},
+  publisher = {ACM},
+  address = {Miami Florida USA},
+  doi = {10.1145/2494621.2494627},
+  urldate = {2024-09-05},
+  abstract = {Despite the potential given by the combination of multitenancy and virtualization, resource utilization in today's data centers is still low. We identify three key characteristics of cloud services and infrastructure as-a-service management practices: burstiness in service workloads, fluctuations in virtual machine resource usage over time, and virtual machines being limited to pre-defined sizes only. Based on these characteristics, we propose scheduling and admission control algorithms that incorporate resource overbooking to improve utilization. A combination of modeling, monitoring, and prediction techniques is used to avoid overpassing the total infrastructure capacity. A performance evaluation using a mixture of workload traces demonstrates the potential for significant improvements in resource utilization while still avoiding overpassing the total capacity.},
+  isbn = {978-1-4503-2172-3},
+  langid = {english},
+}
+
 %%% Modélisation de la conso
 
 @article{orgerieSurveyTechniquesImproving2014,
@@ -1778,10 +1866,10 @@
   pages = {1--31},
   issn = {0360-0300, 1557-7341},
   doi = {10.1145/2532637},
+  url = {https://doi.org/10.1145/2532637},
   urldate = {2022-10-12},
   abstract = {The great amounts of energy consumed by large-scale computing and network systems, such as data centers and supercomputers, have been a major source of concern in a society increasingly reliant on information technology. Trying to tackle this issue, the research community and industry have proposed myriad techniques to curb the energy consumed by IT systems. This article surveys techniques and solutions that aim to improve the energy efficiency of computing and network resources. It discusses methods to evaluate and model the energy consumed by these resources, and describes techniques that operate at a distributed system level, trying to improve aspects such as resource allocation, scheduling, and network traffic management. This work aims to review the state of the art on energy efficiency and to foster research on schemes to make network and computing resources more efficient.},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\P2LRMPFE\Orgerie et al. - 2014 - A survey on techniques for improving the energy ef.pdf}
 }
 
 %%% Wattmètres logiciels
@@ -1804,6 +1892,7 @@
   pages = {6670},
   issn = {2475-9066},
   doi = {10.21105/joss.06670},
+url = {https://doi.org/10.21105/joss.06670},
   urldate = {2024-07-09},
   abstract = {Software that we use daily for accessing digital services from connected devices has a negative impact on the environment as it consumes energy. These digital services, hosted by physical machines around the world, also contribute to planetary pollution. Unfortunately, providers of these online services mostly focus on hardware efficiency to reduce the environmental impact without considering the software they host. For this reason, we propose PowerAPI (G. Fieni, Romero, et al., 2024), a software-defined solution that delivers real-time estimations of software power consumption to spot opportunities to reduce it and therefore to limit their impact on the planet beyond hardware improvements.},
   copyright = {http://creativecommons.org/licenses/by/4.0/},
@@ -1821,6 +1910,7 @@
   publisher = {IEEE},
   address = {Bangalore, India},
   doi = {10.1109/CCGrid57682.2023.00020},
+  url = {https://doi.org/10.1109/CCGrid57682.2023.00020},
   urldate = {2024-07-09},
   abstract = {The global energy demand for digital activities is constantly growing. Computing nodes and cloud services are at the heart of these activities. Understanding their energy consumption is an important step towards reducing it. On one hand, physical power meters are very accurate in measuring energy but they are expensive, difficult to deploy on a large scale, and are not able to provide measurements at the service level. On the other hand, power models and vendor-specific internal interfaces are already available or can be implemented on existing systems. Plenty of tools, called software-based power meters, have been developed around the concepts of power models and internal interfaces, in order to report the power consumption at levels ranging from the whole computing node to applications and services. However, we have found that it can be difficult to choose the right tool for a specific need. In this work, we qualitatively and experimentally compare several software-based power meters able to deal with CPU or GPU-based infrastructures. For this purpose, we evaluate them against high-precision physical power meters while executing various intensive workloads. We extend this empirical study to highlight the strengths and limitations of each software-based power meter.},
   copyright = {https://doi.org/10.15223/policy-029},
@@ -1841,6 +1931,7 @@
   publisher = {ACM},
   address = {Heraklion Greece},
   doi = {10.1145/3342195.3387517},
+  url = {https://doi.org/10.1145/3342195.3387517},
   urldate = {2024-07-08},
   abstract = {This paper analyzes a newly-published trace that covers 8 different Borg [35] clusters for the month of May 2019. The trace enables researchers to explore how scheduling works in large-scale production compute clusters. We highlight how Borg has evolved and perform a longitudinal comparison of the newly-published 2019 trace against the 2011 trace, which has been highly cited within the research community.},
   isbn = {978-1-4503-6882-7},
@@ -1860,6 +1951,7 @@
   pages = {895--900},
   issn = {1758-678X, 1758-6798},
   doi = {10.1038/s41558-018-0282-y},
+  url = {https://doi.org/10.1038/s41558-018-0282-y},
   urldate = {2024-07-02},
   langid = {english},
 }
@@ -1877,6 +1969,7 @@
   pages = {9--11},
   issn = {0001-0782, 1557-7317},
   doi = {10.1145/1364782.1364786},
+  url = {https://doi.org/10.1145/1364782.1364786},
   urldate = {2024-07-05},
   abstract = {As software migrates from local PCs to distant Internet servers, users and developers alike go along for the ride.},
   langid = {english},
@@ -1886,6 +1979,20 @@
   title = {Serverless {{Network File Systems}}},
   author = {Anderson, E and Dahlin, D and Neefe, Jeanna M and Patterson, A and Roselli, S and Wang, Y},
   abstract = {In this paper, we propose a new paradigm for network file system design, serverless network ,file systems. While traditional netwc{\textasciitilde}rk file systems rely on a central server machine, a serverless system utilizes workstations cooperating as peers to provide all file system services. Any machine in the system can store, cache, or control any block of' data. Our approach uses this location illdepelldeIICe, in combination with fast local area networks, to proviclc better performance and scalability than traditional file systems. Further, because any machine in the system can assume the responsibilities of a failed component, our serverless clesign also provides high availability via redundant data storage. To demonstrate our approach, we have implemented a prototype serverless network file system called xFS. Preliminary performance measurements suggest that our architecture achieves its goal of scalability. For instance, in a 32-node xI\% system with 32 active clients, each client receives nearly as much read or write throughput as it would see if it were the only active client.},
+  langid = {english},
+}
+
+@article{meyerVirtualMachineTimesharing1970,
+  title = {A Virtual Machine Time-Sharing System},
+  author = {Meyer, R. A. and Seawright, L. H.},
+  year = {1970},
+  journal = {IBM Systems Journal},
+  volume = {9},
+  number = {3},
+  pages = {199--218},
+  issn = {0018-8670},
+  doi = {10.1147/sj.93.0199},
+  urldate = {2024-09-10},
   langid = {english},
 }
 
@@ -1901,11 +2008,11 @@
   pages = {7--18},
   issn = {1089-7801, 1941-0131},
   doi = {10.1109/MIC.2019.2952061},
+  url = {https://doi.org/10.1109/MIC.2019.2952061},
   urldate = {2024-07-04},
   abstract = {Microservices, containers, and serverless computing belong to a trend toward applications composed of many small, self-contained, and automatically managed components. Core to serverless computing, Function-as-a-Service (FaaS) platforms employ state-of-the-art container technology and microservices-based architectures to enable users to manage complex applications without the need for systems-level expertise. Victim of its own success, and partially due to proprietary technology, currently the community has a limited overview of these platforms. To address this, we propose a reference architecture and ecosystem for FaaS platforms. Based on a year-long survey of real-world platforms conducted within the SPEC-RG Cloud Group, we highlight specific components and identify common operational patterns.},
   copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\APCFBJV6\Van Eyk et al. - 2019 - The SPEC-RG Reference Architecture for FaaS From .pdf}
 }
 
 @article{herbstElasticityCloudComputing,
@@ -1913,7 +2020,6 @@
   author = {Herbst, Nikolas Roman and Kounev, Samuel and Reussner, Ralf},
   abstract = {Originating from the field of physics and economics, the term elasticity is nowadays heavily used in the context of cloud computing. In this context, elasticity is commonly understood as the ability of a system to automatically provision and deprovision computing resources on demand as workloads change. However, elasticity still lacks a precise definition as well as representative metrics coupled with a benchmarking methodology to enable comparability of systems. Existing definitions of elasticity are largely inconsistent and unspecific, which leads to confusion in the use of the term and its differentiation from related terms such as scalability and efficiency; the proposed measurement methodologies do not provide means to quantify elasticity without mixing it with efficiency or scalability aspects. In this short paper, we propose a precise definition of elasticity and analyze its core properties and requirements explicitly distinguishing from related terms such as scalability and efficiency. Furthermore, we present a set of appropriate elasticity metrics and sketch a new elasticity tailored benchmarking methodology addressing the special requirements on workload design and calibration.},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\7G3UM8YC\Herbst et al. - Elasticity in Cloud Computing What It Is, and Wha.pdf}
 }
 
 @inproceedings{straesserWhyItNot2022,
@@ -1927,11 +2033,11 @@
   publisher = {ACM},
   address = {Beijing China},
   doi = {10.1145/3489525.3511680},
+  url = {https://doi.org/10.1145/3489525.3511680},
   urldate = {2024-07-04},
   abstract = {Autoscaling is a task of major importance in the cloud computing domain as it directly affects both operating costs and customer experience. Although there has been active research in this area for over ten years now, there is still a significant gap between the proposed methods in the literature and the deployed autoscalers in practice. Hence, many research autoscalers do not find their way into production deployments. This paper describes six core challenges that arise in production systems that are still not solved by most research autoscalers. We illustrate these problems through experiments in a realistic cloud environment with a real-world multi-service business application and show that commonly used autoscalers have various shortcomings. In addition, we analyze the behavior of overloaded services and show that these can be problematic for existing autoscalers. Generally, we analyze that these challenges are only insufficiently addressed in the literature and conclude that future scaling approaches should focus on the needs of production systems.},
   isbn = {978-1-4503-9143-6},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\2LVI9DLW\Straesser et al. - 2022 - Why Is It Not Solved Yet Challenges for Producti.pdf}
 }
 
 %% Ajouts optimisation
@@ -1961,6 +2067,7 @@
   pages = {853--862},
   issn = {1615-147X, 1615-1488},
   doi = {10.1007/s00158-009-0460-7},
+  url = {https://doi.org/10.1007/s00158-009-0460-7},
   urldate = {2024-07-15},
   abstract = {As a common concept in multi-objective optimization, minimizing a weighted sum constitutes an independent method as well as a component of other methods. Consequently, insight into characteristics of the weighted sum method has far reaching implications. However, despite the many published applications for this method and the literature addressing its pitfalls with respect to depicting the Pareto optimal set, there is little comprehensive discussion concerning the conceptual significance of the weights and techniques for maximizing the effectiveness of the method with respect to a priori articulation of preferences. Thus, in this paper, we investigate the fundamental significance of the weights in terms of preferences, the Pareto optimal set, and objective-function values. We determine the factors that dictate which solution point results from a particular set of weights. Fundamental deficiencies are identified in terms of a priori articulation of preferences, and guidelines are provided to help avoid blind use of the method.},
   copyright = {http://www.springer.com/tdm},
@@ -1982,11 +2089,11 @@
   pages = {1068--1093},
   issn = {0018-9219, 1558-2256},
   doi = {10.1109/JPROC.2020.2983857},
+  url = {https://doi.org/10.1109/JPROC.2020.2983857},
   urldate = {2024-07-04},
   abstract = {Modern distributed systems and Internet-of-Things applications are governed by fast living and changing requirements. Moreover, they have to struggle with huge amounts of data that they create or have to process. To improve the self-awareness of such systems and enable proactive and autonomous decisions, reliable time series forecasting methods are required. However, selecting a suitable forecasting method for a given scenario is a challenging task. According to the ``No-Free-Lunch Theorem,'' there is no general forecasting method that always performs best. Thus, manual feature engineering remains to be a mandatory expert task to avoid trial and error. Furthermore, determining the expected time-to-result of existing forecasting methods is a challenge. In this article, we extensively assess the state-of-the-art in time series forecasting. We compare existing methods and discuss the issues that have to be addressed to enable their use in a self-aware computing context. To address these issues, we present a step-by-step approach to fully automate the feature engineering and forecasting process. Then, following the principles from benchmarking, we establish a level-playing field for evaluating the accuracy and time-to-result of automated forecasting methods for a broad set of application scenarios. We provide results of a benchmarking competition to guide in selecting and appropriately using existing forecasting methods for a given self-aware computing context. Finally, we present a case study in the area of self-aware data-center resource management to exemplify the benefits of fully automated learning and reasoning processes on time series data.},
   copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\IPB9ENMJ\Bauer et al. - 2020 - Time Series Forecasting for Self-Aware Systems.pdf}
 }
 
 @misc{eismannSizelessPredictingOptimal2021,
@@ -2004,7 +2111,6 @@
   archiveprefix = {arxiv},
   langid = {english},
   keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Software Engineering,D.2.0,I.6.0},
-  file = {C:\Users\vlannurien\Zotero\storage\LFCDE3GR\Eismann et al. - 2021 - Sizeless Predicting the optimal size of serverles.pdf}
 }
 
 @misc{leeSPESOptimizingPerformanceResource2024a,
@@ -2037,12 +2143,113 @@
   abstract = {Microservice is an architectural style widely adopted in various latency-sensitive cloud applications. Similar to the monolith, autoscaling has attracted the attention of operators for managing the resource utilization of microservices. However, it is still challenging to optimize resources in terms of latency service-level-objective (SLO) without human intervention. In this paper, we present GRAF, a graph neural networkbased SLO-aware proactive resource autoscaling framework for minimizing total CPU resources while satisfying latency SLO. GRAF leverages front-end workload, distributed tracing data, and machine learning approaches to (a) observe/estimate the impact of traffic change (b) find optimal resource combinations (c) make proactive resource allocation. Experiments using various open-source benchmarks demonstrate that GRAF successfully targets latency SLO while saving up to 19\% of total CPU resources compared to the fine-tuned autoscaler. GRAF also handles a traffic surge with 36\% fewer resources while achieving up to 2.6x faster tail latency convergence compared to the Kubernetes autoscaler. Moreover, we verify the scalability of GRAF on large-scale deployments, where GRAF saves 21.6\% and 25.4\% for CPU resources and memory resources, respectively.},
   copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\QLGSGUSZ\Park et al. - 2024 - Graph Neural Network-Based SLO-Aware Proactive Res.pdf}
 }
 
 %% Ajouts limites
 
 % Passage à l'échelle
+
+@inproceedings{rzadcaAutopilotWorkloadAutoscaling2020,
+  title = {Autopilot: Workload Autoscaling at {{Google}}},
+  shorttitle = {Autopilot},
+  booktitle = {Proceedings of the {{Fifteenth European Conference}} on {{Computer Systems}}},
+  author = {Rzadca, Krzysztof and Findeisen, Pawel and Swiderski, Jacek and Zych, Przemyslaw and Broniek, Przemyslaw and Kusmierek, Jarek and Nowak, Pawel and Strack, Beata and Witusowski, Piotr and Hand, Steven and Wilkes, John},
+  year = {2020},
+  month = apr,
+  pages = {1--16},
+  publisher = {ACM},
+  address = {Heraklion Greece},
+  doi = {10.1145/3342195.3387524},
+  urldate = {2024-09-10},
+  abstract = {In many public and private Cloud systems, users need to specify a limit for the amount of resources (CPU cores and RAM) to provision for their workloads. A job that exceeds its limits might be throttled or killed, resulting in delaying or dropping end-user requests, so human operators naturally err on the side of caution and request a larger limit than the job needs. At scale, this results in massive aggregate resource wastage.},
+  isbn = {978-1-4503-6882-7},
+  langid = {english},
+}
+
+%%%% Horizontal
+@inproceedings{al-faresHederaDynamicFlow,
+  title = {Hedera: {{Dynamic Flow Scheduling}} for {{Data Center Networks}}},
+  author = {{Al-Fares}, Mohammad and Radhakrishnan, Sivasankar and Raghavan, Barath and Huang, Nelson and Vahdat, Amin},
+  booktitle = {7th USENIX Symposium on Networked Systems Design and Implementation (NSDI 10)},
+  year = {2010},
+  address = {San Jose, CA},
+  url = {https://www.usenix.org/conference/nsdi10-0/hedera-dynamic-flow-scheduling-data-center-networks},
+  publisher = {USENIX Association},
+  month = apr,
+  abstract = {Today's data centers offer tremendous aggregate bandwidth to clusters of tens of thousands of machines. However, because of limited port densities in even the highest-end switches, data center topologies typically consist of multi-rooted trees with many equal-cost paths between any given pair of hosts. Existing IP multipathing protocols usually rely on per-flow static hashing and can cause substantial bandwidth losses due to longterm collisions.},
+  langid = {english},
+}
+@article{lakshmanCassandraDecentralizedStructured2010,
+  title = {Cassandra: A Decentralized Structured Storage System},
+  shorttitle = {Cassandra},
+  author = {Lakshman, Avinash and Malik, Prashant},
+  year = {2010},
+  month = apr,
+  journal = {ACM SIGOPS Operating Systems Review},
+  volume = {44},
+  number = {2},
+  pages = {35--40},
+  issn = {0163-5980},
+  doi = {10.1145/1773912.1773922},
+  urldate = {2024-09-10},
+  abstract = {Cassandra is a distributed storage system for managing very large amounts of structured data spread out across many commodity servers, while providing highly available service with no single point of failure. Cassandra aims to run on top of an infrastructure of hundreds of nodes (possibly spread across different data centers). At this scale, small and large components fail continuously. The way Cassandra manages the persistent state in the face of these failures drives the reliability and scalability of the software systems relying on this service. While in many ways Cassandra resembles a database and shares many design and implementation strategies therewith, Cassandra does not support a full relational data model; instead, it provides clients with a simple data model that supports dynamic control over data layout and format. Cassandra system was designed to run on cheap commodity hardware and handle high write throughput while not sacrificing read efficiency.},
+  langid = {english},
+}
+@inproceedings{weilCephScalableHighPerformance,
+  title = {Ceph: {{A Scalable}}, {{High-Performance Distributed File System}}},
+  author = {Weil, Sage A and Brandt, Scott A and Miller, Ethan L and Long, Darrell D E and Maltzahn, Carlos},
+  booktitle = {7th USENIX Symposium on Operating Systems Design and Implementation (OSDI 06)},
+  year = {2006},
+  address = {Seattle, WA},
+  url = {https://www.usenix.org/conference/osdi-06/ceph-scalable-high-performance-distributed-file-system},
+  publisher = {USENIX Association},
+  month = nov,
+  abstract = {We have developed Ceph, a distributed file system that provides excellent performance, reliability, and scalability. Ceph maximizes the separation between data and metadata management by replacing allocation tables with a pseudo-random data distribution function (CRUSH) designed for heterogeneous and dynamic clusters of unreliable object storage devices (OSDs). We leverage device intelligence by distributing data replication, failure detection and recovery to semi-autonomous OSDs running a specialized local object file system. A dynamic distributed metadata cluster provides extremely efficient metadata management and seamlessly adapts to a wide range of general purpose and scientific computing file system workloads. Performance measurements under a variety of workloads show that Ceph has excellent I/O performance and scalable metadata management, supporting more than 250,000 metadata operations per second.},
+  langid = {english},
+}
+%%%% Vertical
+@inproceedings{boyd-wickizerAnalysisLinuxScalability,
+  title = {An {{Analysis}} of {{Linux Scalability}} to {{Many Cores}}},
+  author = {{Boyd-Wickizer}, Silas and Clements, Austin T and Mao, Yandong and Pesterev, Aleksey and Kaashoek, M Frans and Morris, Robert and Zeldovich, Nickolai},
+  booktitle = {9th USENIX Symposium on Operating Systems Design and Implementation (OSDI 10)},
+  year = {2010},
+  address = {Vancouver, BC},
+  url = {https://www.usenix.org/conference/osdi10/analysis-linux-scalability-many-cores},
+  publisher = {USENIX Association},
+  month = oct,
+  abstract = {This paper analyzes the scalability of seven system applications (Exim, memcached, Apache, PostgreSQL, gmake, Psearchy, and MapReduce) running on Linux on a 48core computer. Except for gmake, all applications trigger scalability bottlenecks inside a recent Linux kernel. Using mostly standard parallel programming techniques---this paper introduces one new technique, sloppy counters---these bottlenecks can be removed from the kernel or avoided by changing the applications slightly. Modifying the kernel required in total 3002 lines of code changes. A speculative conclusion from this analysis is that there is no scalability reason to give up on traditional operating system organizations just yet.},
+  langid = {english},
+}
+@inproceedings{linderOracleParallelRDBMS1993,
+  title = {Oracle Parallel {{RDBMS}} on Massively Parallel Systems},
+  booktitle = {[1993] {{Proceedings}} of the {{Second International Conference}} on {{Parallel}} and {{Distributed Information Systems}}},
+  author = {Linder, B.},
+  year = {1993},
+  pages = {67--68},
+  publisher = {IEEE Comput. Soc. Press},
+  address = {San Diego, CA, USA},
+  doi = {10.1109/PDIS.1993.253071},
+  urldate = {2024-09-10},
+  abstract = {Over the past ten years data storage systems in both the commercial and scientific realms have experienced what can be called an "Information Explosion." This exponential increase in the demand for storage and access to data is the result of fundamental changes in the economics of underlying technologies. The speed and accuracy of data collection has more than doubled. The speed of data transmission has risen an order of magnitude while price has halved. The cost per megabyte of permanent storage has dropped by an order of magnitude. Client desktop computers have gone from .5 MIPS to 100 MIPS. These underlying factors have created user demands for data servers of unprecedented proportions. Oracle relational database technology implemented on Massively Parallel hardware architectures allows both OLTP and Decsision support on the same database image. Both queries and transaction processing power scale linearly on MPP platforms. This technology delivers scalable RDBMS super-servers.},
+  isbn = {978-0-8186-3330-0},
+  langid = {english},
+}
+@article{xian-hesunScalabilityParallelAlgorithmmachine1994,
+  title = {Scalability of Parallel Algorithm-Machine Combinations},
+  author = {{Xian-He Sun} and Rover, D.T.},
+  year = {1994},
+  month = jun,
+  journal = {IEEE Transactions on Parallel and Distributed Systems},
+  volume = {5},
+  number = {6},
+  pages = {599--613},
+  issn = {10459219},
+  doi = {10.1109/71.285606},
+  urldate = {2024-09-10},
+  abstract = {Scalability has become an important consideration in parallel algorithm and machine designs. The word scalable, or scalability, has been widely and often used in the parallel processingcommunity. However, there is no adequate, commonly accepted definition of scalability available. Scalabilities of computer systems and programs are difficult to quantify, evaluate, and compare. In this paper, scalability is formally defined for algorithm-machine combinations.A practical method is proposed to provide a quantitative measurement of the scalability. The relationbetween the newly proposed scalability and other existing parallel performance metrics is studied. A harmony between speedup and scalability has been observed. Theoretical results show that a large class of algorithm-machine combinations is scalable and the scalability can be predictedthrough premeasured machine parameters. Two algorithms have been studied on an ,)CUBE 2 mullicomputer and on a MasPar MP-1 computer. These case studies have shown how scalabilitiescan be measured, computed,and predicted.Performanceinstrumentationand visualization tools also have been used and developed to understand the scalability related behavior.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  langid = {english},
+}
 
 @inproceedings{straesserPowerApplicationsVision2023,
   title = {Power to the {{Applications}}: {{The Vision}} of {{Continuous Decentralized Autoscaling}}},
@@ -2060,7 +2267,6 @@
   copyright = {https://doi.org/10.15223/policy-029},
   isbn = {9798350302080},
   langid = {english},
-  file = {C:\Users\vlannurien\Zotero\storage\9B5ZSMLN\Straesser et al. - 2023 - Power to the Applications The Vision of Continuou.pdf}
 }
 
 %% Ajouts sécu (Quentin)
