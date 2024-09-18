@@ -1,30 +1,40 @@
 \chapter{Conclusion et perspectives}
 \label{chapter:conclusion}
-%\addcontentsline{toc}{chapter}{Conclusion et perspectives}
-%\chaptermark{Conclusion et perspectives}
+
+TODO: Le modèle serverless constitue un changement radical dans le cloud, en offrant aux utilisateurs la possibilité de déployer leurs applications sans se préoccuper de la gestion des ressources matérielles sous-jacentes, tout en bénéficiant d'une facturation à une granularité fine. Les fournisseurs de services, quant à eux, peuvent tirer parti des mécanismes d'allocation et de placement dynamiques pour mettre en œuvre des politiques de gestion intelligentes des ressources. À condition de prendre en considération les caractéristiques des applications déployées, et en s'appuyant sur l'hétérogénéité du matériel dans leurs centres de données, il est possible de mener des stratégies d'orchestration optimisées pour la qualité de service, tout en réduisant la consommation d'énergie de leurs infrastructures.
+
+TODO: Dans ce dernier chapitre, nous faisons le résumé des contributions de cette thèse, avant de discuter de certaines limites que nous avons identifiées dans nos travaux. Nous concluons ce manuscrit par une discussion des travaux futurs.
 
 \section{Résumé des contributions}
-%\addcontentsline{toc}{section}{Résumé des contributions}
+\label{section:conclusion-summary}
+
+TODO: ...
 
 \section{Limites des contributions}
-%\addcontentsline{toc}{section}{Limites des contributions}
+\label{section:conclusion-limits}
 
-Contention : \cite{vanbeekCPUContentionPredictor2019} \cite{jacquetSweetspotVMOversubscribingCPU}
+TODO: Plusieurs hypothèses ont été dressées au sujet du comportement des tâches et la plateforme considérée dans nos contributions.
 
-Interférences : \cite{kohAnalysisPerformanceInterference2007} \cite{vardasImprovedParallelApplication}
+TODO: Nous n'avons pas pris en compte les phénomènes de \textbf{contention}~\cite{vanbeekCPUContentionPredictor2019, jacquetSweetspotVMOversubscribingCPU} que l'on peut observer lorsque des tâches sont en compétition pour des ressources matérielles partagées. Cette contention produit des \textbf{interférences}~\cite{kohAnalysisPerformanceInterference2007} \cite{vardasImprovedParallelApplication} qui dégradent la qualité de service pour les utilisateurs. Par exemple, le problème des \textit{voisins bruyants} (ou \textit{noisy neighbors}) est bien connu dans le cloud~\cite{robbagbyAntimodeleVoisinBruyant} : l'activité d'un utilisateur peut dégrader les performances d'autres applications, déployées pour des utilisateurs partageant un même nœud de calcul. Ce phénomène s'observe lorsque la somme de l'utilisation des ressources atteint ou dépasse les capacités réelles des ressources matérielles du nœud. Les fournisseurs de services optent parfois pour des stratégies qui consistent à répartir les applications sur les nœuds en fonction de leurs caractéristiques en matière d'utilisation des ressources. Par exemple, il convient de distribuer sur des nœuds différents les applications respectivement intensives en calcul, en mémoire et en stockage, de manière à lisser l'usage de chacune de ces ressources et ainsi limiter les risques de les saturer sur les mêmes nœuds.
 
-Pannes : \cite{javadiFailureTraceArchive2013, galletModelSpaceCorrelatedFailures2010}
+TODO: Par ailleurs, dans des infrastructures distribuées comme celles des fournisseurs de services cloud, de nombreuses \textbf{pannes}~\cite{javadiFailureTraceArchive2013, galletModelSpaceCorrelatedFailures2010} se produisent et n'ont pas été prises en compte dans nos contributions. Afin de mitiger les effets néfastes des pannes matérielles, les fournisseurs de services ont recours à la réplication et à la migration~\cite{}. Ces mécanismes soulèvent d'autres problèmes : par exemple, dans le cas de la réplication, se pose la question de la cohérence des données répliquées sur les différents nœuds~\cite{} ; dans le cas de la migration des tâches, un surcoût en latence peut dramatiquement dégrader la qualité de service~\cite{}. Ces éléments devraient être pris en compte dans le cadre d'études de cas à plus grande échelle que les travaux qui ont été menés au cours de cette thèse.
 
-Modèle de coût étendu : exemple, coût pour la société (carbone, eau) \cite{rickeCountrylevelSocialCost2018}
+TODO: Enfin, nous avons étudié des applications présentant des motifs d'utilisation dits interactifs. Nous ne nous sommes pas intéressés à des motifs mixtes, c'est-à-dire des cas dans lesquels les usages interactifs côtoient les usages en lots. Ces situations pourraient faire émerger de nouveaux problèmes de performances...
 
-Complexité, passage à l'échelle : les noeuds remontent leur niveau de charge et leurs décisions de scaling à l'orchestrateur \cite{straesserPowerApplicationsVision2023} + job pulling ?
+TODO: La plateforme serverless que nous avons décrite au cours des chapitres~\ref{chapter:herofake} et~\ref{chapter:herocache} repose sur une \textbf{phase hors-ligne} de caractérisation des fonctions à déployer. Ce mécanisme aurait bien du mal à passer à l'échelle, dans le cadre d'une plateforme généraliste, avec de nombreux utilisateurs.
 
-Dimension spatiale : zones géographiques
+TODO: On peut imaginer récolter les métadonnées des fonctions au fur et à mesure de leur exécution, en appliquant une stratégie \textit{best effort} avant d'avoir récolté suffisamment de mesures pour diriger finement les allocations de ressources et les placements de requêtes pour ces fonctions. Concernant la mesure de la consommation d'énergie, des wattmètres logiciels comme PowerAPI~\cite{fieniPowerAPIPythonFramework2024}, EcoFloc~\cite{valeraEnergySavingPerspective}, Scaphandre~\footnote{\href{https://github.com/hubblo-org/scaphandre}{https://github.com/hubblo-org/scaphandre}} et d'autres~\cite{jayExperimentalComparisonSoftwarebased2023} sont disponibles sous licences libres, et pourraient être intégrés au niveau de la plateforme à la chaîne de récolte des métadonnées.
 
-Traces d'exécution : Poisson vs bursty
+TODO: La complexité des algorithmes que nous avons proposés est également une limite forte à la capacité pour nos stratégies de passer à l'échelle dans de grandes infrastructures. En effet, nos algorithmes sont gloutons : à chaque décision, l'espace des solutions est entièrement exploré afin de choisir celle qui minimise les coûts pour le fournisseur de services. Cela n'a pas posé de problème lors de nos études de cas, qui se sont concentrées sur des infrastructures de tailles restreintes, pour un faible nombre d'applications à déployer.
+
+TODO: Il serait intéressant d'explorer l'usage d'heuristiques pour diminuer le temps de la recherche de solutions. Nous avons commencé à travailler sur une stratégie exploitant l'apprentissage par renforcement...
+
+TODO: Dans la littérature, d'autres auteurs renversent le problème, en proposant des plateformes dans lesquelles les nœuds remontent leur niveau de charge et leurs décisions de mises à l'échelle à l'orchestrateur \cite{straesserPowerApplicationsVision2023}...
 
 \section{Travaux futurs}
-%\addcontentsline{toc}{section}{Travaux futurs}
+\label{section:conclusion-perspectives}
+
+TODO: Court terme
 
 % Our next contribution will leverage Q-Learning to explore the design of an autonomous agent which efficiently rightsizes resources allocations on the serverless platform. It will make use of time series prediction to allow timely, proactive autoscaling. This agent will be evaluated in the simulator, showcasing the variety of policies that can be implemented with our tool.
 
@@ -32,5 +42,11 @@ Prédiction sur séries temporelles : \cite{bauerTimeSeriesForecasting2020}
 
 Allocation proactive : \cite{parkGraphNeuralNetworkBased2024}
 
-\section{Remarques finales}
-%\addcontentsline{toc}{section}{Remarques finales}
+TODO: Moyen terme
+
+Modèle de coût étendu : exemple, coût pour la société (carbone, eau) \cite{rickeCountrylevelSocialCost2018}
+
+ % Par ailleurs, sur les aspects réglementaires, de nouvelles exigences émergent en matière de mesure de la consommation d'énergie et de l'empreinte carbone pour les opérateurs de centres de données~\cite{davisUptimeInstituteGlobal2022}. % La granularité offerte par le serverless devrait permettre aux fournisseurs de service une plus grande traçabilité sur les postes de consommation d'énergie au sein de leurs centres de données.
+
+TODO: Long terme
+À quels autres domaines / quels autres sujets peut s'appliquer la problématique de recherche ?

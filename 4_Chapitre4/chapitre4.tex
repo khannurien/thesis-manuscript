@@ -1,21 +1,9 @@
 \chapter{HeROfake : Orchestration serverless sur ressources hétérogènes pour le cloud privé}
 \label{chapter:herofake}
 
-% TODO: traduction française des figures
-
 % TODO: détails sur la normalisation + scalarization~\cite{ehrgottMulticriteriaOptimization882005}
 
 % TODO: détails sur Weighted Sum Method pour la résolution MOO + pourquoi pas ILP ? etc. + problème du front de Pareto avec WSM~\cite{marlerWeightedSumMethod2010} : comment choisir une solution plutôt qu'une autre ?
-
-% TODO: phase hors-ligne : wattmètres logiciels comme PowerAPI~\cite{fieniPowerAPIPythonFramework2024}, EcoFloc~\cite{valeraEnergySavingPerspective}, Scaphandre et d'autres~\cite{jayExperimentalComparisonSoftwarebased2023}
-
-% \section{Introduction}
-% \label{section:herofake-introduction}
-
-% \textbf{Modèle serverless}. Le serverless peut être compris à la fois comme un modèle de programmation, appelé Function as a Service (FaaS), et comme un modèle de déploiement pour le cloud. Dans un tel modèle, les développeurs conçoivent leurs applications comme une composition de fonctions sans état dont l'exécution est pilotée par des évènements~\cite{SchleierSmith2021WhatSC}. 
-% Les services serverless libèrent les locataires d'une réservation complexe des ressources, car ils sont conçus pour gérer les exigences de mise à l'échelle à la demande.
-
-% Dans le modèle FaaS, les fournisseurs ne facturent les clients qu'en fonction de leur utilisation réelle des ressources~\cite{jonasCloudProgrammingSimplified2019}. Ils sont entièrement responsables du déploiement d'une gestion intelligente des ressources et du multiplexage à une granularité plus fine afin d'optimiser les mesures de qualité de service (QoS) telles que le temps de réponse, la consommation d'énergie, etc.
 
 \section{Introduction}
 \label{section:herofake-introduction}
@@ -23,7 +11,7 @@
 Dans le chapitre précédent, nous avons vu que certaines classes d'applications semblent particulièrement adaptées aux déploiements serverless. Pourtant, des défis entravent l'efficacité-coût du modèle et restent ouverts dans l'état de l'art. Dans ce chapitre, nous présentons notre première contribution, dans laquelle nous essayons d'apporter une réponse à la question suivante : 
 
 \boitemagique{Question 1 (\textbf{QR1})}{
-    Comment dimensionner les allocations dynamiques de ressources hétérogènes pour une application simple, constituée de fonctions sans dépendances, et comment ordonnancer efficacement les requêtes des utilisateurs, lorsque ces derniers ont des besoins variés en matière de qualité de service ?
+    Comment dimensionner les allocations dynamiques de ressources hétérogènes pour une application simple, constituée de fonctions de courte durée, et comment ordonnancer efficacement les requêtes des utilisateurs, lorsque ces derniers ont des besoins variés en matière de qualité de service ?
 }
 
 Pour relever les défis rencontrés par le fournisseur de services dans le cadre du déploiement d'applications dans le paradigme serverless, nous avons commencé par nous intéresser au cas d'applications simples. Ces applications sont composées d'une unique fonction, et ne présentent donc pas de dépendances temporelles ou de données. En particulier, le cas des applications dites \textit{interactives} est intéressant : contrairement aux applications de traitements dits \textit{par lot}, les applications interactives présentent des motifs d'utilisation irréguliers, dépendant du comportement des utilisateurs, souvent difficile à anticiper ou à prédire avec précision~\cite{shahradServerlessWildCharacterizing, cncf2018whitepaper}. Ces applications sont sensibles à la latence, car leur exécution est dirigée par un évènement (une requête) ; toutefois, leurs utilisateurs peuvent avoir des exigences variées, et tolérer des écarts en matière de temps de réponse~\cite{buyyaSLAorientedResourceProvisioning2011}.
@@ -40,9 +28,9 @@ Le problème que nous tentons de résoudre dans ce chapitre est de déterminer c
     \centering
     \caption{État de l'art des solutions de déploiement avec mise à l'échelle automatique pour des tâches de courte durée.}
     \resizebox{\textwidth}{!}{
-        \begin{tabular}{lccccccc}
+        \begin{tabular}{lYYYYYYY}
             \toprule
-            & Serverless & Déploiement cible & SLA & Hétérogénéité matérielle & Usage des ressources & Énergie & Conscient du coût \\
+            & Serverless & Déploiement cible & \gls{SLA} & Hétérogénéité matérielle & Utilisation des ressources & Énergie & Conscient du coût \\
             \cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}\cmidrule(lr){7-7}\cmidrule(lr){8-8}
             Swayam~\cite{gujaratiSwayamDistributedAutoscaling2017}        & \xmark         & Public (Azure) & \cmark& \xmark                     & \cmark            & \xmark                 & \xmark         \\
             Pigeon~\cite{lingPigeonDynamicEfficient2019}                  & \cmark       & Privé                   & \xmark  & \cmark                   & \cmark            & \xmark                 & \xmark         \\
@@ -59,12 +47,13 @@ Le problème que nous tentons de résoudre dans ce chapitre est de déterminer c
 \end{table*}
 
 % \textbf{État de l'art}.
-De précédentes études ont exploré le besoin d'une plateforme de mise à l'échelle automatique (ou \textit{autoscaling}) qui prend en charge les tâches de courte durée, à l'image de l'inférence. Le tableau~\ref{table:herofake-sota} résume les différences entre ces solutions et la plateforme cible que nous essayons de proposer ; la section~\ref{section:herofake-sota} rentre plus amplement dans le détail. Bien que de nombreuses contributions aient établi la nécessité de l'accélération à la demande pour garantir le temps de réponse des fonctions, aucune n'a mesuré l'impact de l'utilisation de ressources hétérogènes sur la consommation d'énergie dynamique. En outre, les études précédentes considèrent la consolidation des tâches comme un moyen de libérer des ressources pour d'autres calculs -- nous soutenons que ces techniques ouvrent des possibilités pour le fournisseur de services d'appliquer des politiques d'économie d'énergie dans le cloud privé. Enfin, comme les plateformes serverless sont des briques logicielles généralistes, conçues pour être hautement configurables, nous souhaitons proposer une solution basée sur les coûts, qui permette au fournisseur de faire des choix de configuration cohérents étant donnés ses objectifs d'optimisation.
+De précédentes études ont exploré le besoin d'une plateforme de mise à l'échelle automatique (ou \textit{autoscaling}) qui prend en charge les tâches de courte durée, à l'image de l'inférence. Le tableau~\ref{table:herofake-sota} résume les différences entre ces solutions et la plateforme cible que nous essayons de proposer ; de plus amples détails sont donnés dans le chapitre~\ref{chapter:sota} en section~\ref{section:sota-herofake}. Bien que de nombreuses contributions aient établi la nécessité de l'accélération à la demande pour garantir le temps de réponse des fonctions, aucune n'a mesuré l'impact de l'utilisation de ressources hétérogènes sur la consommation d'énergie dynamique. En outre, les études précédentes considèrent la consolidation des tâches comme un moyen de libérer des ressources pour d'autres calculs -- nous soutenons que ces techniques ouvrent des possibilités pour le fournisseur de services d'appliquer des politiques d'économie d'énergie dans le cloud privé. Enfin, comme les plateformes serverless sont des briques logicielles généralistes, conçues pour être hautement configurables, nous souhaitons proposer une solution basée sur les coûts, qui permette au fournisseur de faire des choix de configuration cohérents étant donnés ses objectifs d'optimisation.
 
 % \textbf{Notre contribution}.
 Nous soutenons qu'utiliser de manière opportuniste des accélérateurs matériels (GPU et FPGA) pour déployer des tâches de détection de deepfake peut permettre à un fournisseur de services cloud de garantir le temps de réponse des tâches et d'atteindre les SLA tout en réduisant l'utilisation des ressources et la consommation d'énergie. Dans ce chapitre, nous proposons \textbf{HeROfake} (pour \textit{\textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration for deep\textbf{fake} detection}), un framework complet pour déployer une application de détection de deepfake dans un cloud serverless. Ce framework comprend une phase hors-ligne et une phase en ligne. Durant la \textbf{phase hors-ligne}, nous caractérisons des plateformes matérielles hétérogènes et des tâches d'inférence en matière de performances et de consommation d'énergie. Durant la \textbf{phase en ligne}, notre orchestrateur se charge de passer automatiquement à l'échelle les fonctions déployées, et ordonnance les requêtes utilisateur de manière à utiliser efficacement les ressources matérielles à disposition pour atteindre les accords de niveau de service par requête, tout en réduisant la consommation d'énergie totale de la plateforme.
 
-Ce chapitre est organisé comme suit : d'abord, nous motivons notre approche dans une première section~\ref{section:herofake-motivation}. Dans la section~\ref{section:herofake-deepfake}, nous présentons le modèle de plateforme global pour le projet. Dans la section~\ref{section:herofake-offline}, nous décrivons la phase hors-ligne de caractérisation des plateformes d'exécution et des tâches d'inférence. Dans la section~\ref{section:herofake-online}, nous rappelons les défis liés à l'orchestration dynamique de ressources hétérogènes lors de la phase en ligne, puis nous décrivons notre modèle de tâches et les politiques d'allocation et d'ordonnancement de l'orchestrateur. La section~\ref{section:herofake-evaluation} présente notre méthodologie d'évaluation et l'analyse des résultats expérimentaux. La section~\ref{section:herofake-sota} donne des détails concernant notre étude de l'état de l'art sur les plateformes d'autoscaling. Enfin, nous concluons dans la section~\ref{section:herofake-conclusion} et donnons quelques perspectives pour des travaux futurs.
+Ce chapitre est organisé comme suit : d'abord, nous motivons notre approche dans une première section~\ref{section:herofake-motivation} ; la section~\ref{section:herofake-deepfake} présente le modèle de plateforme global pour le projet ; la section~\ref{section:herofake-offline} décrit la phase hors-ligne de caractérisation des plateformes d'exécution et des tâches d'inférence ; la section~\ref{section:herofake-online} rappelle les défis liés à l'orchestration dynamique de ressources hétérogènes lors de la phase en ligne, puis décrit notre modèle de tâches et les politiques d'allocation et d'ordonnancement de l'orchestrateur ; la section~\ref{section:herofake-evaluation} présente notre méthodologie d'évaluation et l'analyse des résultats expérimentaux ; enfin, la section~\ref{section:herofake-conclusion} conclut le chapitre et donne quelques perspectives pour des travaux futurs.
+% La section~\ref{section:herofake-sota} donne des détails concernant notre étude de l'état de l'art sur les plateformes d'autoscaling.
 
 \section{Motivation}
 \label{section:herofake-motivation}
@@ -99,8 +88,6 @@ L'infrastructure du fournisseur de cloud est modélisée comme un ensemble de \t
 \label{model:nodes}
 
 Un nœud est un serveur disponible dans l'infrastructure du fournisseur de services. Dans ce travail, nous ne tenons pas compte de la localité du stockage et des données. Les données d'entrée sont toujours fournies \textit{via} le téléchargement de fichiers par l'utilisateur au moment de sa requête. Nous considérons une durée uniforme pour ce téléchargement, qui est incluse dans le temps d'exécution total de la fonction. Ainsi, la seule caractéristique qui définit un nœud dans notre modèle d'infrastructure est la taille de la mémoire dédiée. Un nœud est constitué d'un ensemble de plateformes d'exécution définies ci-après.
-
-TODO: C-states ?
 
 \subsubsection{Plateformes d'exécution}
 \label{model:platforms}
@@ -141,9 +128,9 @@ L'\textbf{ordonnanceur} tente ensuite de planifier une tâche (c'est-à-dire l'i
 \section{Phase hors-ligne : mesures et extraction des métadonnées}
 \label{section:herofake-offline}
 
-TODO: Dans cette section, nous détaillons notre méthodologie et donnons les résultats de la campagne de mesures menée dans le but de caractériser les plateformes d'exécution ainsi que les tâches considérées dans cette contribution.
+Dans cette section, nous détaillons notre méthodologie et donnons les résultats de la campagne de mesures menée dans le but de caractériser les plateformes d'exécution ainsi que les tâches considérées dans cette contribution.
 
-TODO: Ces travaux ont été menés conjointement avec une équipe d'ingénieurs à l'IRT b{\textless\textgreater}com, co-auteurs de la publication associée à ce chapitre~\cite{herofake}.
+Ces travaux ont été menés conjointement avec une équipe d'ingénieurs à l'IRT b{\textless\textgreater}com, co-auteurs de la publication associée à ce chapitre~\cite{herofake}.
 
 \subsection{Caractérisation des plateformes d'exécution}
 
@@ -169,7 +156,7 @@ Le CPU caractérisé est un Intel Xeon CPU ES-1620 v4 (3,5 GHz) ; le GPU est une
 
 En ce qui concerne le FPGA, nous avons utilisé l'Alveo U250, une carte dédiée au cloud et fabriquée par Xilinx. Ce FPGA est compatible avec Vitis-AI~\cite{vitis-ai}, que nous avons utilisé pour exécuter les tâches d'inférence sur le FPGA. Nous avons utilisé la dernière version disponible (v. 2.0) au moment de cette étude. Vitis-AI propose deux méthodes pour l'optimisation des modèles, nécessaire à leur exploitation sur un FPGA limité en ressources mémoire. La première est l'élagage, qui consiste à réduire la complexité du modèle par une compression tout en supprimant certaines sections non critiques de l'arbre. La seconde est la quantification, qui consiste à convertir les poids flottants de 32 bits en entiers de 8 bits. Nous avons utilisé cette dernière méthode pour optimiser notre modèle avant la compilation, qui convertit notre modèle en instructions DPU (\textit{Deep Processing Unit}).
 
-TODO: La mesure d'énergie au repos rapportée dans le tableau~\ref{table:herofake-platforms} est une moyenne calculée sur cinq minutes de relevés.
+TODO: La mesure d'énergie au repos rapportée dans le tableau~\ref{table:herofake-platforms} est une moyenne calculée sur cinq minutes de relevés. Nous n'avons pas pris en compte les optimisations automatiques de la tension et de la fréquence du \gls{CPU} (\textit{P-states}~\cite{}), ni les optimisations de sa consommation d'énergie au repos (\textit{C-states}~\cite{}) mises en œuvre par le fabricant.
 
 \subsection{Caractérisation des tâches logicielles}
 \label{section:herofake-offline:workload}
@@ -192,7 +179,7 @@ TODO: La mesure d'énergie au repos rapportée dans le tableau~\ref{table:herofa
 
 Nous avons caractérisé trois modèles populaires au moment de cette étude. Le premier, ResNet50, est basé sur les réseaux neuronaux résiduels. Il utilise des blocs résiduels et peut être entraîné efficacement~\cite{NEURIPS2019_7716d0fc}. Le second est VGG16 (VGG pour \text{Visual Geometry Group}), qui utilise uniquement des convolutions comme blocs~\cite{DBLP:journals/corr/SimonyanZ14a} et le troisième est VGG19, une variante de VGG16 avec trois couches supplémentaires~\cite{biom10070984}. Ces réseaux sont entraînés sur un GPU, l'entraînement n'étant pas le sujet de cette étude.
 
-TODO: Les mesures rapportées dans le tableau~\ref{table:herofake-tasks} sont des moyennes calculées sur la base de sur vingt mesures.
+Les mesures rapportées dans le tableau~\ref{table:herofake-tasks} sont des moyennes calculées sur la base de sur vingt mesures.
 
 \subsection{Mesures de performances}
 
@@ -241,7 +228,7 @@ Cependant, la consommation d'énergie brute du dispositif ne reflète pas le co�
 
 L'analyse précédente est valable dans le cas où l'inférence est toujours effectuée à pleine charge. En effet, lorsque l'on décompose la consommation d'énergie du GPU entre sa consommation au repos et sa consommation lors de l'inférence, il est clair que le GPU est capable d'adapter dynamiquement sa consommation d'énergie en fonction de l'intensité du traitement. Le FPGA, quant à lui, semble avoir une gestion de l'énergie très limitée. Une fois le modèle (\textit{DPU}, pour \textit{Deep Learning Processor Unit}) chargé dans le FPGA, la consommation d'énergie au repos est mesurée à un niveau élevé (figure~\ref{figure:herofake-power-usage}).
 TODO: Problème commun ? Référence ?
-En plus des 38W consommés au repos par la carte FPGA, on observe une consommation résiduelle de 60W, même lorsque le dispositif est inactif. Si des évolutions en matière d'implémentation du DPU sur le FPGA peuvent limiter l'impact de ce problème (par exemple en réduisant la fréquence d'horloge lorsqu'il est inactif), son influence sur le coût total doit être pris en compte si le dispositif n'est pas toujours utilisé à pleine charge. Avec seulement 12W d'énergie au repos, le GPU est un meilleur candidat lorsque l'utilisation à pleine charge du dispositif n'est pas garantie.
+En plus des 38W consommés au repos par la carte FPGA, on observe une consommation résiduelle de 60W, même lorsque le dispositif est inactif. Si des évolutions en matière d'implantation du DPU sur le FPGA peuvent limiter l'impact de ce problème (par exemple en réduisant la fréquence d'horloge lorsqu'il est inactif), son influence sur le coût total doit être pris en compte si le dispositif n'est pas toujours utilisé à pleine charge. Avec seulement 12W d'énergie au repos, le GPU est un meilleur candidat lorsque l'utilisation à pleine charge du dispositif n'est pas garantie.
 
 Comme la tendance vers des CNN plus complexes se poursuit~\cite{8807741}, l'utilisation de dispositifs les plus efficaces possibles devient un défi majeur. La solution FPGA offre une nouvelle option pour effectuer l'inférence. Cependant, les FPGA ne remplacent pas encore les GPU : le flot de compilation reste complexe et coûteux en temps. Il est nécessaire de trouver un compromis entre la flexibilité des GPU et l'efficacité des FPGA. La section suivante traite d'un premier orchestrateur qui prend en compte la caractérisation mentionnée ci-dessus pour l'allocation et l'ordonnancement de ressources hétérogènes.
 
@@ -256,7 +243,7 @@ L'ordonnancement des charges de travail dans le paradigme serverless est un prob
 
 L'augmentation du nombre de répliques pose un problème de performances : lorsqu'une nouvelle réplique est créée, que ce soit sous la forme d'un conteneur ou d'une machine virtuelle, l'environnement d'exécution doit passer par sa phase d'initialisation. C'est ce que l'on appelle un "démarrage à froid".
 
-Les solutions commerciales telles que AWS Lambda évitent souvent le problème du démarrage à froid en maintenant des réserves d'environnements d'exécution "chauds"~\cite{vahidiniaColdStartServerless2020}, c'est-à-dire déjà initialisés, et en attente de nouvelles requêtes. Ces environnements peuvent aussi être démarrés par anticipation et mis en pause dans un état post-initialisation. Lorsque l'activité reprend, les requêtes entrantes peuvent être servies sans souffrir d'un délai de démarrage à froid, au détriment du multiplexage des ressources du côté du fournisseur. Bien que cette solution permette de réduire, voire d'éliminer les délais de démarrage à froid, elle pèse sur la capacité du fournisseur à maximiser l'usage des ressources, et augmente le coût total de possession (TCO, pour \textit{Total Cost of Ownership}).
+Les solutions commerciales telles que AWS Lambda évitent souvent le problème du démarrage à froid en maintenant des réserves d'environnements d'exécution "chauds"~\cite{vahidiniaColdStartServerless2020}, c'est-à-dire déjà initialisés, et en attente de nouvelles requêtes. Ces environnements peuvent aussi être démarrés par anticipation et mis en pause dans un état post-initialisation. Lorsque l'activité reprend, les requêtes entrantes peuvent être servies sans souffrir d'un délai de démarrage à froid, au détriment du multiplexage des ressources du côté du fournisseur. Bien que cette solution permette de réduire, voire d'éliminer les délais de démarrage à froid, elle pèse sur la capacité du fournisseur à maximiser l'utilisation des ressources, et augmente le coût total de possession (TCO, pour \textit{Total Cost of Ownership}).
 
 En outre, les applications de \textit{Machine Learning as a Service} (MLaaS) présentent des motifs d'utilisation très fluctuants~\cite{gujaratiSwayamDistributedAutoscaling2017}, ce qui renforce l'argument selon lequel une stratégie d'allocation réactive des ressources est nécessaire pour dimensionner efficacement l'infrastructure. Cependant, comme le temps d'exécution des tâches d'inférence est de l'ordre du centième ou du dixième de seconde, tandis que le temps d'initialisation des environnements d'exécution est plutôt de l'ordre de quelques secondes~\cite{mancoMyVMLighter2017}, nous avons besoin d'un mécanisme pour éviter de souffrir d'énormes coûts en latence pour l'exécution des fonctions.
 
@@ -421,8 +408,6 @@ Nous itérons sur les répliques de la fonction pour calculer les métriques sui
 
 Ces valeurs sont normalisées pour les adapter à la fonction de coût pondérée décrite dans l'équation~\ref{eq:herofake-HRO-scheduling-cost-function}.
 
-% TODO: détails sur la normalisation
-
 Pour la pondération, nous avons utilisé $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0.5}{6}$ et $k_{TC} = \frac{1.5}{6}$ (comme pour l'autoscaler). L'ordonnanceur minimise ensuite cette fonction de coût pour toutes les répliques $(N, P)$ (c'est-à-dire l'ensemble des couples possibles de nœud $N$ et de plateforme d'exécution $P$).
 
 \begin{equation}
@@ -439,13 +424,13 @@ Si l'ordonnanceur ne trouve pas de réplique disponible pour exécuter la tâche
 \section{Évaluation}
 \label{section:herofake-evaluation}
 
-TODO: Dans cette section, nous détaillons notre méthodologie pour l'évaluation de notre politique d'orchestration dans un environnement de simulation. Nous la comparons à des politiques de référence et de l'état de l'art, et nous montrons l'impact de ses composants individuels sur la performance globale.
+Dans cette section, nous détaillons notre méthodologie pour l'évaluation de notre politique d'orchestration dans un environnement de simulation. Nous la comparons à des politiques de référence et de l'état de l'art, et nous montrons l'impact de ses composants individuels sur la performance globale.
 
 \subsection{Protocole expérimental}
 
 Nous avons utilisé des mesures provenant de l'évaluation de trois modèles d'apprentissage différents (voir tableau~\ref{table:herofake-tasks}). Ces modèles ont été mis en œuvre sur trois plateformes d'exécution différentes (voir tableau~\ref{table:herofake-platforms}) comme expliqué dans la section~\ref{section:herofake-offline}.
 
-Ces données ont servi en entrée à un simulateur que nous avons développé en utilisant la bibliothèque de simulation à évènements discrets SimPy~\cite{simpy}. Le simulateur suit le modèle décrit dans les sections~\ref{model:nodes}, \ref{model:platforms}, et \ref{model:tasks} (voir chapitre~\ref{chapter:herosim}).
+Ces données ont servi en entrée à un simulateur à évènements discrets que nous avons développé et publié sous licence libre. Le simulateur suit le modèle décrit dans les sections~\ref{model:nodes}, \ref{model:platforms}, et \ref{model:tasks}. De plus amples détails sont donnés dans le voir chapitre~\ref{chapter:herosim}.
 
 Nous avons mesuré les délais de démarrage à froid pour les applications de notre étude de cas (tableau~\ref{table:herofake-tasks}). Il apparaît que les temps d'exécution pour les fonctions considérées sont dominés par les délais de démarrage à froid, ce qui fait de l'allocation adéquate des ressources une exigence stricte pour respecter les accords de niveau de service.
 
@@ -479,8 +464,6 @@ Pour chacune des combinaisons de politiques d'autoscaler et d'ordonnanceur, nous
 Les pondérations pour le niveau de concurrence (équation~\ref{eq:herofake-HRO-concurrency-target}) ont été fixées à $k_{ET} = \frac{2}{3}$, $k_{EC} = \frac{1,5}{6}$ et $k_{HP} = \frac{0,5}{6}$. Les pondérations pour la décision de mise à l'échelle (équation~\ref{eq:herofake-HRO-allocation-cost-function}) ont été fixées à $k_{TT} = \frac{2}{3}$, $k_{EC} = \frac{1,5}{6}$ et $k_{HP} = \frac{0,5}{6}$. Les pondérations pour la décision d'ordonnancement (équation~\ref{eq:herofake-HRO-scheduling-cost-function}) ont été fixées à $k_{QP} = \frac{2}{3}$, $k_{EC} = \frac{0,5}{6}$ et $k_{TC} = \frac{1,5}{6}$.
 
 \subsection{Analyse des résultats}
-
-TODO: ...
 
 \subsubsection{Comparaison aux politiques de référence}
 
@@ -528,16 +511,16 @@ TODO: ...
 
 \textbf{Consommation d'énergie}. La figure~\ref{figure:herofake-evaluation-mixed-energy} montre que la consommation d'énergie est toujours plus faible lorsque l'on utilise notre autoscaler, qui peut allouer des accélérateurs matériels. En revanche, notre ordonnanceur utilisé avec l'autoscaler de Knative donne les pires résultats en termes de consommation d'énergie. Cela s'explique à nouveau par le fait que l'ordonnanceur tente de minimiser les pénalités en répartissant les tâches sur un grand nombre de CPU, la plateforme d'exécution la plus consommatrice en énergie dans notre cas d'étude.
 
-\section{Travaux connexes}
-\label{section:herofake-sota}
+% \section{Travaux connexes}
+% \label{section:herofake-sota}
 
-Plusieurs contributions antérieures se sont concentrées sur les plateformes de mise à l'échelle automatique pour le déploiement de tâches de courte durée, comprises dans des applications présentant des motifs d'utilisation imprévisibles. Le tableau~\ref{table:herofake-sota} résume les différences entre ces contributions et notre plateforme cible.
+% Plusieurs contributions antérieures se sont concentrées sur les plateformes de mise à l'échelle automatique pour le déploiement de tâches de courte durée, comprises dans des applications présentant des motifs d'utilisation imprévisibles. Le tableau~\ref{table:herofake-sota} résume les différences entre ces contributions et notre plateforme cible.
 
-Certaines de ces contributions ont tenté d'atteindre les SLA avec des ressources non réservées~\cite{gujaratiSwayamDistributedAutoscaling2017, zhangMArkExploitingCloud, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, handaoui2020releaser, handaoui2020salamander, yalles2022riscless}. Parmi ces contributions, certaines se concentrent sur l'utilisation de ressources matérielles hétérogènes supplémentaires pour accélérer l'exécution de la charge de travail~\cite{zhangMArkExploitingCloud, lingPigeonDynamicEfficient2019, yangINFlessNativeServerless2022}. Ces méthodes nécessitent souvent un surprovisionnement des ressources pour utiliser l'accélération matérielle, par exemple en s'appuyant sur des instances AWS dans le cloud public qui donnent accès à des GPU~\cite{zhangMArkExploitingCloud}, en utilisant une réserve de conteneurs pré-initialisés~\cite{lingPigeonDynamicEfficient2019}, ou même en provisionnant de manière proactive des nœuds pour respecter des échéances définies par l'utilisateur~\cite{singhviAtollScalableLowLatency2021}. Ces solutions, bien qu'intéressantes, peuvent toutefois s'avérer insuffisantes en termes d'usage des ressources et entraîneraient une consommation d'énergie supplémentaire dans un cloud privé.
+% Certaines de ces contributions ont tenté d'atteindre les SLA avec des ressources non réservées~\cite{gujaratiSwayamDistributedAutoscaling2017, zhangMArkExploitingCloud, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, handaoui2020releaser, handaoui2020salamander, yalles2022riscless}. Parmi ces contributions, certaines se concentrent sur l'utilisation de ressources matérielles hétérogènes supplémentaires pour accélérer l'exécution de la charge de travail~\cite{zhangMArkExploitingCloud, lingPigeonDynamicEfficient2019, yangINFlessNativeServerless2022}. Ces méthodes nécessitent souvent un surprovisionnement des ressources pour utiliser l'accélération matérielle, par exemple en s'appuyant sur des instances AWS dans le cloud public qui donnent accès à des GPU~\cite{zhangMArkExploitingCloud}, en utilisant une réserve de conteneurs pré-initialisés~\cite{lingPigeonDynamicEfficient2019}, ou même en provisionnant de manière proactive des nœuds pour respecter des échéances définies par l'utilisateur~\cite{singhviAtollScalableLowLatency2021}. Ces solutions, bien qu'intéressantes, peuvent toutefois s'avérer insuffisantes en termes d'utilisation des ressources et entraîneraient une consommation d'énergie supplémentaire dans un cloud privé.
 
-En outre, certains auteurs se concentrent sur des infrastructures homogènes~\cite{gujaratiSwayamDistributedAutoscaling2017, sureshENSUREEfficientScheduling2020, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, yangINFlessNativeServerless2022}. Ces études pourraient difficilement s'adapter au contexte du cloud privé que nous visons, où les ressources sont généralement éphémères et hétérogènes. En outre, certaines de ces contributions proposent des modèles de tâches qui ne couvrent pas la possibilité d'accords de niveau de service définis par l'utilisateur et à la granularité d'une requête~\cite{sureshENSUREEfficientScheduling2020, lingPigeonDynamicEfficient2019}. Enfin, certaines de ces contributions sont axées sur les performances plutôt que sur les coûts, ce qui est crucial dans notre contexte de cloud privé~\cite{gujaratiSwayamDistributedAutoscaling2017, lingPigeonDynamicEfficient2019, singhviAtollScalableLowLatency2021, choSLADrivenMLInference}.
+% En outre, certains auteurs se concentrent sur des infrastructures homogènes~\cite{gujaratiSwayamDistributedAutoscaling2017, sureshENSUREEfficientScheduling2020, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, yangINFlessNativeServerless2022}. Ces études pourraient difficilement s'adapter au contexte du cloud privé que nous visons, où les ressources sont généralement éphémères et hétérogènes. En outre, certaines de ces contributions proposent des modèles de tâches qui ne couvrent pas la possibilité d'accords de niveau de service définis par l'utilisateur et à la granularité d'une requête~\cite{sureshENSUREEfficientScheduling2020, lingPigeonDynamicEfficient2019}. Enfin, certaines de ces contributions sont axées sur les performances plutôt que sur les coûts, ce qui est crucial dans notre contexte de cloud privé~\cite{gujaratiSwayamDistributedAutoscaling2017, lingPigeonDynamicEfficient2019, singhviAtollScalableLowLatency2021, choSLADrivenMLInference}.
 
-Bien que la consommation d'énergie soit l'un des éléments les plus importants du coût total d'exploitation (\gls{OPEX}, pour \textit{Operational Expenditure}) dans un centre de données -- dépassant parfois le coût d'achat du matériel~\cite{7279063}, à notre connaissance, aucune de ces contributions ne couvre l'impact de l'allocation et du placement dynamiques sur la consommation d'énergie, ni ne considère la consommation d'énergie comme une métrique de qualité de service. Il s'agit d'une limite sérieuse, car l'optimisation de la consolidation des tâches ouvre la voie à des politiques de ralentissement et de mise hors tension qui peuvent avoir un impact positif majeur sur l'efficacité énergétique d'un centre de données~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}.
+% Bien que la consommation d'énergie soit l'un des éléments les plus importants du coût total d'exploitation (\gls{OPEX}, pour \textit{Operational Expenditure}) dans un centre de données -- dépassant parfois le coût d'achat du matériel~\cite{7279063}, à notre connaissance, aucune de ces contributions ne couvre l'impact de l'allocation et du placement dynamiques sur la consommation d'énergie, ni ne considère la consommation d'énergie comme une métrique de qualité de service. Il s'agit d'une limite sérieuse, car l'optimisation de la consolidation des tâches ouvre la voie à des politiques de ralentissement et de mise hors tension qui peuvent avoir un impact positif majeur sur l'efficacité énergétique d'un centre de données~\cite{chaurasiaComprehensiveSurveyEnergyaware2021}.
 
 \section{Conclusion et perspectives}
 \label{section:herofake-conclusion}
@@ -552,6 +535,6 @@ Avec notre politique d'allocation et d'ordonnancement, la plateforme est en mesu
 
 L'inclusion du traitement vidéo dans le framework est un défi intéressant, car il introduirait des dépendances entre les tâches. Les exécutions de fonctions ne seraient plus \textit{sans état}, ce qui entraînerait la nécessité de s'intéresser au problème du stockage des données intermédiaires dans une infrastructure serverless.
 
-TODO: C'est l'objet du chapitre suivant, dans lequel nous traitons un nouveau cas d'étude qui concerne le déploiement d'applications complexes, composées de tâches interdépendantes.
+C'est l'objet du chapitre suivant, dans lequel nous traitons un nouveau cas d'étude qui concerne le déploiement d'applications complexes, composées de tâches interdépendantes.
 
 % Nous avons également l'intention d'étendre notre cadre d'étude en se donnant la possibilité d'utiliser des traces d'exécution réelles comme scénarios d'entrée, au lieu de générer uniquement des charges de travail synthétiques.

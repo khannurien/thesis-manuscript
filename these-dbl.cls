@@ -78,6 +78,9 @@
 %\renewcommand{\rmdefault}{qpl}
 %\renewcommand{\sfdefault}{qpl} 
 
+% footref
+\usepackage{scrextend}
+
 % Glossaires
 % https://tex.stackexchange.com/a/387041
 % https://tex.stackexchange.com/a/598936
@@ -113,13 +116,20 @@
 \usepackage{booktabs}
 % Various tabular columns with text wrapping
 \newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
-\newcolumntype{Y}{>{\centering\arraybackslash}m{0.2\linewidth}}
+\newcolumntype{Y}{>{\centering\arraybackslash}m{0.15\linewidth}}
+\newcolumntype{y}{>{\arraybackslash}m{0.15\linewidth}}
 \newcolumntype{Z}{>{\centering\arraybackslash}X}
 % Vertical centering of text in X columns
 \renewcommand\tabularxcolumn[1]{m{#1}}
 
 % Blocs de code
-\usepackage{minted}
+\usepackage[newfloat]{minted}
+\usepackage{caption}
+% https://tex.stackexchange.com/a/254177
+% Non-floating listing environment (w/ page breaks)
+\newenvironment{longlisting}{\captionsetup{type=listing}}{}
+% Floating listing environment (w/o page breaks)
+\SetupFloatingEnvironment{listing}{}
 
 % Tableaux multi-pages
 \usepackage{tabularray,adjustbox}
@@ -127,10 +137,12 @@
 % make tabularray use \caption instead of own caption style
 \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}
 \DefTblrTemplate{lasthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{lasthead-text} (Suite)}}
+\DefTblrTemplate{contfoot-text}{normal}{Continue en page suivante}
+\SetTblrTemplate{contfoot-text}{normal}
 
 % Commentaires dans le PDF
 \newboolean{showcomments}
-\setboolean{showcomments}{true}
+\setboolean{showcomments}{false}
 % Affichage
 \ifthenelse{\boolean{showcomments}}
 { \newcommand{\mynote}[3]{

@@ -1,10 +1,10 @@
 \clearemptydoublepage
-\chapter{Contexte}
+\chapter{Contexte -- Cloud, ordonnancement et élasticité}
 \label{chapter:context}
 
 Dans ce second chapitre, nous donnons une définition formelle du cloud, au travers des propriétés spécifiques à ces environnements de calcul et de stockage partagés. Nous présentons également quelques techniques et technologies socles dans les centres de données. Enfin, nous commentons les caractéristiques des applications déployées dans le cloud, et terminons par introduire le modèle serverless pour le cloud, qui constitue l'environnement au cœur des problématiques traitées au cours de cette thèse.
 
-\section{Cloud computing : une définition}
+\section{\textit{Cloud computing} : une définition}
 
 Les premières réflexions autour de l'émergence d'un système informatique à temps partagé remontent au début des années 1960~\cite{greenberger1962management}. L'idée, nouvelle, est alors de permettre le partage des ressources matérielles d'une part entre différentes tâches, et d'autre part entre différents utilisateurs~\cite{meyerVirtualMachineTimesharing1970}. L'objectif est de maximiser l'utilisation des ressources en permettant à plusieurs utilisateurs d'exploiter la même machine simultanément, limitant ainsi le gaspillage de temps de calcul~\cite{corbato1962experimental}.
 %Le premier objectif est bien sûr de maximiser l'utilisation des ressources, mais les auteurs considèrent également ce problème sous un angle différent : le taux -- ou la vitesse -- d'interaction entre utilisateurs et machines. À cette époque, le constat suivant est déjà établi : la vitesse de calcul d'un ordinateur surpasse la vitesse à laquelle son utilisateur peut le programmer. Permettre à plusieurs personnes d'utiliser la même machine simultanément permettrait de limiter le gaspillage de temps de calcul~\cite{corbato1962experimental}.
@@ -34,7 +34,7 @@ Le \gls{NIST} donne une définition formelle du cloud~\cite{mellNISTDefinitionCl
 	\label{figure:context-service-model}
 \end{figure}
 
-\footnotetext{\url{https://www.redhat.com/en/topics/cloud-computing/iaas-vs-paas-vs-saas}}
+\footnotetext{\href{https://www.redhat.com/en/topics/cloud-computing/iaas-vs-paas-vs-saas}{https://www.redhat.com/en/topics/cloud-computing/iaas-vs-paas-vs-saas}}
 
 Ces caractéristiques sont déclinées dans trois modèles de service, comme illustré par la figure~\ref{figure:context-service-model}, qui constituent des déclinaisons de l'offre commerciale des fournisseurs de service cloud :
 
@@ -185,6 +185,8 @@ Dans cette section, nous présentons le modèle de service serverless pour le cl
 
 \subsubsection{Caractéristiques des plateformes serverless}
 
+% TOOD: Le modèle serverless n'est pas une idée nouvelle... Première mention de "serverless" dans la littérature~\cite{andersonServerlessNetworkFile}...
+
 Le serverless désigne à la fois un modèle de programmation et un modèle de service pour le cloud. Dans une architecture serverless, les développeurs conçoivent leurs applications comme une composition de fonctions sans état. Sans état (ou "pur", sans effet de bord) signifie que le résultat du calcul dépend exclusivement des entrées~\cite{burckhardtNetheriteEfficientExecution}. Ces fonctions prennent en entrée une valeur et un contexte d'invocation, et produisent un résultat qui est stocké dans un système de stockage. Leur exécution est déclenchée par un événement tel qu'une requête HTTP, une tâche planifiée, un téléchargement de fichier, etc. Ainsi, le serverless est un modèle dirigé par les événements~\cite{SchleierSmith2021WhatSC}. Dans les offres commerciales de cloud public, le modèle serverless est souvent appelé \textit{Function as a Service}~\cite{hellersteinServerlessComputingOne2019} (\gls{FaaS}).
 
 L'appellation \textit{serverless} ne signifie pas que des serveurs ne sont plus utilisés pour héberger et exécuter des applications. Le terme fait référence à une abstraction sur les ressources matérielles qui permet aux développeurs de s'affranchir de la gestion des serveurs qui supportent leurs applications. Grâce à des mécanismes de mise à l'échelle automatique, les développeurs sont libérés de la réservation des ressources nécessaires au déploiement de leurs charges de travail~\cite{vaneykSPECRGCloud2018}. Les plateformes serverless sont conçues pour gérer de manière automatique les besoins de mise à l'échelle et ainsi répondre aux fluctuations de la demande sur les applications, évitant ainsi aux développeurs d'avoir à définir des stratégies de mise à l'échelle explicites. L'objectif du modèle est de rapprocher les clients de la logique métier de leurs applications~\cite{vaneykSPECRGReferenceArchitecture2019}.
@@ -210,6 +212,8 @@ En réponse à ces limites du modèle, la Cloud Native Computing Foundation (\gl
 \end{itemize}
 
 Pour ces classes d'applications, un déploiement serverless peut être envisagé comme une alternative efficace en matière de coût par rapport aux modèles traditionnels. Toutefois, elles ne recouvrent pas tous les cas d'usage dans le cloud. Si les possibilités de gestion fine des allocations de ressources semblent donner le serverless comme le futur premier modèle de service dans le cloud~\cite{hellersteinServerlessComputingOne2019}, il apparaît donc que les plateformes serverless soulèvent des défis qui restent à relever.
+
+% TODO: Par ailleurs, les utilisateurs déploient des charges de travail très variées sur des plateformes serverless.
 
 \section{Conclusion}
 
