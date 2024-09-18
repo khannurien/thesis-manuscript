@@ -198,7 +198,7 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
 \end{longlisting}
 
 \begin{figure}[!ht]
-    \captionof{listing}{Description \gls{JSON} des caractéristiques des fonctions \texttt{hello} et \texttt{world}.}
+    \captionof{listing}{Description \gls{JSON} des caractéristiques des fonctions \texttt{hello} et \texttt{world}, pouvant être déployées sur des plateformes \texttt{exampleCpu}.}
     \label{code:herosim-json-functions}
     \begin{minipage}{0.5\textwidth}
         \centering
@@ -206,22 +206,22 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
   "hello": {
     "name": "hello",
     "platforms": [
-      "rpiCpu"
+      "exampleCpu"
     ],
     "memoryRequirements": {
-      "rpiCpu": 0.0015
+      "exampleCpu": 0.0015
     },
     "coldStartDuration": {
-      "rpiCpu": 0.002
+      "exampleCpu": 0.002
     },
     "executionTime": {
-      "rpiCpu": 8.5e-3
+      "exampleCpu": 8.5e-3
     },
     "energy": {
-      "rpiCpu": 5.5-9
+      "exampleCpu": 5.5-9
     },
     "imageSize": {
-      "rpiCpu": 0.003
+      "exampleCpu": 0.003
     },
     "stateSize": {
       "hello-world": {
@@ -239,22 +239,22 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
   "world": {
     "name": "world",
     "platforms": [
-      "rpiCpu"
+      "exampleCpu"
     ],
     "memoryRequirements": {
-      "rpiCpu": 0.0015
+      "exampleCpu": 0.0030
     },
     "coldStartDuration": {
-      "rpiCpu": 0.002
+      "exampleCpu": 0.004
     },
     "executionTime": {
-      "rpiCpu": 8.5e-3
+      "exampleCpu": 8.5e-3
     },
     "energy": {
-      "rpiCpu": 5.5-9
+      "exampleCpu": 5.5-9
     },
     "imageSize": {
-      "rpiCpu": 0.003
+      "exampleCpu": 0.003
     },
     "stateSize": {
       "hello-world": {
@@ -314,7 +314,7 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
     "name": "Example CPU",
     "hardware": "cpu",
     "price": 60,
-    "idleEnergy": 0.000663305
+    "idleEnergy": 0.00065
   }
 },
 {
@@ -323,16 +323,16 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
     "hardware": "flash",
     "capacity": 64,
     "iops": {
-      "read": 2977,
-      "write": 987
+      "read": 3000,
+      "write": 1000
     },
     "throughput": {
       "read": 100,
       "write": 40
     },
     "latency": {
-      "read": 0.00122,
-      "write": 0.00122
+      "read": 0.001,
+      "write": 0.001
     }
   }
 }
@@ -471,11 +471,11 @@ Dans HeROfake, chaque exécution de tâche a un coût associé mesuré en \textb
 
 Les différentes architectures matérielles ont également des coûts monétaires et énergétiques différents qui ont été pris en compte dans le modèle de coût (utilisation des ressources et consommation d'énergie, les deux dimensions du coût de l'infrastructure montré dans la figure~\ref{figure:herosim-cost}). Nous avons mis en œuvre un autoscaler et un ordonnanceur qui cherchent à estimer et à minimiser ce coût composite, à la granularité de chaque requête utilisateur. L'autoscaler cherche à allouer des plateformes qui minimisent le coût global, y compris l'utilisation des ressources, la consommation d'énergie et le coût total de possession. L'ordonnanceur cherche à sélectionner les répliques qui traitent les requêtes avec le moins de pénalités et la plus faible consommation d'énergie.
 
-HeROfake a été évalué pour un scénario synthétique avec une distribution uniforme des temps d'arrivée des requêtes, des types de fonction appelées et des niveaux de qualité de service associés aux requêtes. HeROfake s'est avéré performant (en termes de pénalités sur \gls{QoS}, de consolidation des tâches et d'énergie consommée) par rapport à Knative (l'orchestrateur serverless de Google) et Bin-Packing First Fit (\gls{BPFF}, la politique d'Amazon Web Services pour Lambda)~\cite{aws-lambda, herofake}.
+HeROfake a été évalué pour un scénario synthétique avec une distribution uniforme des temps d'arrivée des requêtes, des types de fonction appelées et des niveaux de qualité de service associés aux requêtes. HeROfake s'est avéré performant (en termes de pénalités sur \gls{QoS}, de consolidation des tâches et d'énergie consommée) par rapport à Knative (l'orchestrateur serverless de Google) et \textit{Bin-Packing First Fit} (\gls{BPFF}, la politique d'\gls{AWS} pour Lambda)~\cite{herofake}.
 
 Notre objectif principal était d'étudier la pertinence de la prise en compte de l'hétérogénéité matérielle lors de l'allocation des ressources et de l'ordonnancement des requêtes utilisateur au regard de différentes mesures de qualité de service, \textit{i.e.} la latence de bout en bout subie par les requêtes utilisateur, et la consommation d'énergie de l'infrastructure. Les résultats expérimentaux ont montré que si le temps total d'exécution des tâches dans HeROfake est similaire à celui de Knative, nous obtenons une réduction de plus de 60\% des pénalités sur qualité de service ; les tâches sont consolidées sur moins de 40\% des nœuds de l'infrastructure, 77\% des plateformes d'exécution restant inutilisées ; et la consommation d'énergie dynamique est réduite de 35\% par rapport à Knative.
 
-HeROsim nous a également permis d'évaluer l'impact des différents composants de notre framework. Les résultats ont montré que, même en allouant uniquement des \gls{CPU}, l'ordonnancement des requêtes avec notre politique consciente de la qualité de service pouvait maintenir les pénalités en dessous de 50\%.
+HeROsim nous a également permis d'évaluer l'impact des différents composants de notre orchestrateur. Les résultats ont montré que, même en allouant uniquement des \gls{CPU}, l'ordonnancement des requêtes avec notre politique consciente de la qualité de service pouvait maintenir les pénalités en dessous de 50\%.
 
 \subsection{Stratégie d'orchestration d'applications avec prise en compte du cache et des communications}
 
