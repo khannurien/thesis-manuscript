@@ -954,6 +954,34 @@
 	abstract     = {Google's Borg system is a cluster manager that runs hundreds of thousands of jobs, from many thousands of different applications, across a number of clusters each with up to tens of thousands of machines.},
 	langid       = {english}
 }
+@inproceedings{kwasnickDeterminationCPUUse2011,
+  title = {Determination of {{CPU}} Use Conditions},
+  booktitle = {2011 {{International Reliability Physics Symposium}}},
+  author = {Kwasnick, Robert and Papathanasiou, Athanasios E. and Reilly, Matthew and Rashid, Al and Zaknoon, Bashir and Falk, John},
+  year = {2011},
+  month = apr,
+  pages = {2C.3.1-2C.3.6},
+  publisher = {IEEE},
+  address = {Monterey, CA, USA},
+  doi = {10.1109/IRPS.2011.5784455},
+  abstract = {Use condition inputs to physics-of-failure models are required to use knowledge-based qualification of ICs. Modern CPUs have multiple voltage-frequency states which vary widely in reliability stress, but it is not obvious what time in the various states to use in product qualification. We present a methodology for developing a time in state model for CPUs which combines large scale user monitoring and lab-based studies. Results for a specific CPU family, including field validation and implications for knowledge-based qualification, are discussed.},
+  isbn = {978-1-4244-9113-1},
+  langid = {english},
+}
+
+@article{sueurSlowSleepThat,
+  title = {Slow {{Down}} or {{Sleep}}, That Is the {{Question}}},
+  author = {Sueur, Etienne Le and Heiser, Gernot},
+  booktitle = {2011 USENIX Annual Technical Conference (USENIX ATC 11)},
+  year = {2011},
+  address = {Portland, OR},
+  url = {https://www.usenix.org/conference/usenixatc11/slow-down-or-sleep-question},
+  urldate = {2024-09-19},
+  publisher = {USENIX Association},
+  month = jun,
+  abstract = {Energy consumption has become a major concern for all computing systems, from servers in data-centres to mobile phones. Processor manufacturers have reacted to this by implementing power-management mechanisms in the hardware and researchers have investigated how operating systems can make use of those mechanisms to minimise energy consumption. Much of this research has focused on a single class of systems and computeintensive workloads.},
+  langid = {english},
+}
 %%% Ajouts modèle économique
 @misc{BareMetal70B,
 	title        = {From Bare Metal to a {{70B}} Model: Infrastructure Set-up and Scripts},
@@ -1080,6 +1108,20 @@
 	abstract     = {With the increasing presence, scale, and complexity of distributed systems, resource failures are becoming an important and practical topic of computer science research. While numerous failure models and failure-aware algorithms exist, their comparison has been hampered by the lack of public failure data sets and data processing tools. To facilitate the design, validation, and comparison of fault-tolerant models and algorithms, we have created the Failure Trace Archive (FTA)---an online, public repository of failure traces collected from diverse parallel and distributed systems. In this work, we first describe the design of the archive, in particular of the standard FTA data format, and the design of a toolbox that facilitates automated analysis of trace data sets. We also discuss the use of the FTA for various current and future purposes. Second, after applying the toolbox to nine failure traces collected from distributed systems used in various application domains (e.g., HPC, Internet operation, and various online applications), we present a comparative analysis of failures in various distributed systems. Our analysis presents various statistical insights and typical statistical modeling results for the availability of individual resources in various distributed systems. The analysis results underline the need for public availability of trace data from different distributed systems. Last, we show how different interpretations of the meaning of failure data can result in different conclusions for failure modeling and job scheduling in distributed systems. Our results for different interpretations show evidence that there may be a need for further revisiting existing failure-aware algorithms, when applied for general rather than for domain-specific distributed systems. {\copyright} 2013 Elsevier Inc. All rights reserved.},
 	langid       = {english}
 }
+@article{nazaricheraghlouSurveyFaultTolerance2016,
+    title = {A Survey of Fault Tolerance Architecture in Cloud Computing},
+    author = {Nazari Cheraghlou, Mehdi and {Khadem-Zadeh}, Ahmad and Haghparast, Majid},
+    year = {2016},
+    month = feb,
+    journal = {Journal of Network and Computer Applications},
+    volume = {61},
+    pages = {81--92},
+    issn = {10848045},
+    doi = {10.1016/j.jnca.2015.10.004},
+    abstract = {Utilizing cloud computing services has had numerous advantages such as the reduction of costs, development of efficiency, central promotion of soft wares, compatibility of various formats, unlimited storage capacity, easy access to services at any time and from any location and, most importantly, the independency of these services from the hardware. It should be mentioned that the provision of various cloud computing services is faced with problems and challenges that the fault tolerance can be mentioned as the main restrictions.},
+    langid = {english},
+}
+
 %% Ajouts caractérisation
 
 %%% Oversubscription / overcommitment
@@ -1320,6 +1362,32 @@
 	langid       = {english}
 }
 %% Ajouts ouverture
+
+@inproceedings{linBridgingSustainabilityGap2024,
+  title = {Bridging the {{Sustainability Gap}} in {{Serverless}} through {{Observability}} and {{Carbon-Aware Pricing}}},
+  author = {Lin, Changyuan and Shahrad, Mohammad},
+  year = {2024},
+  booktitle = {Proceedings of the 3rd Workshop on Sustainable Computer Systems},
+  location = {Santa Cruz California},
+  series = {HotCarbon '24},
+  abstract = {Serverless computing has become a mainstream cloud computing paradigm due to its high scalability, ease of server management, and cost-effectiveness. With cloud data centers' carbon footprint rising sharply, understanding and minimizing the carbon impact of serverless functions becomes crucial. The unique characteristics of serverless functions, such as event-driven invocation, pay-as-you-go billing model, short execution duration, ephemeral runtime, and opaque underlying infrastructure, pose challenges in effective carbon metering. In this paper, we argue that the current carbon estimation methodologies should be expanded for more accurate carbon accounting in serverless settings, and propose a usage and allocation-based carbon model that aligns with the context of serverless computing. We also articulate how current serverless systems and billing models do not make it financially attractive to prioritize sustainability for a broad class of users and developers. To solve this, we propose a new carbon-aware pricing model and evaluate its ability to incentivize sustainable practices for developers through better alignment of billing and carbon efficiency.},
+  langid = {english},
+}
+
+@article{mokhtariDigitalSustainabilityInvolving,
+  title = {Towards {{Digital Sustainability}}: {{Involving Cloud Users}} as {{Key Players}}},
+  author = {Mokhtari, Anas and Jonglez, Baptiste and Ledoux, Thomas},
+  URL = {https://hal.science/hal-04633237},
+  urldate = {2024-09-20},
+  BOOKTITLE = {{IC2E 2024 - 12th IEEE International Conference on Cloud Engineering}},
+  ADDRESS = {Paphos, Cyprus},
+  PUBLISHER = {{IEEE}},
+  YEAR = {2024},
+  MONTH = Sep,
+  KEYWORDS = {Cloud computing ; Human-centered computing ; Digital sustainability ; Carbon footprint ; Green energy},
+  abstract = {Due to the rapid growth of Cloud services, data centers have become major energy consumers, resulting in significant CO2 emissions. Several infrastructure-focused strategies, such as resource consolidation, have been used to reduce the carbon footprint of Cloud infrastructure. However, end-users are often left out of the picture. Since they are the primary target of Cloud applications, it would be beneficial to actively involve them in reducing the carbon footprint of Cloud applications.},
+  langid = {english},
+}
 
 % Prédiction
 @article{bauerTimeSeriesForecasting2020,

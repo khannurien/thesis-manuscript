@@ -416,7 +416,7 @@ HeROsim est livré avec les politiques de mise à l'échelle automatique suivant
 
 \begin{itemize}
     \item \textit{Random} -- Sélectionne un nœud aléatoire et une plateforme d'exécution pour les nouvelles répliques ;
-    \item Knative -- Sélectionne le nœud le moins chargé pour allouer de nouvelles répliques, \textit{i.e} équilibre les charges de travail sur un grand nombre de nœuds ;
+    \item Knative -- Sélectionne le nœud le moins chargé pour allouer de nouvelles répliques~\cite{sureshENSUREEfficientScheduling2020}, \textit{i.e} équilibre les charges de travail sur un grand nombre de nœuds ;
     \item HeROfake (voir chapitre~\ref{chapter:herofake}) -- Exploite l'hétérogénéité du matériel pour minimiser les pénalités de qualité de service, la consommation d'énergie et le coût total de possession. Plus de détails sont donnés dans la section~\ref{section:herosim-case-study};
     \item HeROcache (voir chapitre~\ref{chapter:herocache}) -- Optimise les allocations pour les chaînes de fonctions ; maximise la consolidation des fonctions de chaque application. Plus de détails sont donnés dans la section~\ref{section:herosim-case-study}.
 \end{itemize}
@@ -435,7 +435,7 @@ HeROsim est livré avec les politiques d'ordonnancement suivantes implantées et
 
 \begin{itemize}
     \item \textit{Random} -- Sélectionne une réplique aléatoire pour le placement des tâches ;
-    \item Knative -- Sélectionne la réplique avec la file d'attente la plus courte pour le placement des tâches ;
+    \item Knative -- Sélectionne la réplique avec la file d'attente la plus courte pour le placement des tâches~\cite{sureshENSUREEfficientScheduling2020} ;
     \item \gls{BPFF} -- Sélectionne la réplique avec la plus longue file de requêtes en attente pour le placement des tâches ;
     \item HeROfake (voir chapitre~\ref{chapter:herofake}) -- Sélectionne la réplique qui minimise un score calculé en fonction de l'échéance de la tâche, de la consommation d'énergie de la fonction et de la dispersion des tâches sur les nœuds. Plus de détails sont donnés dans la section~\ref{section:herosim-case-study} ;
     \item HeROcache (voir chapitre~\ref{chapter:herocache}) -- Sélectionne la réplique d'une manière similaire à HeROfake, mais prend en compte les opérations de stockage et de communication pour calculer la latence de bout en bout de la requête, et prend en compte les chaînes de fonctions lors du calcul du score des répliques en ce qui concerne la consolidation des tâches. De plus amples détails sont donnés dans la section~\ref{section:herosim-case-study}.

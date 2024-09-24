@@ -58,6 +58,8 @@
 
 \RequirePackage{setspace} % permet d'utiliser les commandes \spacing, doublespace (double interligne), singlespace (simple interligne) et onehalfspace (un interligne et demi)
 
+\RequirePackage{scrextend} % Permet de r\'{e}f\'{e}rencer des notes de bas de page plusieurs fois
+
 \RequirePackage[pdfusetitle]{hyperref} %Utiliser pour une bibliographie interactive + sommaire et TOC interactifs (pour une sortie PDF, par exemple).
 % Une couleur pour les liens et les références
 \hypersetup{colorlinks=true, citecolor=purple, filecolor=black, linkcolor=blue, urlcolor=blue}
@@ -78,42 +80,37 @@
 %\renewcommand{\rmdefault}{qpl}
 %\renewcommand{\sfdefault}{qpl} 
 
-% footref
-\usepackage{scrextend}
-
 % Glossaires
 % https://tex.stackexchange.com/a/387041
 % https://tex.stackexchange.com/a/598936
 % https://tex.stackexchange.com/a/303285
-\usepackage[automake,nonumberlist,toc=false]{glossaries-extra}
+\RequirePackage[automake,nonumberlist,toc=false]{glossaries-extra}
 % Pagination level
 \setglossarysection{section}
 
 % Maths
-\usepackage{amsmath,amssymb,amsfonts}
+\RequirePackage{amsmath,amssymb,amsfonts}
 % Valeurs numériques
-\usepackage[allow-quantity-breaks]{siunitx}
+\RequirePackage[allow-quantity-breaks]{siunitx}
 
 % Polices
-% \usepackage{pifont}
 \newcommand{\cmark}{\color{YellowGreen}\ding{51}}%
 \newcommand{\xmark}{\color{BrickRed}\ding{55}}%
 
 % Figures
-\usepackage{float}
-% \usepackage[caption=false]{subfig}
-\usepackage{subcaption}
+\RequirePackage{float}
+\RequirePackage{subcaption}
 
 % Marqueurs
-\usepackage{circledsteps}
+\RequirePackage{circledsteps}
 \pgfkeys{/csteps/inner color=white}
 \pgfkeys{/csteps/fill color=black}
 
 % Tableaux
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{tabularx}
-\usepackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{tabularx}
+\RequirePackage{booktabs}
 % Various tabular columns with text wrapping
 \newcolumntype{L}{>{\arraybackslash}m{0.75\linewidth}}
 \newcolumntype{Y}{>{\centering\arraybackslash}m{0.15\linewidth}}
@@ -123,8 +120,8 @@
 \renewcommand\tabularxcolumn[1]{m{#1}}
 
 % Blocs de code
-\usepackage[newfloat]{minted}
-\usepackage{caption}
+\RequirePackage[newfloat]{minted}
+\RequirePackage{caption}
 % https://tex.stackexchange.com/a/254177
 % Non-floating listing environment (w/ page breaks)
 \newenvironment{longlisting}{\captionsetup{type=listing}}{}
@@ -132,7 +129,7 @@
 \SetupFloatingEnvironment{listing}{}
 
 % Tableaux multi-pages
-\usepackage{tabularray,adjustbox}
+\RequirePackage{tabularray,adjustbox}
 \UseTblrLibrary{booktabs}
 % make tabularray use \caption instead of own caption style
 \makeatletter\def\captionofnoinc#1{\def\@captype{#1}\addtocounter{#1}{-1}\caption}\makeatother\DefTblrTemplate{firsthead}{default}{\captionofnoinc{table}{\InsertTblrText{caption}}}\DefTblrTemplate{middlehead}{default}{\captionofnoinc{table}{\InsertTblrText{caption} \InsertTblrText{middlehead-text} (Suite)}}

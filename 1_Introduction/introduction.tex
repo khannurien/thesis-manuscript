@@ -40,10 +40,10 @@ Cette section présente l'architecture générale du système considéré au cou
     \centering
     \includegraphics[width=\textwidth]{1_Introduction/figures/architecture.png}
 	\caption{Vue à haut niveau de l'architecture considérée, en lien avec nos questions de recherche et nos contributions.}
-	\label{fig:intro-architecture}
+	\label{figure:intro-architecture}
 \end{figure}
 
-Les travaux menés au cours de cette thèse s'inscrivent dans le cadre du modèle de service serverless pour le cloud. Nous avons considéré un environnement dans lequel un fournisseur de services dispose de ressources matérielles que des développeurs peuvent exploiter pour déployer leurs applications à destination d'une variété d'utilisateurs. La figure~\ref{fig:intro-architecture} montre une vue générale de l'architecture du système considéré dans les travaux de cette thèse, ses liens avec nos questions de recherche, ainsi qu'un aperçu du positionnement des contributions au sein de cette architecture.
+Les travaux menés au cours de cette thèse s'inscrivent dans le cadre du modèle de service serverless pour le cloud. Nous avons considéré un environnement dans lequel un fournisseur de services dispose de ressources matérielles que des développeurs peuvent exploiter pour déployer leurs applications à destination d'une variété d'utilisateurs. La figure~\ref{figure:intro-architecture} montre une vue générale de l'architecture du système considéré dans les travaux de cette thèse, ses liens avec nos questions de recherche, ainsi qu'un aperçu du positionnement des contributions au sein de cette architecture.
 
 Les applications, les fonctions et les ressources matérielles sont considérées comme des données d'entrée dans nos contributions. Les applications sont définies par les développeurs ; elles comportent une à plusieurs fonctions, qui peuvent présenter des relations de dépendances (temporelles ou de données) que l'on exprime comme un graphe acyclique (\gls{DAG}, pour \textit{Directed Acyclic Graph}). Les fonctions sont publiées par les développeurs, en vue d'être déployées par la plateforme serverless lors d'une requête utilisateur. Les ressources matérielles constituent l'ensemble des ressources de calcul (processeurs, mémoire, stockage, réseau) disponibles dans l'infrastructure fournisseur de services. Elles sont réparties au sein de plusieurs nœuds (des serveurs physiques dans le centre de données du fournisseur).
 

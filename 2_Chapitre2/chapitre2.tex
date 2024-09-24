@@ -30,7 +30,7 @@ Le \gls{NIST} donne une définition formelle du cloud~\cite{mellNISTDefinitionCl
 \begin{figure}[!ht]
     \centering
 	\includegraphics[width=\textwidth]{2_Chapitre2/figures/service-models.png}
-	\caption[Comparaison entre différents modèles de service pour le cloud en termes de responsabilités pour le client et le fournisseur de service.]{Comparaison entre différents modèles de service pour le cloud en termes de responsabilités pour le client et le fournisseur de service (inspiré de la documentation Red Hat \protect \footnotemark).}
+	\caption[Comparaison entre différents modèles de service pour le cloud en termes de responsabilités pour le client et le fournisseur de service.]{Comparaison entre différents modèles de service pour le cloud en termes de responsabilités pour le client et le fournisseur de service (inspiré de la documentation Red Hat~{\protect \footnotemark}).}
 	\label{figure:context-service-model}
 \end{figure}
 
@@ -46,11 +46,11 @@ Ces caractéristiques sont déclinées dans trois modèles de service, comme ill
 
 \subsection{Modèles de déploiement}
 
-Il existe plusieurs topologies dans le cloud, qui correspondent à différentes contraintes métier pour les utilisateurs :
+Pour organiser les calculs et les données dans le cloud, il existe plusieurs stratégies qui correspondent à différentes contraintes métier pour les utilisateurs :
 
 \begin{itemize}
-    \item \textbf{Cloud privé} -- L'infrastructure est dédiée à une organisation qui regroupe plusieurs utilisateurs finaux. Ce modèle de déploiement est privilégié pour la sécurité et la confidentialité des données ;
-    \item \textbf{Cloud public} -- L'infrastructure est partagée entre de nombreux clients hétérogènes, professionnels comme particuliers. Ce modèle de déploiement est souvent moins coûteux qu'une offre de cloud privé ;
+    \item \textbf{Cloud privé} -- L'infrastructure est dédiée à une organisation qui regroupe plusieurs utilisateurs finaux. Ce modèle de déploiement est privilégié par les clients pour la sécurité et la confidentialité des données ;
+    \item \textbf{Cloud public} -- L'infrastructure est partagée entre de nombreux clients hétérogènes, professionnels comme particuliers. Ce modèle de déploiement est souvent moins coûteux pour le client qu'une offre de cloud privé ;
     \item \textbf{Cloud communautaire} -- L'infrastructure est partagée entre différents acteurs ayant souvent des problématiques métier similaires (secteurs bancaire ou hospitalier par exemple) ;
     \item \textbf{Cloud hybride} -- Solution de répartition des tâches entre cloud privé et cloud public, en fonction de leur niveau de criticité.
 \end{itemize}
@@ -72,7 +72,7 @@ La virtualisation est une technique d'isolation qui permet d'exécuter une appli
 
 La virtualisation des ressources de l'hôte peut se faire à l'aide de machines virtuelles (\gls{VM}, pour \textit{Virtual Machine}) ou de conteneurs. Ces environnements d'exécution donnent aux processus sous-jacents l'illusion d'avoir une machine entière à leur disposition. Alors que les VM virtualisent les ressources physiques de l'hôte, en s'appuyant sur l'architecture du processeur pour réaliser l'isolation, les conteneurs exploitent des directives du système d'exploitation hôte pour isoler les charges de travail~\cite{mancoMyVMLighter2017}.
 
-Lorsqu'ils choisissent le modèle d'isolation sur lequel ils souhaitent s'appuyer pour exploiter le partage des ressources, les fournisseurs cloud doivent faire un compromis entre performances et sécurité. Les conteneurs sont fréquemment la cible d'attaques par élévation de privilèges~\cite{zomer2022containers, redhat2019containers}, mais leurs performances sont de plusieurs ordres de grandeur supérieures à celles des machines virtuelles : le temps de démarrage des conteneurs se compte en centaines de millisecondes, tandis que les VM démarrent en quelques secondes~\cite{mancoMyVMLighter2017}. La conception de machines virtuelles légères offrant des performances comparables à celles des conteneurs est un sujet de recherche essentiel~\cite{agacheFirecrackerLightweightVirtualization, Anjali2020BlendingCA}).
+Lorsqu'ils choisissent le modèle d'isolation sur lequel ils souhaitent s'appuyer pour exploiter le partage des ressources, les fournisseurs cloud doivent faire un compromis entre performances et sécurité. Les conteneurs sont fréquemment la cible d'attaques par élévation de privilèges~\cite{zomer2022containers, redhat2019containers}, mais leurs temps de démarrage sont de plusieurs ordres de grandeur inférieurs à ceux des machines virtuelles : le temps d'initialisation des conteneurs se compte en centaines de millisecondes, tandis que les VM démarrent en quelques secondes~\cite{mancoMyVMLighter2017}. La conception de machines virtuelles légères offrant des temps d'initialisation comparables à ceux des conteneurs est un sujet de recherche essentiel~\cite{agacheFirecrackerLightweightVirtualization, Anjali2020BlendingCA}.
 
 \begin{figure}[!ht]
     \centering
@@ -193,17 +193,17 @@ L'appellation \textit{serverless} ne signifie pas que des serveurs ne sont plus 
 
 Une caractéristique nouvelle dans le modèle serverless est celui de mise à l'échelle à zéro : lorsqu'une fonction ne reçoit pas de requêtes entrantes, la plateforme serverless libère les ressources qui lui étaient précédemment allouées. Ainsi, les fournisseurs ne facturent les clients que lorsque leur application utilise effectivement des ressources matérielles~\cite{hellersteinServerlessComputingOne2019}.
 
-Pour permettre la mise à l'échelle à zéro des applications, il est nécessaire de désagréger la gestion de leur état. Ainsi, les plateformes serverless dans le cloud public fournissent un ensemble de logiciels dorsaux (ou \textit{backend}), appelés \gls{BaaS}~\cite{mikeroberts2018serverless} (pour \textit{Backend as a Service}). Ce sont des offres commerciales et gérées par le fournisseur, mises à la disposition des développeurs d'applications pour fournir un ensemble de services à longue durée de vie : bases de données, stockage, bus de messages, etc. Ces services tiers constituent l'infrastructure de base des applications serverless.
+Pour permettre la mise à l'échelle à zéro des applications, il est nécessaire que celles-ci soient déployées dans des environnements d'exécution "jetables" : leur durée de vie est inférieure à celle des données sur lesquelles ils opèrent. Les données quant à elles doivent être pérennes, et sont donc sauvegardées sur des stockages persistants. On parle de \textit{désagrégation} de l'état des applications. Ainsi, les plateformes serverless dans le cloud public fournissent un ensemble de logiciels dorsaux (ou \textit{backend}), appelés \gls{BaaS}~\cite{mikeroberts2018serverless} (pour \textit{Backend as a Service}). Ce sont des offres commerciales et gérées par le fournisseur, mises à la disposition des développeurs d'applications pour fournir un ensemble de services à longue durée de vie : bases de données, stockage, bus de messages, etc. Ces services tiers constituent l'infrastructure de base des applications serverless.
 
 L'abstraction offerte par le modèle permet aux fournisseurs de déployer le code de leurs clients dans plusieurs zones géographiques. Ce mécanisme de basculement garantit la disponibilité en cas de panne dans une zone de déploiement et réduit le risque de défaillance d'une fonction dans l'application~\cite{taibiPatternsServerlessFunctions2020}. En outre, comme les instances de fonction sont créées à la demande par le fournisseur, le modèle de concurrence offert par les plateformes serverless signifie que les performances d'une application peuvent évoluer linéairement avec le nombre de requêtes~\cite{mcgrathServerlessComputingDesign2017}.
 
 \subsubsection{Caractéristiques des charges de travail serverless}
 
-Du point de vue du client, le serverless permet une mise à l'échelle parfaite de leurs applications. La facturation est effectuée au plus juste, uniquement lorsque les ressources sont effectivement utilisées et pour la durée exacte de l'exécution. Du point de vue du fournisseur, la granularité d'allocation permet un meilleur multiplexage des ressources, ce qui se traduit par une efficacité accrue et donc des bénéfices plus importants.
+Du point de vue du client, le serverless permet une mise à l'échelle automatique de leurs applications. La facturation est effectuée au plus juste, uniquement lorsque les ressources sont effectivement utilisées et pour la durée exacte de l'exécution. Du point de vue du fournisseur, la granularité d'allocation permet un meilleur multiplexage des ressources, ce qui se traduit par une efficacité accrue et donc des bénéfices plus importants.
 
 Mais ce mécanisme de mise à l'échelle automatique a un coût en termes de latence : initialiser de nouvelles instances de fonctions pour les requêtes entrantes peut provoquer des délais, menant à des situations où les temps d'initialisation peuvent dominer les temps d'exécution des fonctions~\cite{Jiang2021TowardsDS}. Par ailleurs, les performances peuvent aussi être dégradées en termes de débit : étant donné que l'état des fonctions doit être persisté dans un stockage désagrégé, les applications qui présentent des motifs de communications entre les fonctions peuvent souffrir du temps de récupération des données dans les nœuds de calcul~\cite{mullerLambadaInteractiveData2020}.
 
-En réponse à ces limites du modèle, la Cloud Native Computing Foundation (\gls{CNCF}), une initiative de la Fondation Linux soutenue par plus de 800 membres industriels impliqués dans les services cloud, identifie des propriétés idéales pour les cas d'usage serverless, notamment~\cite{cncf2018whitepaper} :
+En réponse à ces limites du modèle, la Cloud Native Computing Foundation~\footnote{\href{https://www.cncf.io/}{https://www.cncf.io/}} (\gls{CNCF}), une initiative de la Fondation Linux~\footnote{\href{https://www.linuxfoundation.org/}{https://www.linuxfoundation.org/}} soutenue par plus de 800 membres industriels impliqués dans les services cloud, identifie des propriétés idéales pour les cas d'usage serverless, notamment~\cite{cncf2018whitepaper} :
 
 \begin{itemize}
     \item Charges de travail hautement parallèles, asynchrones et concurrentes, avec peu ou pas de communication et pas de synchronisation entre les processus ;
@@ -217,6 +217,12 @@ Pour ces classes d'applications, un déploiement serverless peut être envisagé
 
 \section{Conclusion}
 
-Dans ce chapitre, nous avons introduit la notion de cloud, les enjeux que de telles plateformes soulèvent en matière d'ordonnancement, et nous avons présenté quelques propriétés d'un modèle de service émergent pour le cloud, le modèle serverless.
+% Dans ce chapitre, nous avons introduit la notion de cloud, les enjeux que de telles plateformes soulèvent en matière d'ordonnancement, et nous avons présenté quelques propriétés d'un modèle de service émergent pour le cloud, le modèle serverless.
 
-Le chapitre suivant fait état d'un ensemble de défis que les fournisseurs de services doivent relever pour permettre le déploiement d'une variété d'applications sur les plateformes serverless sous contrainte de qualité de service.
+Nous avons vu que les offres traditionnelles du cloud reposent sur la réservation de ressources matérielles par les clients. La capacité pour une plateforme à provisionner des ressources à la demande permet aux clients de bénéficier d'une propriété essentielle dans le cloud, l'élasticité. En fonction de la charge (c'est-à-dire le trafic entrant) que subit une application, la plateforme doit permettre d'ajuster la quantité de ressources allouées à l'application, de manière à garantir ses performances.
+
+Cette élasticité n'est généralement pas automatique : il incombe aux clients de faire des prévisions pertinentes dans le cadre de leurs déploiements, et d'ajuster la quantité et la nature des ressources matérielles allouées au plus près de leurs besoins. Cette planification est délicate et une erreur d'estimation peut induire des écarts entre les besoins réels et la capacité allouée. Si les ressources sont surprovisionnées, le client doit supporter un coût financier superflu ; si les estimations sont trop basses, les performances des applications risquent d'en pâtir.
+
+Pour pallier cette limite, un nouveau modèle de service a émergé depuis le milieu des années 2010. Appelé \gls{FaaS}, ou \textit{serverless}, il renverse la responsabilité de l'allocation des ressources dans le cloud. C'est à la plateforme du fournisseur de services d'assigner ces ressources aux applications des clients ou de les libérer, automatiquement, lors de variations de charge. Cela devrait permettre de simplifier la gestion des déploiements pour les clients, tout en autorisant le fournisseur de services à optimiser l'utilisation de ses ressources matérielles.
+
+Si le modèle serverless doit permettre Ce mécanisme n'est pas sans soulever de nouveaux problèmes, notamment en matière de performances. Le chapitre suivant fait état d'un ensemble de défis que les fournisseurs de services doivent relever pour permettre le déploiement d'une variété d'applications sur les plateformes serverless sous contrainte de qualité de service.
