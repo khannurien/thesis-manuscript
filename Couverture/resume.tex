@@ -12,17 +12,19 @@
     \titleFR{Ordonnancement sur ressources hétérogènes pour le cloud}
     \keywordsFR{cloud, serverless, orchestration, hétérogénéité, optimisation, simulation}
     \abstractFR{
-        Le modèle serverless constitue un changement de paradigme dans le cloud : par opposition aux modèles traditionnels, les clients serverless ne réservent pas de ressources matérielles. L'exécution de leurs applications est dirigée par les requêtes utilisateur, et la facturation s'effectue sur la base de l'utilisation réelle des ressources. En contrepartie, la responsabilité de l'allocation des ressources et du placement des tâches incombe au fournisseur. Ce mécanisme d'orchestration, dynamique et en ligne, peut induire un surcoût important en latence et dégrader la qualité de service pour les utilisateurs.
-        Nous nous sommes intéressés à la capacité pour le fournisseur à respecter des engagements de niveau de service étant donnée une infrastructure dotée de matériel hétérogène (CPU, GPU, FPGA, DLA).
-        Nous avons traité deux cas d'usage : le déploiement serverless d'une application de détection de deepfake, basée sur des fonctions sans état, et celui d'une application de détection d'intrusions, reposant sur des chaînes de fonctions communiquant des résultats intermédiaires.
-        Nous avons proposé une politique d’orchestration qui optimise le déploiement d'applications simples, composées d'une unique fonction, en minimisant les pénalités sur qualité de service. Nous avons également modélisé des applications complexes, en prenant en compte les dépendances temporelles et de données entre fonctions qui les composent, pour chercher à réduire la consommation énergétique et la désagrégation des tâches sur les nœuds de calcul du fournisseur lors de leur déploiement.
+        Le modèle serverless est un paradigme pour le cloud dans lequel les ressources matérielles ne sont pas réservées, mais allouées à la demande, lors de la réception de requêtes utilisateur. La facturation des clients s'effectue sur la base de l'utilisation réelle des ressources. En contrepartie, la responsabilité de l'allocation des ressources et du placement des tâches incombe au fournisseur. Ce mécanisme d'orchestration peut induire un surcoût en latence et dégrader la qualité de service pour les utilisateurs.
+        Nous nous sommes intéressés à la capacité pour le fournisseur à garantir la qualité de service étant donnée une infrastructure dotée de matériel hétérogène (CPU, GPU, FPGA, DLA), dans le cadre de deux déploiements : une application de détection de deepfake, basée sur des fonctions sans état, et une application de détection d'intrusions, reposant sur des chaînes de fonctions communiquant des résultats intermédiaires.
+        Nous avons proposé une politique d’orchestration qui optimise le déploiement d'applications composées d'une unique fonction, en minimisant les pénalités sur qualité de service. Nous avons également modélisé des applications complexes, en prenant en compte les dépendances entre fonctions qui les composent, pour chercher à réduire la consommation énergétique et la désagrégation des tâches sur les nœuds de calcul.
         Enfin, nous avons développé un simulateur permettant de représenter de tels environnements, et d'évaluer et de comparer différentes stratégies d'orchestration pour le cloud.
     }
 
     \titleEN{Scheduling on heterogeneous resources in the cloud}
     \keywordsEN{cloud, serverless, orchestration, heterogeneity, optimization, simulation}
     \abstractEN{
-        TODO
+        The serverless model is a cloud paradigm in which hardware resources are not reserved but allocated on demand, triggered by incoming user requests. Clients are billed based on their actual resource usage. In return, the responsibility for resource allocation and task placement lies with the provider. This orchestration mechanism can lead to latency overhead and degrade the quality of service for users.
+        We focused on the provider’s ability to guarantee quality of service given an infrastructure comprising heterogeneous hardware resources (CPU, GPU, FPGA, DLA), in the context of two deployments: a deepfake detection application, based on stateless functions, and an intrusion detection application, relying on chains of functions that communicate intermediate results.
+        We proposed an orchestration policy that optimizes the deployment of applications composed of a single function, minimizing penalties on quality of service. We also modeled complex applications, taking into account the dependencies between the functions they comprise, aiming to reduce energy consumption and task disaggregation across compute nodes.
+        Finally, we developed a simulator to represent such environments and to evaluate and compare different cloud orchestration strategies.
     }
 }
 

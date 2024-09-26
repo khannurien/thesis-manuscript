@@ -2,7 +2,7 @@
 \chapter{Contexte -- Cloud, ordonnancement et élasticité}
 \label{chapter:context}
 
-Dans ce second chapitre, nous donnons une définition formelle du cloud, au travers des propriétés spécifiques à ces environnements de calcul et de stockage partagés. Nous présentons également quelques techniques et technologies socles dans les centres de données. Enfin, nous commentons les caractéristiques des applications déployées dans le cloud, et terminons par introduire le modèle serverless pour le cloud, qui constitue l'environnement au cœur des problématiques traitées au cours de cette thèse.
+Dans ce deuxième chapitre, nous donnons une définition formelle du cloud, au travers des propriétés spécifiques à ces environnements de calcul et de stockage partagés. Nous présentons également quelques techniques et technologies socles dans les centres de données. Enfin, nous commentons les caractéristiques des applications déployées dans le cloud, et terminons par introduire le modèle serverless pour le cloud, qui constitue l'environnement au cœur des problématiques traitées au cours de cette thèse.
 
 \section{\textit{Cloud computing} : une définition}
 
@@ -201,7 +201,7 @@ L'abstraction offerte par le modèle permet aux fournisseurs de déployer le cod
 
 Du point de vue du client, le serverless permet une mise à l'échelle automatique de leurs applications. La facturation est effectuée au plus juste, uniquement lorsque les ressources sont effectivement utilisées et pour la durée exacte de l'exécution. Du point de vue du fournisseur, la granularité d'allocation permet un meilleur multiplexage des ressources, ce qui se traduit par une efficacité accrue et donc des bénéfices plus importants.
 
-Mais ce mécanisme de mise à l'échelle automatique a un coût en termes de latence : initialiser de nouvelles instances de fonctions pour les requêtes entrantes peut provoquer des délais, menant à des situations où les temps d'initialisation peuvent dominer les temps d'exécution des fonctions~\cite{Jiang2021TowardsDS}. Par ailleurs, les performances peuvent aussi être dégradées en termes de débit : étant donné que l'état des fonctions doit être persisté dans un stockage désagrégé, les applications qui présentent des motifs de communications entre les fonctions peuvent souffrir du temps de récupération des données dans les nœuds de calcul~\cite{mullerLambadaInteractiveData2020}.
+Mais ce mécanisme de mise à l'échelle automatique a un coût en termes de latence : initialiser de nouvelles instances de fonctions pour les requêtes entrantes peut provoquer des délais, menant à des situations où les temps d'initialisation peuvent dominer les temps d'exécution des fonctions~\cite{Jiang2021TowardsDS}. Par ailleurs, les performances peuvent aussi être dégradées en termes de débit : étant donné que l'état des fonctions doit être sauvegardé dans un stockage désagrégé, les applications qui présentent des motifs de communications entre les fonctions peuvent souffrir du temps de récupération des données dans les nœuds de calcul~\cite{mullerLambadaInteractiveData2020}.
 
 En réponse à ces limites du modèle, la Cloud Native Computing Foundation~\footnote{\href{https://www.cncf.io/}{https://www.cncf.io/}} (\gls{CNCF}), une initiative de la Fondation Linux~\footnote{\href{https://www.linuxfoundation.org/}{https://www.linuxfoundation.org/}} soutenue par plus de 800 membres industriels impliqués dans les services cloud, identifie des propriétés idéales pour les cas d'usage serverless, notamment~\cite{cncf2018whitepaper} :
 
