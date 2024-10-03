@@ -9,7 +9,7 @@ Nous discutons ensuite de travaux de l'état de l'art concernant l'orchestration
 
 Dans cette première section, nous proposons un aperçu des différentes offres serverless chez les fournisseurs de cloud public, ainsi que des solutions open source disponibles pour le cloud privé.
 
-Le tableau~\ref{table:sota-commercial-faas} présente un sommaire des offres commerciales \gls{FaaS} dans le cloud public, leurs modèles de tarifications ainsi que certaines de leurs caractéristiques. Ce sommaire inclut Alibaba Function Compute~\footnote{\label{footnote:alibaba-function}\href{https://www.alibabacloud.com/product/function-compute}{https://www.alibabacloud.com/product/function-compute}}, Amazon Web Services Lambda~\footnote{\label{footnote:aws-lambda}\href{https://aws.amazon.com/lambda/}{https://aws.amazon.com/lambda/}}, Microsoft Azure Functions~\footnote{\label{footnote:azure-functions}\href{https://azure.microsoft.com/products/functions/}{https://azure.microsoft.com/products/functions/}}, Cloudflare Workers~\footnote{\label{footnote:cloudflare-workers}\href{https://workers.cloudflare.com/}{https://workers.cloudflare.com/}} Google Cloud Functions~\footnote{\label{footnote:google-functions}\href{https://cloud.google.com/functions}{https://cloud.google.com/functions}}, IBM Cloud Functions~\footnote{\label{footnote:ibm-functions}\href{https://cloud.ibm.com/functions/}{https://cloud.ibm.com/functions/}} et Oracle Cloud Functions~\footnote{\label{footnote:oracle-functions}\href{https://www.oracle.com/cloud/cloud-native/functions/}{https://www.oracle.com/cloud/cloud-native/functions/}}.
+Le tableau~\ref{table:sota-commercial-faas} présente un sommaire des offres commerciales \gls{FaaS} dans le cloud public, leurs modèles de tarifications ainsi que certaines de leurs caractéristiques. Ce sommaire inclut Alibaba Function Compute~\footnote{\label{footnote:alibaba-function}\href{https://www.alibabacloud.com/product/function-compute}{https://www.alibabacloud.com/product/function-compute}}, Amazon Web Services Lambda~\footnote{\label{footnote:aws-lambda}\href{https://aws.amazon.com/lambda/}{https://aws.amazon.com/lambda/}}, Microsoft Azure Functions~\footnote{\label{footnote:azure-functions}\href{https://azure.microsoft.com/products/functions/}{https://azure.microsoft.com/products/functions/}}, Google Cloud Functions~\footnote{\label{footnote:google-functions}\href{https://cloud.google.com/functions}{https://cloud.google.com/functions}}, IBM Cloud Functions~\footnote{\label{footnote:ibm-functions}\href{https://cloud.ibm.com/functions/}{https://cloud.ibm.com/functions/}} et Oracle Cloud Functions~\footnote{\label{footnote:oracle-functions}\href{https://www.oracle.com/cloud/cloud-native/functions/}{https://www.oracle.com/cloud/cloud-native/functions/}}.
 
 Le tableau~\ref{table:sota-foss-faas} présente ensuite quelques solutions majeures disponibles dans la communauté open source, et donne un aperçu de l'état du projet en fonction de son adoption par les utilisateurs et la quantité de contributions, ainsi que les partenaires industriels qui accompagnent le projet. On y trouve Apache OpenWhisk~\footnote{\label{footnote:openwhisk}\href{https://github.com/apache/openwhisk}{https://github.com/apache/openwhisk}}, Fission~\footnote{\label{footnote:fission}\href{https://github.com/fission/fission}{https://github.com/fission/fission}}, Fn~\footnote{\label{footnote:fn}\href{https://github.com/fnproject/fn}{https://github.com/fnproject/fn}}, Knative Serving~\footnote{\label{footnote:knative}\href{https://github.com/knative/serving}{https://github.com/knative/serving}} et OpenFaaS~\footnote{\label{footnote:openfaas}\href{https://github.com/openfaas/faas}{https://github.com/openfaas/faas}}.
 
@@ -25,8 +25,6 @@ Pour positionner chacune des offres commerciales, nous avons choisi de les compa
 Les solutions \gls{FaaS} dans le cloud public adoptent une tarification dite \textit{pay as you go} (ou \textit{à la demande}). Ce sont des offres sans engagement, facturées à une granularité fine. Cette granularité peut se situer au niveau du temps d'utilisation des ressources matérielles, ou s'exprimer en termes de requêtes utilisateur.
 
 Nous essayons de fournir une grille de lecture unifiée avec des valeurs normalisées entre les différentes offres. Cependant, les stratégies de tarification peuvent varier grandement d'un fournisseur à l'autre. Une métrique communément utilisée pour mesurer l'utilisation des ressources dans le modèle \gls{FaaS} est le \textit{gigabyte-second} (noté \textit{GB-s}, ou Go-s en français). Une consommation de 10 Go-s peut représenter un usage de 10 Go de mémoire vive pendant 1 seconde, comme un usage de 1 Go de mémoire pendant 10 secondes. Cette valeur est souvent rapportée au nombre d'invocations de fonctions.
-
-TODO: Vérification des valeurs du tableau
 
 \begin{longtblr}[
     caption = {Offres \gls{FaaS} commerciales dans le cloud public, proposées par les acteurs majeurs de l'industrie. Tous proposent un quota gratuit, en plus d'une tarification à la demande.},
@@ -46,7 +44,7 @@ TODO: Vérification des valeurs du tableau
     \cmidrule[lr=-0.4]{2-3}
     \cmidrule[lr=-0.4]{4-7}
     &
-    quota gratuit &
+    quota gratuit (par mois) &
     coût à la demande &
     \\
     &
@@ -62,7 +60,7 @@ TODO: Vérification des valeurs du tableau
     \num{1000000} / \num{400000} &
     \num{20}\TblrNote{a} / \num{0.000016384} &
     \qty{500}{\mega\byte} &
-    \qty{3}{\giga\byte}&
+    \qty{3}{\giga\byte} &
     \qty{24}{\hour} &
     \qty{128}{\kilo\byte} (requête), \qty{6}{\mega\byte} (réponse)
     \\
@@ -85,21 +83,12 @@ TODO: Vérification des valeurs du tableau
     \qty{100}{\mega\byte} (requête)
     \\
 
-    Cloudflare Workers~\footref{footnote:cloudflare-workers} &
-    \num{0} / \num{0} &
-    \num{0} / \num{0} &
-    N/A &
-    \qty{0}{\giga\byte} &
-    \qty{0}{\minute}&
-    \qty{0}{\mega\byte} (requête)
-    \\
-
     Google Cloud Functions~\footref{footnote:google-functions}   &
     \num{2000000} / \num{400000} &
     \num{0.4} / \num{0.0000025} &
-    \qty{500}{\mega\byte}&
-    \qty{8}{\giga\byte}&
-    \qty{9}{\minute}&
+    \qty{500}{\mega\byte} &
+    \qty{8}{\giga\byte} &
+    \qty{9}{\minute} &
     \qty{10}{\mega\byte} (requête et réponse)
     \\
 
@@ -117,7 +106,7 @@ TODO: Vérification des valeurs du tableau
     \num{0.2} / \num{0.00001417} &
     N/A &
     \qty{2048}{\mega\byte} &
-    \qty{5}{\minute}&
+    \qty{5}{\minute} &
     \qty{6}{\mega\byte}
     \\
 
@@ -154,9 +143,7 @@ Pour chacun de ces projets, nous relevons également les entités industrielles 
     \label{table:sota-foss-faas}
 \end{table}
 
-TODO: Conclusion ?
-
-% TODO: Les limites imposées par les offres de cloud public peuvent être trop restrictives pour certaines applications. Il est possible de mettre en place une plateforme \gls{FaaS} dans le cloud privé, en s'appuyant sur des solutions open source.
+Ainsi, de nombreuses offres existent dans le cloud pour permettre des déploiements serverless. Si les limites imposées par les offres de cloud public peuvent être trop restrictives pour certaines applications, il est possible de mettre en place une plateforme \gls{FaaS} dans le cloud privé, en s'appuyant sur des solutions open source.
 
 \section{Orchestration de fonctions serverless sur ressources hétérogènes}
 \label{section:sota-herofake}
