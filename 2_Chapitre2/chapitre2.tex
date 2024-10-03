@@ -7,7 +7,6 @@ Dans ce deuxième chapitre, nous donnons une définition formelle du cloud, au t
 \section{\textit{Cloud computing} : une définition}
 
 Les premières réflexions autour de l'émergence d'un système informatique à temps partagé remontent au début des années 1960~\cite{greenberger1962management}. L'idée, nouvelle, est alors de permettre le partage des ressources matérielles d'une part entre différentes tâches, et d'autre part entre différents utilisateurs~\cite{meyerVirtualMachineTimesharing1970}. L'objectif est de maximiser l'utilisation des ressources en permettant à plusieurs utilisateurs d'exploiter la même machine simultanément, limitant ainsi le gaspillage de temps de calcul~\cite{corbato1962experimental}.
-%Le premier objectif est bien sûr de maximiser l'utilisation des ressources, mais les auteurs considèrent également ce problème sous un angle différent : le taux -- ou la vitesse -- d'interaction entre utilisateurs et machines. À cette époque, le constat suivant est déjà établi : la vitesse de calcul d'un ordinateur surpasse la vitesse à laquelle son utilisateur peut le programmer. Permettre à plusieurs personnes d'utiliser la même machine simultanément permettrait de limiter le gaspillage de temps de calcul~\cite{corbato1962experimental}.
 
 Le cloud est vu comme la suite logique au succès de ces systèmes à temps partagé~\cite{hayesCloudComputing2008}. Salesforce fait partie des premières sociétés à avoir fait le pari du cloud en 1999~\cite{weissmanDesignForceCom2009} en proposant à ses clients une suite logicielle d'informatique de gestion accessible en ligne. En 2006, Amazon Web Services (\gls{AWS}) propose EC2~\footnote{\href{https://aws.amazon.com/fr/ec2/}{https://aws.amazon.com/fr/ec2/}} (pour \textit{Elastic Compute Cloud}), la première offre d'infrastructure en tant que service. La même année, Google lance Google Docs~\footnote{\href{https://www.google.fr/intl/fr/docs/about/}{https://www.google.fr/intl/fr/docs/about/}}, une suite bureautique accessible en ligne et destinée aux utilisateurs finaux. En 2010, la NASA annonce la publication sous licence libre d'OpenStack~\footnote{\href{https://www.openstack.org/}{https://www.openstack.org/}}, une plateforme logicielle permettant de gérer une infrastructure cloud, ouvrant la possibilité à de nouveaux acteurs de rentrer sur le marché du cloud sans avoir à développer une pile logicielle complète.
 
@@ -70,9 +69,9 @@ Pour respecter ces garanties, les fournisseurs doivent recourir à des mesures d
 
 La virtualisation est une technique d'isolation qui permet d'exécuter une application dans les limites d'un environnement d'exécution sécurisé, en introduisant une couche d'indirection entre la plateforme hôte et l'application elle-même~\cite{singhviAtollScalableLowLatency2021}.
 
-La virtualisation des ressources de l'hôte peut se faire à l'aide de machines virtuelles (\gls{VM}, pour \textit{Virtual Machine}) ou de conteneurs. Ces environnements d'exécution donnent aux processus sous-jacents l'illusion d'avoir une machine entière à leur disposition. Alors que les VM virtualisent les ressources physiques de l'hôte, en s'appuyant sur l'architecture du processeur pour réaliser l'isolation, les conteneurs exploitent des directives du système d'exploitation hôte pour isoler les charges de travail~\cite{mancoMyVMLighter2017}.
+La virtualisation des ressources de l'hôte peut se faire à l'aide de machines virtuelles (\gls{VM}, pour \textit{Virtual Machine}) ou de conteneurs. Ces environnements d'exécution donnent aux processus sous-jacents l'illusion d'avoir une machine entière à leur disposition. Alors que les \gls{VM} virtualisent les ressources physiques de l'hôte, en s'appuyant sur l'architecture du processeur pour réaliser l'isolation, les conteneurs exploitent des directives du système d'exploitation hôte pour isoler les charges de travail~\cite{mancoMyVMLighter2017}.
 
-Lorsqu'ils choisissent le modèle d'isolation sur lequel ils souhaitent s'appuyer pour exploiter le partage des ressources, les fournisseurs cloud doivent faire un compromis entre performances et sécurité. Les conteneurs sont fréquemment la cible d'attaques par élévation de privilèges~\cite{zomer2022containers, redhat2019containers}, mais leurs temps de démarrage sont de plusieurs ordres de grandeur inférieurs à ceux des machines virtuelles : le temps d'initialisation des conteneurs se compte en centaines de millisecondes, tandis que les VM démarrent en quelques secondes~\cite{mancoMyVMLighter2017}. La conception de machines virtuelles légères offrant des temps d'initialisation comparables à ceux des conteneurs est un sujet de recherche essentiel~\cite{agacheFirecrackerLightweightVirtualization, Anjali2020BlendingCA}.
+Lorsqu'ils choisissent le modèle d'isolation sur lequel ils souhaitent s'appuyer pour exploiter le partage des ressources, les fournisseurs cloud doivent faire un compromis entre performances et sécurité. Les conteneurs sont fréquemment la cible d'attaques par élévation de privilèges~\cite{zomer2022containers, redhat2019containers}, mais leurs temps de démarrage sont de plusieurs ordres de grandeur inférieurs à ceux des machines virtuelles : le temps d'initialisation des conteneurs se compte en centaines de millisecondes, tandis que les \gls{VM} démarrent en quelques secondes~\cite{mancoMyVMLighter2017}. La conception de machines virtuelles légères offrant des temps d'initialisation comparables à ceux des conteneurs est un sujet de recherche essentiel~\cite{agacheFirecrackerLightweightVirtualization, Anjali2020BlendingCA}.
 
 \begin{figure}[!ht]
     \centering
@@ -85,7 +84,7 @@ Lorsqu'ils choisissent le modèle d'isolation sur lequel ils souhaitent s'appuye
 
 La virtualisation assistée par le matériel permet à plusieurs systèmes d'exploitation \textit{invités} complets de fonctionner indépendamment sur des ressources physiques partagées, quelle que soit la nature du système d'exploitation \textit{hôte}~\cite{kivityKvmLinuxVirtual}.
 
-Du point de vue d'une application déployée dans une VM, l'environnement d'exécution isolé est perçu comme une plateforme complète, alors qu'il s'agit en réalité d'un sous-ensemble des ressources de la plateforme hôte, déterminé par l'hyperviseur (ou \gls{VMM}, pour \textit{Virtual Machine Manager}), un logiciel de bas niveau qui peut faire office de système d'exploitation, ou s'exécuter en tant que processus du système d'exploitation hôte.
+Du point de vue d'une application déployée dans une \gls{VM}, l'environnement d'exécution isolé est perçu comme une plateforme complète, alors qu'il s'agit en réalité d'un sous-ensemble des ressources de la plateforme hôte, déterminé par l'hyperviseur (ou \gls{VMM}, pour \textit{Virtual Machine Manager}), un logiciel de bas niveau qui peut faire office de système d'exploitation, ou s'exécuter en tant que processus du système d'exploitation hôte.
 
 L'hyperviseur a la responsabilité de gérer le cycle de vie des machines virtuelles : la création, l'exécution, la destruction et parfois la migration des machines virtuelles sont gérées par l'hyperviseur.
 
@@ -105,7 +104,7 @@ Les conteneurs constituent un mécanisme d'isolation léger qui repose sur les c
 \begin{itemize}
     \item \texttt{chroot} : modifie le répertoire racine apparent pour une arborescence de processus donnée. Il permet à un conteneur d'opérer sur un répertoire virtuel \texttt{/} qui pourrait être situé n'importe où sur le système de fichiers de l'hôte ;
     \item \texttt{cgroups} : permettent de créer des groupes hiérarchiques de processus et allouer, limiter et surveiller les ressources matérielles pour ces groupes : E/S vers et depuis les périphériques de bloc, accès à l'unité centrale, à la mémoire et aux interfaces réseau ;
-    \item \texttt{namespaces} : une couche d'abstraction autour des ressources du système d'exploitation, telles que le réseau ou les communications entre processus (IPC). Les processus au sein d'un espace de noms ont leurs propres instances isolées de ces ressources système.
+    \item \texttt{namespaces} : une couche d'abstraction autour des ressources du système d'exploitation, telles que le réseau ou les communications entre processus (\gls{IPC}, pour \textit{Inter-Process Communication}). Les processus au sein d'un espace de noms ont leurs propres instances isolées de ces ressources système.
 \end{itemize}
 
 L'ambition derrière les conteneurs est de contenir l'exécution d'une application dans un processus isolé du reste du système, de sorte à ce qu'il ignore les autres processus exécutés par le système hôte. Le cycle de vie des conteneurs est géré par un moteur de conteneurs. Le conteneur est amorcé à partir d'une image qui contient toutes les dépendances nécessaires à la construction et/ou à l'exécution de l'application.
@@ -123,7 +122,7 @@ L'équilibrage de charge s'appuie sur des politiques (ou stratégies) de gestion
 Lorsque la charge sur une application augmente, une mise à l'échelle (ou \textit{scaling}) des ressources matérielles qui lui sont allouées peut alors être effectuée selon deux axes :
 
 \begin{itemize}
-    \item \textbf{Verticalement}~\cite{boyd-wickizerAnalysisLinuxScalability, linderOracleParallelRDBMS1993, xian-hesunScalabilityParallelAlgorithmmachine1994} : en attachant plus de ressources matérielles aux serveurs qui supportent l'application (par exemple, augmenter le nombre de CPU ou la quantité de mémoire alloués à une VM). Il peut s'agir de migrer une instance de l'application vers un nouveau serveur plus performant, ce qui a un impact sur la disponibilité de l'application. Le mécanisme d'équilibrage de charge permet de router temporairement les requêtes entrantes vers une instance fonctionnelle de l'application en attendant l'initialisation de la nouvelle instance ;
+    \item \textbf{Verticalement}~\cite{boyd-wickizerAnalysisLinuxScalability, linderOracleParallelRDBMS1993, xian-hesunScalabilityParallelAlgorithmmachine1994} : en attachant plus de ressources matérielles aux serveurs qui supportent l'application (par exemple, augmenter le nombre de \gls{CPU} ou la quantité de mémoire alloués à une \gls{VM}). Il peut s'agir de migrer une instance de l'application vers un nouveau serveur plus performant, ce qui a un impact sur la disponibilité de l'application. Le mécanisme d'équilibrage de charge permet de router temporairement les requêtes entrantes vers une instance fonctionnelle de l'application en attendant l'initialisation de la nouvelle instance ;
     \item \textbf{Horizontalement}~\cite{al-faresHederaDynamicFlow, lakshmanCassandraDecentralizedStructured2010, weilCephScalableHighPerformance} : en augmentant le nombre de serveurs alloués à l'application. Le mécanisme d'équilibrage de charge permet d'acheminer les requêtes et les réponses entre les utilisateurs et les multiples instances de l'application.
 \end{itemize}
 
@@ -157,25 +156,9 @@ Cette conception de l'offre a plusieurs conséquences. Tout d'abord, cela signif
 
 Le cloud a vu naître de nouvelles techniques de développement. Le développement "cloud-native" consiste à construire des applications pour le cloud, en prenant en compte dès leur conception les besoins futurs de mise à l'échelle~\cite{dragoniMicroservicesHowMake2018, martinfowler2014microservices}.
 
-% \begin{figure}[!ht]
-%     \centering
-% 	\includegraphics[width=\textwidth]{2_Chapitre2/figures/scaling-monolith.png}
-% 	\caption{La mise à l'échelle d'une application à architecture monolithique nécessite de répliquer le monolithe sur plusieurs serveurs.}
-% 	\label{figure:context-scaling-monolith}
-% \end{figure}
-
 Une application monolithique est construite comme une unité unique, dont les différents services exposés ne sont pas découplés~\cite{villamizarEvaluatingMonolithicMicroservice2015}. Lors de la mise à l'échelle d'un monolithe, l'augmentation du nombre d'instances du monolithe (mise à l'échelle horizontale) peut s'avérer inefficace en termes de coûts, car toutes les parties d'une application ne subissent pas des pics de charge en même temps. Une augmentation des requêtes vers une zone logique de l'application implique une mise à l'échelle de l'infrastructure pour l'ensemble de l'application.
-% : dans l'exemple illustré par la figure~\ref{figure:context-scaling-monolith}, une augmentation des requêtes d'authentification implique une mise à l'échelle de l'infrastructure pour l'ensemble de l'application.
-
-% \begin{figure}[!ht]
-%     \centering
-% 	\includegraphics[width=\textwidth]{2_Chapitre2/figures/scaling-microservices.png}
-% 	\caption{La mise à l'échelle d'une application architecturée en microservices permet de distribuer et de répliquer chaque microservice de manière indépendante.}
-% 	\label{figure:context-scaling-microservices}
-% \end{figure}
 
 Une architecture logicielle en microservices consiste à organiser une application sous la forme d'une collection de services faiblement couplés~\cite{12factor}. Chacun de ces services s'exécute dans son propre processus, communique avec les autres par le biais du passage de messages et peut être déployé de manière indépendante sur des serveurs hétérogènes afin d'atteindre les objectifs de niveau de service. Une augmentation des requêtes vers une zone logique de l'application peut être absorbée par la mise à l'échelle de l'infrastructure pour ce seul microservice.
-% : dans la figure~\ref{figure:context-scaling-microservices}, une augmentation des requêtes d'authentification peut être absorbée par la mise à l'échelle de l'infrastructure pour le seul microservice d'authentification.
 
 L'infrastructure en microservices facilite donc la mise à l'échelle des applications dans le cloud en permettant un déploiement indépendant pour chacune des composantes d'une application~\cite{vaneykSPECRGReferenceArchitecture2019}.
 
@@ -187,7 +170,7 @@ Dans cette section, nous présentons le modèle de service serverless pour le cl
 
 % TOOD: Le modèle serverless n'est pas une idée nouvelle... Première mention de "serverless" dans la littérature~\cite{andersonServerlessNetworkFile}...
 
-Le serverless désigne à la fois un modèle de programmation et un modèle de service pour le cloud. Dans une architecture serverless, les développeurs conçoivent leurs applications comme une composition de fonctions sans état. Sans état (ou "pur", sans effet de bord) signifie que le résultat du calcul dépend exclusivement des entrées~\cite{burckhardtNetheriteEfficientExecution}. Ces fonctions prennent en entrée une valeur et un contexte d'invocation, et produisent un résultat qui est stocké dans un système de stockage. Leur exécution est déclenchée par un événement tel qu'une requête HTTP, une tâche planifiée, un téléchargement de fichier, etc. Ainsi, le serverless est un modèle dirigé par les événements~\cite{SchleierSmith2021WhatSC}. Dans les offres commerciales de cloud public, le modèle serverless est souvent appelé \textit{Function as a Service}~\cite{hellersteinServerlessComputingOne2019} (\gls{FaaS}).
+Le serverless désigne à la fois un modèle de programmation et un modèle de service pour le cloud. Dans une architecture serverless, les développeurs conçoivent leurs applications comme une composition de fonctions sans état. Sans état (ou "pur", sans effet de bord) signifie que le résultat du calcul dépend exclusivement des entrées~\cite{burckhardtNetheriteEfficientExecution}. Ces fonctions prennent en entrée une valeur et un contexte d'invocation, et produisent un résultat qui est stocké dans un système de stockage. Leur exécution est déclenchée par un événement tel qu'une requête \gls{HTTP}, une tâche planifiée, un téléchargement de fichier, etc. Ainsi, le serverless est un modèle dirigé par les événements~\cite{SchleierSmith2021WhatSC}. Dans les offres commerciales de cloud public, le modèle serverless est souvent appelé \textit{Function as a Service}~\cite{hellersteinServerlessComputingOne2019} (\gls{FaaS}).
 
 L'appellation \textit{serverless} ne signifie pas que des serveurs ne sont plus utilisés pour héberger et exécuter des applications. Le terme fait référence à une abstraction sur les ressources matérielles qui permet aux développeurs de s'affranchir de la gestion des serveurs qui supportent leurs applications. Grâce à des mécanismes de mise à l'échelle automatique, les développeurs sont libérés de la réservation des ressources nécessaires au déploiement de leurs charges de travail~\cite{vaneykSPECRGCloud2018}. Les plateformes serverless sont conçues pour gérer de manière automatique les besoins de mise à l'échelle et ainsi répondre aux fluctuations de la demande sur les applications, évitant ainsi aux développeurs d'avoir à définir des stratégies de mise à l'échelle explicites. L'objectif du modèle est de rapprocher les clients de la logique métier de leurs applications~\cite{vaneykSPECRGReferenceArchitecture2019}.
 
@@ -213,11 +196,8 @@ En réponse à ces limites du modèle, la Cloud Native Computing Foundation~\foo
 
 Pour ces classes d'applications, un déploiement serverless peut être envisagé comme une alternative efficace en matière de coût par rapport aux modèles traditionnels. Toutefois, elles ne recouvrent pas tous les cas d'usage dans le cloud. Si les possibilités de gestion fine des allocations de ressources semblent donner le serverless comme le futur premier modèle de service dans le cloud~\cite{hellersteinServerlessComputingOne2019}, il apparaît donc que les plateformes serverless soulèvent des défis qui restent à relever.
 
-% TODO: Par ailleurs, les utilisateurs déploient des charges de travail très variées sur des plateformes serverless.
 
 \section{Conclusion}
-
-% Dans ce chapitre, nous avons introduit la notion de cloud, les enjeux que de telles plateformes soulèvent en matière d'ordonnancement, et nous avons présenté quelques propriétés d'un modèle de service émergent pour le cloud, le modèle serverless.
 
 Nous avons vu que les offres traditionnelles du cloud reposent sur la réservation de ressources matérielles par les clients. La capacité pour une plateforme à provisionner des ressources à la demande permet aux clients de bénéficier d'une propriété essentielle dans le cloud, l'élasticité. En fonction de la charge (c'est-à-dire le trafic entrant) que subit une application, la plateforme doit permettre d'ajuster la quantité de ressources allouées à l'application, de manière à garantir ses performances.
 

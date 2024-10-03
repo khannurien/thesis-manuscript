@@ -26,6 +26,8 @@ Les solutions \gls{FaaS} dans le cloud public adoptent une tarification dite \te
 
 Nous essayons de fournir une grille de lecture unifiée avec des valeurs normalisées entre les différentes offres. Cependant, les stratégies de tarification peuvent varier grandement d'un fournisseur à l'autre. Une métrique communément utilisée pour mesurer l'utilisation des ressources dans le modèle \gls{FaaS} est le \textit{gigabyte-second} (noté \textit{GB-s}, ou Go-s en français). Une consommation de 10 Go-s peut représenter un usage de 10 Go de mémoire vive pendant 1 seconde, comme un usage de 1 Go de mémoire pendant 10 secondes. Cette valeur est souvent rapportée au nombre d'invocations de fonctions.
 
+TODO: Vérification des valeurs du tableau
+
 \begin{longtblr}[
     caption = {Offres \gls{FaaS} commerciales dans le cloud public, proposées par les acteurs majeurs de l'industrie. Tous proposent un quota gratuit, en plus d'une tarification à la demande.},
     label = {table:sota-commercial-faas},
@@ -84,12 +86,12 @@ Nous essayons de fournir une grille de lecture unifiée avec des valeurs normali
     \\
 
     Cloudflare Workers~\footref{footnote:cloudflare-workers} &
-    \num{1000000} / \num{400000} &
-    \num{0.2} / \num{0.000016} &
+    \num{0} / \num{0} &
+    \num{0} / \num{0} &
     N/A &
-    \qty{1.5}{\giga\byte} &
-    \qty{10}{\minute}&
-    \qty{100}{\mega\byte} (requête)
+    \qty{0}{\giga\byte} &
+    \qty{0}{\minute}&
+    \qty{0}{\mega\byte} (requête)
     \\
 
     Google Cloud Functions~\footref{footnote:google-functions}   &
@@ -124,8 +126,6 @@ Nous essayons de fournir une grille de lecture unifiée avec des valeurs normali
 
 \subsection{Solution open source pour le cloud privé}
 
-% TODO: Les limites imposées par les offres de cloud public peuvent être trop restrictives pour certaines applications. Il est possible de mettre en place une plateforme \gls{FaaS} dans le cloud privé, en s'appuyant sur des solutions open source.
-
 Comme mesures de l'état d'un projet ainsi que de son adoption, nous choisissons deux métriques disponibles publiquement sur leurs dépôts GitHub~\footnote{\href{https://github.com/}{https://github.com/}} :
 
 \begin{itemize}
@@ -154,6 +154,10 @@ Pour chacun de ces projets, nous relevons également les entités industrielles 
     \label{table:sota-foss-faas}
 \end{table}
 
+TODO: Conclusion ?
+
+% TODO: Les limites imposées par les offres de cloud public peuvent être trop restrictives pour certaines applications. Il est possible de mettre en place une plateforme \gls{FaaS} dans le cloud privé, en s'appuyant sur des solutions open source.
+
 \section{Orchestration de fonctions serverless sur ressources hétérogènes}
 \label{section:sota-herofake}
 
@@ -161,9 +165,30 @@ Pour chacun de ces projets, nous relevons également les entités industrielles 
     Comment dimensionner les allocations dynamiques de ressources hétérogènes pour une application simple, constituée de fonctions de courte durée, et comment ordonnancer efficacement les requêtes utilisateur, lorsque ces derniers ont des besoins variés en matière de qualité de service ?
 }
 
-Plusieurs contributions de la littérature se sont concentrées sur les plateformes de mise à l'échelle automatique pour le déploiement de tâches de courte durée, comprises dans des applications présentant des motifs d'utilisation imprévisibles. Le tableau~\ref{table:herofake-sota} résume les différences entre ces contributions et notre plateforme cible (voir chapitre~\ref{chapter:herofake}, section~\ref{section:herofake-deepfake}).
+Plusieurs contributions de la littérature se sont concentrées sur les plateformes de mise à l'échelle automatique pour le déploiement de tâches de courte durée, comprises dans des applications présentant des motifs d'utilisation imprévisibles. Le tableau~\ref{table:sota-herofake-sota} (reproduit dans le chapitre~\ref{chapter:herofake}) résume les différences entre ces contributions et notre plateforme cible (voir chapitre~\ref{chapter:herofake}, section~\ref{section:herofake-deepfake}).
 
-% SLA
+\begin{table*}[!ht]
+    \centering
+    \caption{État de l'art des solutions de déploiement avec mise à l'échelle automatique pour des tâches de courte durée.}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{lYYYYYYY}
+            \toprule
+            & Serverless & Déploiement cible & \gls{SLA} & Hétérogénéité matérielle & Utilisation des ressources & Énergie & Conscient du coût \\
+            \cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}\cmidrule(lr){7-7}\cmidrule(lr){8-8}
+            Swayam~\cite{gujaratiSwayamDistributedAutoscaling2017}        & \xmark         & Public (Azure) & \cmark& \xmark                     & \cmark            & \xmark                 & \xmark         \\
+            Pigeon~\cite{lingPigeonDynamicEfficient2019}                  & \cmark       & Privé                   & \xmark  & \cmark                   & \cmark            & \xmark                 & \xmark         \\
+            MArk~\cite{zhangMArkExploitingCloud}                          & \xmark         & Public (AWS)              & \cmark& \cmark                   & \cmark            & \xmark                 & \cmark       \\
+            ENSURE~\cite{sureshENSUREEfficientScheduling2020}             & \cmark       & Privé                   & \xmark  & \xmark                     & \cmark            & \xmark                 & \cmark       \\
+            Mampage et al.~\cite{mampageDeadlineawareDynamicResource2021} & \cmark       & Privé                   & \cmark& \xmark                     & \cmark            & \xmark                 & \cmark       \\
+            Atoll~\cite{singhviAtollScalableLowLatency2021}               & \cmark       & Privé                   & \cmark& \xmark                     & \xmark              & \xmark                 & \xmark         \\
+            INFless~\cite{yangINFlessNativeServerless2022}                & \cmark       & Privé                   & \cmark& \xmark                     & \cmark            & \xmark                 & \cmark       \\
+            SMIF~\cite{choSLADrivenMLInference}                           & \cmark       & Privé                   & \cmark& \cmark                   & \cmark            & \xmark                 & \xmark         \\
+            Solution cible                                                & \cmark       & Privé                   & \cmark& \cmark                   & \cmark            & \cmark               & \cmark       \\ \bottomrule
+        \end{tabular}
+    }
+    \label{table:sota-herofake-sota}
+\end{table*}
+
 Certaines de ces contributions ont tenté d'atteindre des \gls{SLA} avec des ressources non réservées~\cite{gujaratiSwayamDistributedAutoscaling2017, zhangMArkExploitingCloud, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, handaoui2020releaser, handaoui2020salamander, yallesRISCLESSReinforcementLearning}, en dimensionnant automatiquement les ressources matérielles allouées aux applications. C'est un premier enjeu majeur pour une plateforme serverless, car les offres de cloud public ne garantissent pas de niveau de qualité de service et excluent donc de fait les charges de travail critiques~\cite{elsakhawyFaaS2FFrameworkDefining2020}.
 
 Parmi ces contributions, certaines se concentrent sur l'utilisation de ressources matérielles hétérogènes supplémentaires pour accélérer l'exécution de la charge de travail~\cite{zhangMArkExploitingCloud, lingPigeonDynamicEfficient2019, yangINFlessNativeServerless2022}. Ces méthodes nécessitent souvent un surprovisionnement de ressources stables pour utiliser l'accélération matérielle. Plusieurs stratégies sont mises en œuvre dans la littérature :
@@ -176,7 +201,6 @@ Parmi ces contributions, certaines se concentrent sur l'utilisation de ressource
 
 Ces solutions, bien qu'intéressantes en matière de performances, peuvent toutefois s'avérer insuffisantes en termes d'utilisation des ressources, et entraînent une consommation d'énergie supplémentaire dans un cloud privé.
 
-% Hétérogénéité
 D'autres contributions de la littérature se concentrent sur des infrastructures homogènes~\cite{gujaratiSwayamDistributedAutoscaling2017, sureshENSUREEfficientScheduling2020, mampageDeadlineawareDynamicResource2021, singhviAtollScalableLowLatency2021, yangINFlessNativeServerless2022}. Ces études pourraient difficilement s'adapter au contexte du cloud privé que nous visons, où les ressources sont généralement éphémères et hétérogènes. C'est également un manque à gagner en termes de maîtrise des coûts pour le fournisseur, car des ressources matérielles hétérogènes présentent des niveaux de coût et de performance différents.
 
 Par ailleurs, certaines de ces contributions proposent des modèles de tâches qui ne couvrent pas la possibilité d'accords de niveau de service définis par l'utilisateur et à la granularité d'une requête~\cite{sureshENSUREEfficientScheduling2020, lingPigeonDynamicEfficient2019}. C'est une limite au déploiement d'applications à destination d'utilisateurs ayant des besoins variés.
@@ -190,9 +214,30 @@ Enfin, certaines de ces contributions sont axées sur les performances plutôt q
     Comment déployer des applications complexes, composées de chaînes de fonctions de courte durée, et comment tirer parti de l'hétérogénéité des nœuds disponibles à l'edge, pour respecter la qualité de service requise par les utilisateurs tout en contenant la consommation d'énergie de l'infrastructure ?
 }
 
-Des travaux antérieurs se sont concentrés sur les plateformes de mise à l'échelle automatique pour le déploiement de tâches de courte durée et comprises dans des applications présentant des modèles de charge imprévisibles. Le tableau~\ref{table:herocache-sota} résume les différences entre ces contributions et notre plateforme cible (voir chapitre~\ref{chapter:herocache}, section~\ref{section:herocache-before-contrib}).
+Des travaux antérieurs se sont concentrés sur les plateformes de mise à l'échelle automatique pour le déploiement de tâches de courte durée et comprises dans des applications présentant des modèles de charge imprévisibles. Le tableau~\ref{table:sota-herocache-sota} (reproduit dans le chapitre~\ref{chapter:herocache}) résume les différences entre ces contributions et notre plateforme cible (voir chapitre~\ref{chapter:herocache}, section~\ref{section:herocache-before-contrib}).
 
-% Conscience des données
+\begin{table*}[!ht]
+    \centering
+        \caption{État de l'art des plateformes d'orchestration prenant en compte les données.}
+        \resizebox{\textwidth}{!}{
+            \begin{tabular}{lYYYYYYY}
+                \toprule
+                & Chaînes de fonctions & \gls{QoS} par requête & Hétérogénéité matérielle & Contrainte de programmation & Énergie & Cache de fonctions & {Com- \newline munications} \\
+                \cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}\cmidrule(lr){7-7}\cmidrule(lr){8-8}
+                Cypress~\cite{bhasiCypressInputSizesensitive2022} & \cmark & \cmark & \xmark & \cmark & \cmark & \xmark & \cmark \\
+                FaDO~\cite{smithFaDOFaaSFunctions2022} & \xmark & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark \\
+                FaasFlow~\cite{zijunFassflowEfficient2022} & \cmark & \xmark& \xmark & \xmark & \xmark & \xmark & \xmark \\
+                FIRST~\cite{zhangFIRSTExploitingMultiDimensional2023} & \xmark & \xmark & \xmark & \cmark & \cmark & \xmark & \xmark \\
+                HeROfake~\cite{herofake} & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+                Netherite~\cite{burckhardtNetheriteEfficientExecution} & \cmark & \xmark & \xmark & \cmark & \xmark & \xmark & \cmark \\
+                Palette~\cite{abdiPaletteLoadBalancing2023} & \cmark & \xmark & \xmark & \xmark & \xmark & \cmark & \cmark \\
+                Solution cible & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark \\
+                \bottomrule
+            \end{tabular}
+        }
+    \label{table:sota-herocache-sota}
+\end{table*}
+
 La composition de fonctions pour constituer des applications complexes suppose des communications de données intermédiaires entre les fonctions au sein d'une chaîne~\cite{vaneykSPECRGReferenceArchitecture2019}. Ces communications induisent un coût en latence lors des phases de composition~\cite{jiaNightcoreEfficientScalable2021}. Certaines contributions proposent des mécanismes d'orchestration conscientes du coût, mais ne tiennent pas compte du stockage et de la transmission de ces données intermédiaires~\cite{zhangFIRSTExploitingMultiDimensional2023, zijunFassflowEfficient2022, herofake}.
 
 Pour plusieurs de ces contributions~\cite{bhasiCypressInputSizesensitive2022, zijunFassflowEfficient2022, smithFaDOFaaSFunctions2022, zhangFIRSTExploitingMultiDimensional2023}, les images de fonctions sont considérées comme toujours disponibles sur les nœuds de calcul. Le coût de cette disponibilité doit être pris en compte au niveau de l'orchestrateur, car celle-ci suppose l'utilisation de supports de stockage comme cache des images de fonctions. Dans le cas où les images ne sont pas mises en cache sur les nœuds, il faut considérer leur temps de récupération dans le calcul de la latence des requêtes. Par ailleurs, toutes ces contributions ne tiennent pas compte de l'effet boule de neige provoqué par des retards dans les chaînes de fonctions.
@@ -202,17 +247,20 @@ Plusieurs contributions traitent d'orchestrateurs serverless \textit{conscients 
 Plusieurs approches sont proposées dans la littérature à cet effet :
 
 \begin{itemize}
-    \item Des auteurs proposent de répliquer les données sur plusieurs nœuds de calcul permet de maximiser les chances de déployer les fonctions à proximité de celles-ci~\cite{smithFaDOFaaSFunctions2022}. Ce mécanisme engendre un coût direct en stockage, car il faut provisionner la capacité nécessaire à la réplication de ces données. Il peut aussi créer des coûts cachés, car la plateforme doit s'assurer de la cohérence des données~\cite{wuTransactionalCausalConsistency2020} ;
+    \item Des auteurs proposent de répliquer les données sur plusieurs nœuds de calcul, de manière à maximiser les chances de déployer les fonctions à proximité de celles-ci~\cite{smithFaDOFaaSFunctions2022}. Ce mécanisme engendre un coût direct en stockage, car il faut provisionner la capacité nécessaire à la réplication de ces données. Il peut aussi créer des coûts cachés, car la plateforme doit s'assurer de la cohérence des données~\cite{wuTransactionalCausalConsistency2020} ;
     \item D'autres publications suggèrent que l'orchestrateur peut être chargé de déterminer lui-même un placement adéquat pour les fonctions~\cite{abdiPaletteLoadBalancing2023}. Cela sous-entend une connaissance suffisamment fine des charges de travail pour guider une décision pertinente de l'orchestrateur.
 \end{itemize}
 
 Certains de ces travaux imposent une contrainte de programmation, ou la production de métadonnées supplémentaires au sujet des fonctions, aux développeurs souhaitant déployer leurs applications sur une telle plateforme serverless~\cite{zijunFassflowEfficient2022, abdiPaletteLoadBalancing2023}. Idéalement, nous souhaitons un mécanisme qui n'entraîne pas de surcoût en ingénierie logicielle pour les utilisateurs de la plateforme.
 
-% Hétérogénéité
 Toutes ces contributions considèrent une infrastructure homogène~\cite{bhasiCypressInputSizesensitive2022, zijunFassflowEfficient2022, smithFaDOFaaSFunctions2022, zhangFIRSTExploitingMultiDimensional2023, abdiPaletteLoadBalancing2023}. Cela n'est pas représentatif de notre cas d'utilisation, dans lequel les dispositifs edge sont très hétérogènes. HeROfake~\cite{herofake} exploite l'hétérogénéité matérielle dans sa politique d'orchestration, mais n'intègre pas les dépendances inter-fonctions ni la mise en cache des images dans son modèle de coût. Elle a été choisie à des fins d'évaluation, pour souligner la nécessité de prendre en compte ces coûts.
 
-% Conso d'énergie
-Certaines de ces contributions optimisent la consommation d'énergie au niveau de l'autoscaler~\cite{bhasiCypressInputSizesensitive2022, zhangFIRSTExploitingMultiDimensional2023}. Toutefois, elles se concentrent sur la partie dynamique de la consommation d'énergie : elles ne tiennent pas compte de l'impact possible de la consolidation sur la consommation d'énergie statique. Nous soutenons que les fournisseurs de services devraient chercher à consolider les tâches afin de mettre hors tension le plus grand nombre de nœuds possible, ce qui réduirait considérablement les besoins énergétiques globaux de leurs infrastructures~\cite{leeEnergyEfficientUtilization2012}.
+Certaines de ces contributions optimisent la consommation d'énergie au niveau de l'autoscaler~\cite{bhasiCypressInputSizesensitive2022, zhangFIRSTExploitingMultiDimensional2023}. Toutefois, elles se concentrent sur la partie dynamique de la consommation d'énergie : elles ne tiennent pas compte de l'impact possible de la consolidation sur la consommation d'énergie statique. Nous soutenons que les fournisseurs de services devraient chercher à consolider les tâches afin de :
+
+\begin{itemize}
+    \item limiter le renouvellement du matériel, dont la fabrication représente la majeure partie de l'empreinte environnementale sur l'ensemble du cycle de vie~\cite{bordage2019empreinte, NumeriqueQuelsImpacts} ;
+    \item mettre hors tension le plus grand nombre de nœuds possible, ce qui réduirait considérablement les besoins énergétiques globaux de leurs infrastructures~\cite{leeEnergyEfficientUtilization2012} ;
+\end{itemize}
 
 \section{Évaluer et comparer différentes politiques d'orchestration serverless}
 \label{section:sota-herosim}
@@ -221,7 +269,31 @@ Certaines de ces contributions optimisent la consommation d'énergie au niveau d
     Du point de vue d'un fournisseur de services pour le cloud, comment évaluer et comparer l'impact sur la qualité de service de différentes politiques d'allocation de ressources et d'ordonnancement de tâches dans le modèle serverless ?
 }
 
-Nous présentons un aperçu des travaux de l'état de l'art en matière de simulation pour le cloud. Le tableau~\ref{table:herosim-sota} propose une comparaison d'un ensemble de leurs caractéristiques au regard des besoins que nous avons identifiés pour un simulateur de plateforme pour le cloud privé serverless (voir chapitre~\ref{chapter:herosim}, section~\ref{section:herosim-overview}).
+Nous présentons un aperçu des travaux de l'état de l'art en matière de simulation pour le cloud. Le tableau~\ref{table:sota-herosim-sota} (reproduit dans le chapitre~\ref{chapter:herosim}) propose une comparaison d'un ensemble de leurs caractéristiques au regard des besoins que nous avons identifiés pour un simulateur de plateforme pour le cloud privé serverless (voir chapitre~\ref{chapter:herosim}, section~\ref{section:herosim-overview}).
+
+\begin{table*}[!ht]
+    \centering
+    \caption{État de l'art des outils de simulation pour l'orchestration des ressources et des charges de travail dans le cloud.}
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{lYYYYYYYYY}
+        \toprule
+        & Serverless & Déploiements & Chaînes de fonctions & Hétérogénéité matérielle & \gls{QoS} par requête & Énergie & Visualisation \\
+        \cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}\cmidrule(lr){7-7}\cmidrule(lr){8-8}
+        CloudSim~\cite{calheiros_cloudsim_2011} & \xmark & Public, privé, hybride & \xmark & \cmark & \xmark & \cmark & \xmark \\
+        CloudSimSC~\cite{mampage_cloudsimsc_2023} & \cmark & Public, privé, hybride & \xmark & \cmark & \xmark & \cmark & \xmark \\
+        CloudAnalyst~\cite{wickremasinghe_cloudanalyst_2010} & \xmark & Public, privé, hybride & \xmark & \cmark & \xmark & \cmark & \cmark \\        DFaaSCloud~\cite{jeonCloudSimExtensionSimulatingDistributed2019} & \cmark & Hybride multi-strates & \xmark & \xmark & \cmark & \xmark & \cmark \\
+        ElasticSim~\cite{cai_elasticsim_2017} & \xmark & Public & \cmark & \xmark & \xmark & \xmark & \cmark \\
+        GridSim~\cite{buyyaGridSimToolkitModeling2002} & \xmark & Grille & \xmark & \cmark & \cmark & \xmark & \cmark \\
+        iCanCloud~\cite{nunez_icancloud_2012} & \xmark & Public & \xmark & \xmark & \xmark & \xmark & \cmark \\
+        iFogSim2~\cite{mahmudIFogSim2ExtendedIFogSim2021} & \xmark & Edge, Fog & \xmark & \cmark & \xmark & \cmark & \xmark \\
+        OpenDC 2.0~\cite{mastenbroekOpenDCConvenientModeling2021} & \cmark & Public, privé, hybride & \cmark & \cmark & \xmark & \cmark & \cmark \\
+        SimFaaS~\cite{mahmoudiSimFaaSPerformanceSimulator2021} & \cmark & Public & \xmark & \xmark & \xmark & \cmark & \cmark \\
+        \textbf{HeROsim} & \cmark & Privé & \cmark & \cmark & \cmark & \cmark & \cmark \\
+        \bottomrule
+        \end{tabular}
+    }
+    \label{table:sota-herosim-sota}
+\end{table*}
 
 CloudSim~\cite{calheiros_cloudsim_2011} est l'outil de référence pour les expériences de déploiement cloud à grande échelle. Il cible les différents modèles de service traditionnels dans le cloud (\gls{IaaS}, \gls{PaaS}, \gls{SaaS} ; voir chapitre~\ref{chapter:context}).
 CloudSim et ses extensions~\cite{calheiros_cloudsim_2011, mampage_cloudsimsc_2023, wickremasinghe_cloudanalyst_2010, jeonCloudSimExtensionSimulatingDistributed2019} ne prennent pas en compte les applications serverless, \textit{i.e.} la composition de fonctions pour décrire un comportement complexe qui introduit des défis spécifiques (délais de démarrage à froid, coûts liés aux communications inter-fonctions, etc.~\cite{wawrzoniakBoxerDataAnalytics2021a}).
@@ -247,15 +319,9 @@ Nos travaux~\cite{herofake, herocache} se sont concentrés sur la perspective de
 
 En libérant les utilisateurs de la contrainte du dimensionnement de leur infrastructure, le modèle de service serverless pour le cloud promet de faciliter le passage à l'échelle des applications. Grâce au mécanisme d'allocation à la demande, les clients peuvent bénéficier d'économies considérables, en ne payant plus pour des ressources qui seraient essentiellement dormantes, en attente d'une requête.
 
-% TODO: SLA
-
 La mise à l'échelle depuis zéro est associée à un risque de latence lors du réveil de l'application, puisque le fournisseur de services doit alors dynamiquement allouer des ressources matérielles et instancier l'environnement d'exécution des fonctions en réponse à un évènement. Les fournisseurs de services ont tendance à pré-allouer des ressources de manière à éviter ces démarrages à froid, ce qui contraint leurs gains potentiels en rendant ces ressources indisponibles pour d'autres clients~\cite{tomasImprovingCloudInfrastructure2013}.
 
-% TODO: Data-aware
-
 Le fonctionnement de cette architecture logicielle, qui présente des similitudes avec l'architecture en microservices, repose sur la communication par passage de messages entre fonctions. Les fonctions n'étant pas directement adressables sur le réseau dans les solutions commerciales actuelles, cette communication s'effectue par le biais d'un stockage lent : cela induit un surcoût important sur les performances de l'application lors des phases de composition et de synchronisation, jusqu'à parfois contrebalancer les gains offerts par le parallélisme massif inhérent au paradigme serverless~\cite{mullerLambadaInteractiveData2020}.
-
-% TODO: Hétérogénéité
 
 Enfin, les accélérateurs matériels sont les grands absents de l'offre serverless commerciale~\cite{khandelwalTaureauDeconstructingServerless2020}. À l'heure où la demande en \gls{GPU} et \gls{FPGA} est croissante pour répondre aux besoins en calcul massivement parallèle, notamment dans le cadre de l'apprentissage automatique ou de l'analyse de données en masse, les clients doivent se tourner vers une offre cloud plus conventionnelle s'ils souhaitent bénéficier de plateformes d'exécution hétérogènes.
 

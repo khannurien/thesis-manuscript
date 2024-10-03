@@ -968,7 +968,6 @@
   isbn = {978-1-4244-9113-1},
   langid = {english},
 }
-
 @article{sueurSlowSleepThat,
   title = {Slow {{Down}} or {{Sleep}}, That Is the {{Question}}},
   author = {Sueur, Etienne Le and Heiser, Gernot},
@@ -981,6 +980,32 @@
   month = jun,
   abstract = {Energy consumption has become a major concern for all computing systems, from servers in data-centres to mobile phones. Processor manufacturers have reacted to this by implementing power-management mechanisms in the hardware and researchers have investigated how operating systems can make use of those mechanisms to minimise energy consumption. Much of this research has focused on a single class of systems and computeintensive workloads.},
   langid = {english},
+}
+@incollection{shahzadInvestigatingEnergyConsumption,
+  title = {Investigating {{Energy Consumption}} of an {{SRAM-based FPGA}} for {{Duty- Cycle Applications}}},
+  author = {Shahzad, Khurram and Oelmann, Bengt},
+  booktitle={Parallel Computing: Accelerating Computational Science and Engineering (CSE)},
+  pages={548--559},
+  year={2014},
+  publisher={IOS Press},
+  doi={10.3233/978-1-61499-381-0-548},
+  abstract = {In order to conserve energy, battery powered embedded systems are typically designed with very low-power modules that offer limited computational power and communication bandwidth and therefore, are generally applicable to low-sample-rate intermittent applications. On the other hand, enabling an embedded system with a high-throughput processing resource such as an FPGA, high-throughput processing performance that is typically required in high-sample rate monitoring applications can be achieved. However, the high power consumption associated with an FPGA poses a major challenge in attaining significant lifetime for a battery-powered embedded system. In this paper, we investigate energy consumption of an SRAM-based FPGA in relation to dutycycle applications. In order to achieve long operational lifetime in an FPGA-based embedded system, the possible options to dynamically manage the power consumption are studied and discussed. The experimental results suggest that the SRAM-based FPGA, XC6SLX16 that provides ample logic resources in relation to typical high-sample rate monitoring applications, can be used in a battery operated embedded systems while minimizing the energy consumption to 2.56 mJ for inactive duration of 235 ms or above.},
+  langid = {english},
+}
+@article{bordage2019empreinte,
+  title={Empreinte environnementale du num{\'e}rique mondial},
+  author={Bordage, Fr{\'e}d{\'e}ric},
+  journal={Paris, greenit.fr},
+  volume={9},
+  year={2019}
+}
+@article{NumeriqueQuelsImpacts,
+  title = {{Le num{\'e}rique : quels impacts environnementaux ?}},
+  author = {ADEME},
+  journal = {Clés pour agir},
+  year = {2022},
+  month = feb,
+  langid = {french},
 }
 %%% Ajouts modèle économique
 @misc{BareMetal70B,
@@ -1124,6 +1149,36 @@
 
 %% Ajouts caractérisation
 
+%%% I/O
+@inproceedings{naasEZIOTracerUnifyingKernel2021,
+  title = {{{EZIOTracer}}: Unifying Kernel and User Space {{I}}/{{O}} Tracing for Data-Intensive Applications},
+  shorttitle = {{{EZIOTracer}}},
+  booktitle = {Proceedings of the {{Workshop}} on {{Challenges}} and {{Opportunities}} of {{Efficient}} and {{Performant Storage Systems}}},
+  author = {Naas, Mohammed Islam and Trahay, Fran{\c c}ois and Colin, Alexis and Olivier, Pierre and Rubini, St{\'e}phane and Singhoff, Frank and Boukhobza, Jalil},
+  year = {2021},
+  month = apr,
+  pages = {1--11},
+  publisher = {ACM},
+  address = {Online Event United Kingdom},
+  doi = {10.1145/3439839.3458731},
+  isbn = {978-1-4503-8302-8},
+  langid = {english},
+}
+@inproceedings{ouarnoughiMultilevelTracerTiming,
+  title = {A {{Multilevel I}}/{{O Tracer}} for {{Timing}} and {{Performance Analysis}} of {{Storage Systems}} in {{IaaS Cloud}}},
+  author = {Ouarnoughi, Hamza and Boukhobza, Jalil and Singhoff, Frank},
+  editor       = {Marisol Garc{\'{\i}}a{-}Valls and Tommaso Cucinotta},
+  booktitle    = {Proceedings of the 3rd {IEEE} International Workshop on Real-time and distributed computing in emerging applications},
+  series = {{REACTION} 2014},
+  location = {Rome Italy},
+  month = dec,
+  publisher    = {Universidad Carlos {III} de Madrid},
+  year         = {2014},
+  url          = {https://hdl.handle.net/10016/19685},
+  abstract = {Data centers are more and more relying on hybrid storage systems consisting of flash memory based storage devices and traditional hard disk drives. Optimal data placement in such hybrid storage systems is a very important issue in the domain of cloud computing and virtualization. This is specially the case when users need that storage systems enforce Quality of Service requirements on I/Os performed, for example for multimedia applications. To characterize Virtual Machine (VM) I/O workload properties such as timing predictability or throughput, monitoring services are necessary on such new architectures. This article presents a multilevel I/O tracer for virtual machines that relies on and complement different state-of-the-art tools. It produces I/O traces at different levels of the Linux I/O software stack. The I/O tracer gives an exhaustive information that allows administrators to precisely characterize virtual machine I/O behavior in terms of percentage of read/write I/Os, percentage of random/sequential, I/O request inter-arrival time, etc. This tool is the first piece towards a middleware whose purpose is to meet user QoS requirements thanks to optimal data placement and migration policies in a hybrid storage system in the context of an IaaS Cloud.},
+  langid = {english},
+}
+
 %%% Oversubscription / overcommitment
 @inproceedings{bashirTakeItLimit2021,
 	title        = {Take It to the Limit: Peak Prediction-Driven Resource Overcommitment in Datacenters},
@@ -1252,6 +1307,28 @@
 	doi          = {10.1038/s41558-018-0282-y},
 	issn         = {1758-678X, 1758-6798},
 	langid       = {english}
+}
+@article{ostapencoModelingEvaluatingOrchestrating2023,
+  title = {Modeling, Evaluating, and Orchestrating Heterogeneous Environmental Leverages for Large-Scale Data Center Management},
+  author = {Ostapenco, Vladimir and Lef{\`e}vre, Laurent and Orgerie, Anne-C{\'e}cile and Fichel, Benjamin},
+  year = {2023},
+  month = jul,
+  journal = {The International Journal of High Performance Computing Applications},
+  volume = {37},
+  number = {3-4},
+  pages = {328--350},
+  issn = {1094-3420, 1741-2846},
+  doi = {10.1177/10943420231172978},
+  abstract = {Data centers are very energy-intensive facilities that can generate various environmental impacts. Numerous energy, power, and environmental leverages exist and can help cloud providers and data center managers to reduce some of these impacts. But dealing, with such heterogeneous leverages can be a challenging task that requires some support from a dedicated framework. This article presents a new approach for modeling, evaluating and orchestrating a large set of technological and logistical leverages. Our framework is based on leverages modeling and Gantt chart leverages mapping. First experimental results based on selected scenarios show the pertinence of the proposed approach in terms of management facilities and potential impacts reduction.},
+  langid = {english},
+}
+@inproceedings{courageux-sudanStudyingEndendPerformancea,
+  title = {Studying the End-to-End Performance, Energy Consumption and Carbon Footprint of Fog Applications},
+  author = {{Courageux-Sudan}, Cl{\'e}ment and Orgerie, Anne-C{\'e}cile and Quinson, Martin},
+  booktitle={ISCC: IEEE Symposium on Computers and Communications},
+  year={2024},
+  abstract = {The deployment of applications closer to end-users through fog computing has shown promise in improving network communication times and reducing contention. However, the use of fog applications such as microservices necessitates intricate network interactions among heterogeneous devices. Consequently, understanding the impact of different application and infrastructure parameters on performance becomes crucial. Current literature either offers end-to-end models that lack granularity and validation or fine-grained models that only consider a portion of the infrastructure. Our research first compares experimentally the accuracy of the existing integrated frameworks. We then combine one of these tools with a collection of validated models to obtain comprehensive metrics regarding microservice applications operating in the fog. Through a usecase, we demonstrate the effectiveness of our approach in investigating fog environments, from examining application latencies to greenhouse gas emissions.},
+  langid = {english},
 }
 %% Ajouts historique
 @article{hayesCloudComputing2008,
@@ -1447,6 +1524,21 @@
 	copyright    = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
 	abstract     = {Microservice is an architectural style widely adopted in various latency-sensitive cloud applications. Similar to the monolith, autoscaling has attracted the attention of operators for managing the resource utilization of microservices. However, it is still challenging to optimize resources in terms of latency service-level-objective (SLO) without human intervention. In this paper, we present GRAF, a graph neural networkbased SLO-aware proactive resource autoscaling framework for minimizing total CPU resources while satisfying latency SLO. GRAF leverages front-end workload, distributed tracing data, and machine learning approaches to (a) observe/estimate the impact of traffic change (b) find optimal resource combinations (c) make proactive resource allocation. Experiments using various open-source benchmarks demonstrate that GRAF successfully targets latency SLO while saving up to 19\% of total CPU resources compared to the fine-tuned autoscaler. GRAF also handles a traffic surge with 36\% fewer resources while achieving up to 2.6x faster tail latency convergence compared to the Kubernetes autoscaler. Moreover, we verify the scalability of GRAF on large-scale deployments, where GRAF saves 21.6\% and 25.4\% for CPU resources and memory resources, respectively.},
 	langid       = {english}
+}
+@inproceedings{handaouiReLeaSERReinforcementLearning2020,
+  title = {{{ReLeaSER}}: {{A Reinforcement Learning Strategy}} for {{Optimizing Utilization Of Ephemeral Cloud Resources}}},
+  shorttitle = {{{ReLeaSER}}},
+  booktitle = {2020 {{IEEE International Conference}} on {{Cloud Computing Technology}} and {{Science}} ({{CloudCom}})},
+  author = {Handaoui, Mohamed and Dartois, Jean-Emile and Boukhobza, Jalil and Barais, Olivier and {d'Orazio}, Laurent},
+  year = {2020},
+  month = dec,
+  pages = {65--73},
+  publisher = {IEEE},
+  address = {Bangkok, Thailand},
+  doi = {10.1109/CloudCom49646.2020.00009},
+  abstract = {Cloud data center capacities are over-provisioned to handle demand peaks and hardware failures which leads to low resources' utilization. One way to improve resource utilization and thus reduce the total cost of ownership is to offer unused resources (referred to as ephemeral resources) at a lower price. However, reselling resources needs to meet the expectations of its customers in terms of Quality of Service. The goal is so to maximize the amount of reclaimed resources while avoiding SLA penalties. To achieve that, cloud providers have to estimate their future utilization to provide availability guarantees. The prediction should consider a safety margin for resources to react to unpredictable workloads. The challenge is to find the safety margin that provides the best trade-off between the amount of resources to reclaim and the risk of SLA violations. Most state-of-the-art solutions consider a fixed safety margin for all types of metrics (e.g., CPU, RAM). However, a unique fixed margin does not consider various workloads variations over time which may lead to SLA violations or/and poor utilization. In order to tackle these challenges, we propose ReLeaSER, a Reinforcement Learning strategy for optimizing the ephemeral resources' utilization in the cloud. ReLeaSER dynamically tunes the safety margin at the host-level for each resource metric. The strategy learns from past prediction errors (that caused SLA violations). Our solution reduces significantly the SLA violation penalties on average by 2.7{\texttimes} and up to 3.4{\texttimes}. It also improves considerably the CPs' potential savings by 27.6\% on average and up to 43.6\%.},
+  isbn = {978-1-66540-388-7},
+  langid = {english},
 }
 %% Ajouts limites
 

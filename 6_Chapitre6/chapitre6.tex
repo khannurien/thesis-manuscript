@@ -1,14 +1,10 @@
 \chapter{HeROsim : Élaborer et évaluer des politiques d'orchestration serverless pour le cloud privé}
 \label{chapter:herosim}
 
-% TODO: nouvelles références à intégrer~\cite{bambrikSurveyCloudComputing2020, byrneReviewCloudComputing2017}
-
-% TODO: màj bibtex (références raccourcies pour IEEE IC)
-
 \section{Introduction}
 \label{section:herosim-introduction}
 
-Les deux chapitres précédents ont abordé un ensemble de défis qui doivent être relevés par les fournisseurs de services qui souhaitent déployer des applications sur une plateforme serverless optimisée pour la \gls{QoS} et économe en énergie. Le chapitre~\ref{chapter:herofake} traite en particulier de la surcharge de latence causée par l'allocation dynamique du matériel pour les nouvelles instances de fonction, appelée délai de démarrage à froid~\cite{vahidiniaColdStartServerless2020}. Un autre problème récurrent, introduit dans le chapitre~\ref{chapter:herocache}, est celui de la prise en compte de la localité des données~\cite{yuFollowingDataNot} par la plateforme pour éviter une dégradation considérable des performances, en particulier dans le cas d'applications conçues comme des chaînes de fonctions qui communiquent entre elles.
+Les deux chapitres précédents ont abordé un ensemble de défis qui doivent être relevés par les fournisseurs de services qui souhaitent déployer des applications sur une plateforme serverless optimisée pour la \gls{QoS} et économe en énergie. Le chapitre~\ref{chapter:herofake} traite en particulier de la surcharge de latence causée par l'allocation dynamique du matériel pour les nouvelles instances de fonction, appelée délai de démarrage à froid~\cite{vahidiniaColdStartServerless2020}. Un autre problème récurrent, introduit dans le chapitre~\ref{chapter:herocache}, est celui de la prise en compte de la localité des données~\cite{yuFollowingDataNot, chikhaouiMultiobjectiveOptimizationData2021a} par la plateforme pour éviter une dégradation considérable des performances, en particulier dans le cas d'applications conçues comme des chaînes de fonctions qui communiquent entre elles.
 
 Pour surmonter de tels défis, nous avons conçu des politiques d'orchestration qui guident les décisions d'allocation de ressources et d'ordonnancement de requêtes, dans le but de minimiser les coûts, selon des objectifs d'optimisation définis par le fournisseur de services. Il est nécessaire d'évaluer la pertinence de ces politiques dans divers cas d'utilisation ; différentes mesures peuvent être utiles pour cette évaluation, par exemple la durée totale de complétion pour un scénario donné, le temps de réponse des fonctions, la consommation d'énergie dynamique et statique dans la plateforme, etc.
 
@@ -64,7 +60,6 @@ La conception du logiciel suit l'architecture de référence des orchestrateurs 
 \end{itemize}
 
 Ce chapitre est organisé comme suit : la section~\ref{section:herosim-overview} donne un aperçu du fonctionnement d'une plateforme serverless ; la section~\ref{section:herosim-herosim} détaille la conception de HeROsim ; la section~\ref{section:herosim-case-study} montre comment HeROsim peut être exploité à travers deux cas d'utilisation tirés de nos publications ; enfin, nous concluons par les limites de la contribution et quelques perspectives pour de futurs travaux en section~\ref{section:herosim-conclusion}.
-% nous discutons ensuite dans la section~\ref{section:herosim-sota} des travaux de l'état de l'art ; 
 
 \section{Présentation générale de la plateforme simulée}
 \label{section:herosim-overview}
@@ -200,7 +195,7 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
 \begin{figure}[!ht]
     \captionof{listing}{Description \gls{JSON} des caractéristiques des fonctions \texttt{hello} et \texttt{world}, pouvant être déployées sur des plateformes \texttt{exampleCpu}.}
     \label{code:herosim-json-functions}
-    \begin{minipage}{0.5\textwidth}
+    \begin{minipage}{0.49\textwidth}
         \centering
         \begin{minted}[linenos,breaklines]{json}
   "hello": {
@@ -233,7 +228,7 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
         \end{minted}
         % \captionof{listing}{Sub caption}
     \end{minipage}
-    \begin{minipage}{0.5\textwidth}
+    \begin{minipage}{0.49\textwidth}
         \centering
         \begin{minted}[linenos,breaklines]{json}
   "world": {
@@ -271,7 +266,7 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
 \begin{figure}[!ht]
     \captionof{listing}{Description \gls{JSON} d'une infrastructure hypothétique comportant deux nœuds hétérogènes. La partie droite détaille les métadonnées de la plateforme d'exécution \texttt{exampleCpu} et du support de stockage \texttt{exampleFlash}.}
     \label{code:herosim-json-infrastructure}
-    \begin{minipage}{0.5\textwidth}
+    \begin{minipage}{0.49\textwidth}
         \centering
         \begin{minted}[linenos,breaklines]{json}
 {
@@ -305,7 +300,7 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
         \end{minted}
         % \captionof{listing}{Sub caption}
     \end{minipage}
-    \begin{minipage}{0.5\textwidth}
+    \begin{minipage}{0.49\textwidth}
         \centering
         \begin{minted}[linenos,breaklines]{json}
 {
@@ -337,7 +332,6 @@ Les données issues de nos contributions (voir chapitres~\ref{chapter:herofake} 
   }
 }
         \end{minted}
-        % \captionof{listing}{Another sub caption}
     \end{minipage}
 \end{figure}
 
@@ -377,8 +371,6 @@ L'utilisateur peut choisir les politiques d'orchestration souhaitées et exécut
     \item fait avancer l'horloge au fur et à mesure du traitement des requêtes utilisateur.
 \end{itemize}
 
-% Le simulateur connaît le temps de réponse des fonctions sur la base des métadonnées d'entrée, mesurées au préalable. Ces métadonnées concernent le matériel et les charges de travail spécifiques que l'utilisateur souhaite ordonnancer. Elles peuvent être obtenues de différentes manières ; la figure~\ref{figure:herosim-characterization} donne un aperçu de la méthodologie que nous avons utilisée pour caractériser les différentes charges de travail et plateformes d'exécution tout au long de nos expériences ; voir~\cite{herofake, herocache} pour plus de détails.
-
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.7\textwidth]{6_Chapitre6/figures/characterization.png}
@@ -410,7 +402,7 @@ La suppression des répliques inactives se fait sur le mode \textit{best effort}
 
 L'autoscaler garde une trace de chaque événement d'allocation pour calculer l'utilisation des ressources à la fin de la simulation. HeROsim permet à l'utilisateur de savoir quels nœuds et quelles plateformes d'exécution ont été enrôlés pendant le scénario, à quel moment et pour quelle durée, et pour quel déploiement de fonction ils ont été choisis. Cela permet également à HeROsim de calculer la consommation d'énergie à différentes granularités : la consommation statique nécessaire au matériel alloué, et la consommation dynamique liée à l'exécution des applications.
 
-% TODO: modèle énergétique, modèle temporel
+% TODO: modèle énergétique, modèle temporel ?
 
 HeROsim est livré avec les politiques de mise à l'échelle automatique suivantes, basées sur des seuils de concurrence et prêtes à l'emploi :
 
@@ -481,9 +473,7 @@ HeROsim nous a également permis d'évaluer l'impact des différents composants 
 
 Dans une seconde étude, nous avons conçu un orchestrateur pour les applications serverless, composées de plusieurs fonctions interdépendantes. Nous avons proposé HeROcache (pour \textbf{He}terogeneous \textbf{R}esources \textbf{O}rchestration with a \textbf{cache} strategy~\cite{herocache}) (voir chapitre~\ref{chapter:herocache}), une stratégie d'orchestration consciente des contraintes temporelles et de données. Nous avons exploré le déploiement d'un système de détection d'intrusion (\gls{IDS}, pour \textit{Intrusion Detection System}) sur une plateforme serverless. En particulier, nous avons étudié les avantages de l'orchestration consciente des données lors de l'exploitation de matériel hétérogène pour déployer des applications sensibles au temps sur des dispositifs \textit{edge} à ressources limitées, du point de vue du fournisseur de services.
 
-L'objectif de l'application est de détecter le trafic réseau potentiellement malveillant dans des journaux soumis par les utilisateurs.
-% Comme cette application d'\gls{IDS} est spécifiquement destinée aux missions de drones, la fréquence des requêtes utilisateur présente une saisonnalité, ce qui en fait un bon cas d'étude pour le paradigme serverless : les ressources matérielles pourront être libérées lorsque l'application n'est pas utilisée.
-L'application se compose de deux couches pour traiter les requêtes utilisateur : deux fonctions de prétraitement, qui opèrent sur les journaux de trafic réseau pour exclure les évènements que l'on sait légitimes, et quatre fonctions d'inférence, basées sur des réseaux de neurones entraînés à détecter des motifs typiques d'activité malveillante dans le reste des journaux. Ces fonctions ont été mises en œuvre sur différentes architectures matérielles (\gls{CPU}, \gls{FPGA}, \gls{GPU}).
+L'objectif de l'application est de détecter le trafic réseau potentiellement malveillant dans des journaux soumis par les utilisateurs. L'application se compose de deux couches pour traiter les requêtes utilisateur : deux fonctions de prétraitement, qui opèrent sur les journaux de trafic réseau pour exclure les évènements que l'on sait légitimes, et quatre fonctions d'inférence, basées sur des réseaux de neurones entraînés à détecter des motifs typiques d'activité malveillante dans le reste des journaux. Ces fonctions ont été mises en œuvre sur différentes architectures matérielles (\gls{CPU}, \gls{FPGA}, \gls{GPU}).
 
 Il existe des dépendances de données entre les deux couches de l'application. Nous les avons modélisées sous forme de graphes acycliques dirigés (\gls{DAG}) d'appels de fonctions. Nous avons utilisé le module Python \texttt{TopologicalSorter} du module \texttt{graphlib} pour lire et écrire la représentation \gls{JSON} des graphes et pour les parcourir pendant l'exécution.
 
@@ -502,6 +492,6 @@ HeROcache (mis en œuvre dans HeROsim) a été soumis pour évaluation des artef
 \section{Conclusion et perspectives}
 \label{section:herosim-conclusion}
 
-Dans cet article, nous avons présenté HeROsim, un outil de simulation qui vise à permettre aux chercheurs de modéliser des infrastructures cloud hétérogènes, de décrire des charges de travail à une granularité fine, de mettre en œuvre diverses politiques de gestion des ressources et d'ordonnancement des tâches, et d'évaluer leur efficacité au regard de métriques telles que l'utilisation des ressources, la consommation d'énergie, les violations de la QoS par requête, ou la latence des files d'attente. HeROsim peut générer des graphiques qui aident à visualiser ces résultats pendant la phase de mise en œuvre et peuvent être utilisés dans des publications.
+Dans cet article, nous avons présenté HeROsim, un outil de simulation qui vise à permettre aux chercheurs de modéliser des infrastructures cloud hétérogènes, de décrire des charges de travail à une granularité fine, de mettre en œuvre diverses politiques de gestion des ressources et d'ordonnancement des tâches, et d'évaluer leur efficacité au regard de métriques telles que l'utilisation des ressources, la consommation d'énergie, les violations de la \gls{QoS} par requête, ou la latence des files d'attente. HeROsim peut générer des graphiques qui aident à visualiser ces résultats pendant la phase de mise en œuvre et peuvent être utilisés dans des publications.
 
 Des travaux sont en cours pour étendre HeROsim et proposer une interface web permettant de visualiser l'état de la simulation en temps réel. Nous travaillons également sur un agent d'apprentissage par renforcement qui pourrait être inclus dans une prochaine version.

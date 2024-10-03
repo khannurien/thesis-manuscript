@@ -63,6 +63,17 @@
 \RequirePackage[pdfusetitle]{hyperref} %Utiliser pour une bibliographie interactive + sommaire et TOC interactifs (pour une sortie PDF, par exemple).
 % Une couleur pour les liens et les références
 \hypersetup{colorlinks=true, citecolor=purple, filecolor=black, linkcolor=blue, urlcolor=blue}
+% Do not color glossary hyperlinks (does not seem to work)
+% cf. https://tex.stackexchange.com/a/673016
+% \makeatletter
+% \newcommand*{\glsplainhyperlink}[2]{%
+%     \begingroup%
+%       \hypersetup{hidelinks}%
+%       \hyperlink{#1}{#2}%
+%     \endgroup%
+% }
+% \let\@glslink\glsplainhyperlink
+% \makeatother
 
 \RequirePackage{eso-pic} % For \AddToShipoutPicture used for cover backgrounds
 \RequirePackage{framed} % utilise pour coloriser les encarts
