@@ -384,7 +384,7 @@ Nous itérons sur les répliques de la fonction pour calculer les métriques sui
 \begin{itemize}
     \item \textbf{pénalité potentielle} : on récupère la longueur de la file d'attente de la plateforme et on vérifie si l'échéance de la tâche sera dépassée, comme décrit dans l'équation~\ref{eq:herofake-task-penalty} ;
     \item \textbf{consommation d'énergie} : on récupère les mesures hors-ligne pour établir la consommation d'énergie dynamique de cette tâche sur la plateforme ;
-    \item \textbf{consolidation des tâches} : on récupère la longueur $Q$ de la file d'attente de la plateforme en additionnant les durées totales de toutes les tâches en file d'attente, comme décrit dans les équations~\ref{eq:herofake-HRO-scheduling-platform-queue} (longueur de la file d'attente) et~\ref{eq:herofake-HRO-total-time} (durée totale de la tâche). 
+    \item \textbf{consolidation des tâches} : on récupère la longueur $Q$ de la file d'attente de la plateforme en additionnant les durées totales de toutes les tâches en file d'attente, comme décrit dans les équations~\ref{eq:herofake-HRO-scheduling-platform-queue} (longueur de la file d'attente) et~\ref{eq:herofake-HRO-total-time} (durée totale de la tâche).
 \end{itemize}
 
 \begin{equation}
@@ -433,13 +433,13 @@ Notre évaluation comporte quatre ordonnanceurs :
     \item HeROfake (HRO) -- Notre ordonnanceur conscient des coûts qui minimise les violations de \gls{SLA}, la consommation d'énergie et la quantité totale de ressources engagées ;
     \item Knative (KN) -- Knative sélectionne une réplique sur le nœud le plus disponible~\cite{sureshENSUREEfficientScheduling2020}. Les répliques sont triées en fonction du nombre de requêtes en cours de traitement. La réplique avec la file d'attente la plus courte est sélectionnée ;
     \item Random Placement (RP) -- Les tâches sont assignées à une réplique aléatoire sur un nœud aléatoire ;
-    \item Bin Packing First-Fit (BPFF) -- Les tâches sont consolidées sur un nombre minimum de répliques. L'ordonnanceur place les requêtes sur une première réplique jusqu'à ce que celle-ci atteigne son seuil de concurrence. BPFF est la politique d'ordonnancement mise en œuvre pour \gls{AWS} Lambda~\cite{wangPeekingCurtainsServerlessb}.
+    \item Bin Packing First-Fit (\gls{BPFF}) -- Les tâches sont consolidées sur un nombre minimum de répliques. L'ordonnanceur place les requêtes sur une première réplique jusqu'à ce que celle-ci atteigne son seuil de concurrence. \gls{BPFF} est la politique d'ordonnancement mise en œuvre pour \gls{AWS} Lambda~\cite{wangPeekingCurtainsServerlessb}.
 \end{itemize}
 
 Nous avons conçu une évaluation des performances en deux étapes basée sur des simulations :
 
 \begin{itemize}
-    \item \textbf{Comparaison aux politiques de référence} (figure~\ref{figure:herofake-evaluation-hro-full}) : dans cette partie, nous avons comparé notre combinaison d'autoscaler et d'ordonnanceur, HeROfake (HRO-HRO), à : (1) l'autoscaler et l'ordonnanceur Knative complet (KN-KN), (2) l'autoscaler Knative avec l'ordonnanceur BPFF (KN-BPFF), (3) l'autoscaler Knative avec l'ordonnanceur RP (KN-RP) ;
+    \item \textbf{Comparaison aux politiques de référence} (figure~\ref{figure:herofake-evaluation-hro-full}) : dans cette partie, nous avons comparé notre combinaison d'autoscaler et d'ordonnanceur, HeROfake (HRO-HRO), à : (1) l'autoscaler et l'ordonnanceur Knative complet (KN-KN), (2) l'autoscaler Knative avec l'ordonnanceur \gls{BPFF} (KN-BPFF), (3) l'autoscaler Knative avec l'ordonnanceur RP (KN-RP) ;
     \item \textbf{Impact des composants sur la performance globale} (figure~\ref{figure:herofake-evaluation-hro-mixed}) : nous discutons ici de l'impact individuel de chacun des autoscalers et ordonnanceurs. Pour ce faire, nous avons conçu différentes stratégies : (1) en utilisant l'autoscaler HeROfake avec l'ordonnanceur Knative (HRO-KN), et (2) en utilisant l'autoscaler Knative avec l'ordonnanceur HeROfake (KN-HRO), puis nous avons comparé ces stratégies avec les versions complètes de HeROfake (HRO-HRO) et Knative (KN-KN).
 \end{itemize}
 
@@ -468,11 +468,11 @@ Les pondérations pour le niveau de concurrence (équation~\ref{eq:herofake-HRO-
     \label{figure:herofake-evaluation-hro-full}
 \end{figure*}
 
-\textbf{Consolidation des tâches}. La figure~\ref{figure:herofake-evaluation-full-nodes} montre que notre combinaison d'autoscaler et d'ordonnanceur permet d'obtenir le plus grand nombre de nœuds inutilisés. Avec l'autoscaler de Knative, l'ordonnanceur BPFF assure la meilleure consolidation, mais cette politique nécessite toujours plus de trois fois le nombre de nœuds que nous allouons avec notre politique.
+\textbf{Consolidation des tâches}. La figure~\ref{figure:herofake-evaluation-full-nodes} montre que notre combinaison d'autoscaler et d'ordonnanceur permet d'obtenir le plus grand nombre de nœuds inutilisés. Avec l'autoscaler de Knative, l'ordonnanceur \gls{BPFF} assure la meilleure consolidation, mais cette politique nécessite toujours plus de trois fois le nombre de nœuds que nous allouons avec notre politique.
 
 \textbf{Accords de niveau de service}. La figure~\ref{figure:herofake-evaluation-full-penalty} montre que HRO-HRO est le plus performant en termes de violations de la \gls{QoS}, avec 35\% de tâches qui ne respectent pas les délais. Il s'agit d'une amélioration considérable par rapport aux résultats de Knative, où les tâches ne respectent pas leur échéance dans plus de 99\% des cas : le retard introduit par l'allocation réactive des ressources ne peut pas être compensé à temps en utilisant uniquement des \gls{CPU}.
 
-\textbf{Consommation d'énergie}. La figure~\ref{figure:herofake-evaluation-full-energy} montre que notre politique, avec l'autoscaler et l'ordonnanceur HRO fonctionnant conjointement, est toujours la plus performante en termes de consommation d'énergie dynamique. Cela s'explique évidemment par le fait que nous allouons des accélérateurs matériels ; cependant, au cours de notre évaluation, la durée d'exécution de notre scénario est similaire avec les politiques Knative et HRO (environ 13,5 minutes). La politique d'ordonnancement BPFF est également la moins performante en termes de temps d'exécution, car elle maximise la taille des files d'attente dans les répliques, ce qui donne les pires résultats en termes de consommation d'énergie.
+\textbf{Consommation d'énergie}. La figure~\ref{figure:herofake-evaluation-full-energy} montre que notre politique, avec l'autoscaler et l'ordonnanceur HRO fonctionnant conjointement, est toujours la plus performante en termes de consommation d'énergie dynamique. Cela s'explique évidemment par le fait que nous allouons des accélérateurs matériels ; cependant, au cours de notre évaluation, la durée d'exécution de notre scénario est similaire avec les politiques Knative et HRO (environ 13,5 minutes). La politique d'ordonnancement \gls{BPFF} est également la moins performante en termes de temps d'exécution, car elle maximise la taille des files d'attente dans les répliques, ce qui donne les pires résultats en termes de consommation d'énergie.
 
 \subsubsection{Impact des composants individuels}
 
