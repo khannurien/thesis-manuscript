@@ -148,6 +148,9 @@
 \DefTblrTemplate{contfoot-text}{normal}{Continue en page suivante}
 \SetTblrTemplate{contfoot-text}{normal}
 
+% Easter egg
+\RequirePackage{scalerel}
+
 % Commentaires dans le PDF
 \newboolean{showcomments}
 \setboolean{showcomments}{false}
